@@ -4,8 +4,11 @@
 This is an input/output API that emulates a terminal in the browser. I was inspired by the kinds of terminal programs you can run in replit through repl.run, for example:
 
 [arithmetic practice](http://quest.borisvolk.repl.run)
+
 [day trading simulator](http://stocks.borisvolk.repl.run)
+
 [logarithms](http://logquiz.borisvolk.repl.run)
+
 [polynomial factoring](http://factorquiz.borisvolk.repl.run)
 
 I think this is a refreshingly simple way to engage with a website, and there's a lot of potential for some clean educational games for math, proramming, logic, etc. Any contributions are welcome. I want to make a whole website of these. 
