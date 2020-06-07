@@ -1,4 +1,4 @@
-### Terminal in the browser
+### Terminal Games in the Browser! GUI programmers fear us...
 
 # About:
 This is an input/output API that emulates a terminal in the browser. I was inspired by the kinds of terminal programs you can run in replit through repl.run, for example:
@@ -50,8 +50,17 @@ Edit: added a logic/programming game as proof of concept. This program can be us
   - webpage with terminal and some extra text on top that could be instructions
   - a version of the webpage with a title on top
 
+- calculator_quest_stats.png
+  - pyplot data from the arithmetic challenge in the links above
+  - left is histogram of all players scores (around 200 unique players)
+  - right progress chart of the game's "biggest fan". about 5 months of progress.
+  - smart kids really enjoy these! they appreciate the speed of a terminal.
+
 - xterm/..
   - a bunch of typescript files that make the terminal run
   - documentation at xtermjs.org
 
- 
+
+
+#afterword: 
+This is an open source project! Anyone who has something to contribute please feel free. This is for education. You might as well help out. Think about it... you don't have anything better to do!
