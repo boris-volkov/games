@@ -1,3 +1,4 @@
+/**
 function princess(input){
 	var head = input.charAt(0);
 	var tail = input.charAt(input.length - 1);
@@ -18,6 +19,7 @@ function princess(input){
 	else
 		return "";
 }
+*/
 
 /**
  * Test user on rules one at a time. 
@@ -155,13 +157,13 @@ $(function () {
 	    if (test(buffer, i))
 	    {
 		    i++;
-		    //if (i == rules.length) 
-	            //        term.dispose();
 		    term.writeln(red + "\n\n\n    Correct\n\n\n\n\r");
 		    term.writeln(rules[i]);
 	    }
 	        buffer = "";
                 prompt(term);
+	    if (i > rules.length)
+		    term.dispose();
             } else if (e.domEvent.keyCode === 8) {
                 // Do not delete the prompt
                 if (term._core.buffer.x > 2) {

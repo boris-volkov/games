@@ -1,3 +1,6 @@
+
+//prompt("got here");
+
 function princess(input){
 	var head = input.charAt(0);
 	var tail = input.charAt(input.length - 1);
@@ -46,10 +49,6 @@ function test7(input){ // f(f(x)) = x with first and last digits interchanged
 	return null;
 }
 
-//prompt("got here");
-
-var yellow = "\x1b[93m";
-var white = "\x1b[97m";
 
 var prompts = 
 [
