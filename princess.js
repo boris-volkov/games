@@ -52,22 +52,22 @@ var prompts =
 	yellow + "The first test:\n\r"+
 	"Send the princess a number that would make her\n\r"+
 	"respond with the exact same number\n\r" + blue + 
-	"x->x\n\n\r" + white,
+	"x→x\n\n\r" + white,
 
 	yellow + "The second test:\n\r"+ blue + 
-	"x->xx\n\n\r" + white,
+	"x→xx\n\n\r" + white,
 
 	yellow + "the third test:\n\r"+ blue + 
-	"x->x(digits reversed)\n\n\r" + white,
+	"x→x'(digits reversed)\n\n\r" + white,
 
 	yellow + "the fourth test:\n\r"+ blue + 
-	"x->x(after a popleft() and a popright())\n\n\r",
+	"x→x'(with the final digit removed)\n\n\r",
 
 	yellow + "the fifth test:\n\r"+ blue + 
-	"x->y->x find a cyclic element of order 2\n\n\r", // is that right Tim?
+	"x→y→x find a cyclic element of order 2\n\n\r", // is that right Tim?
 
 	yellow + "the sixth test:\n\r"+ blue + 
-	"x->y->x with its digits reversed.\n\n\r"
+	"x→y→x'(with its digits reversed).\n\n\r"
 ]
 
 var tests = [test1, test2, test3, test4, test5, test6];

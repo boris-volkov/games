@@ -29,47 +29,47 @@ const rules =
 		"it means concatenation, not multiplication\n\r"+
 		"so if x = 543 and y = 987 xy means 5439878\n\r"+
 		"and 3x means 3543\n\r"+
-		"x -> y means: when you send the princess x,\n\r"+
+		"x → y means: when you send the princess x,\n\r"+
 		"she will respond with y.\n\n\r"+
 		yellow + "Rule I: getting a response\n\r"+ white + 	
-		"		(1a2 -> a)\n\r" + 
-		"Examples: 	16542 -> 654\n\r"+
-		"		11922 -> 192\n\r"+
+		"		(1a2 → a)\n\r" + 
+		"Examples: 	16542 → 654\n\r"+
+		"		11922 → 192\n\r"+
 		"Play with the rule. Does it make sense?\n\r"+
 		"What number would you send to get 1643 back\n\r"+
-		"		x -> 1643\n\n\n\r",
+		"		x → 1643\n\n\n\r",
 
 		yellow + "RULE II: doubling\n\r"+ white +
-		"		(if a -> b then 3a -> aa)\n\r"+
-		"Examples:      Since 116432 -> 1643\n\r"+
-		"		     3116432 -> 16431643\n\r"+
-		"		Since 1432 -> 43\n\r"+
-		"		     31432 -> 4343\n\r"+
-		"               and 331432 -> 43434343\n\r"+
+		"		(if a → b then 3a → aa)\n\r"+
+		"Examples:      Since 116432 → 1643\n\r"+
+		"		     3116432 → 16431643\n\r"+
+		"		Since 1432 → 43\n\r"+
+		"		     31432 → 4343\n\r"+
+		"               and 331432 → 43434343\n\r"+
 		"Using rule II:\n\r"+
 		"What number would you send to get 123123 back?\n\r"+
-		"                   x -> 123123\n\n\n\r",
+		"                   x → 123123\n\n\n\r",
 
 		yellow + "RULE III: reversal\n\r"+ white + 
-		"		(if a->b, then 4a -> b^-1)\n\r"+
-		"Example:      since 19872 -> 987\n\r"+
-		"		    419872 -> 789\n\r"+
+		"		(if a→b, then 4a → b^-1)\n\r"+
+		"Example:      since 19872 → 987\n\r"+
+		"		    419872 → 789\n\r"+
 		"Use rule III to make her send back 123\n\r",
 
 		yellow + "Rule IV: ereasure\n\r"+ white + 
-		"(if a->b, then 5a-> b*with the first digit removed)\n\r"+
-		"Example:      since 127432 -> 2743\n\r"+
-		"		    5127432 -> 743\n\r"+
+		"(if a→b, then 5a→ b*with the first digit removed)\n\r"+
+		"Example:      since 127432 → 2743\n\r"+
+		"		    5127432 → 743\n\r"+
 		"Use rule IV to make her send back 375\n\r",
 
-		yellow + "Rule V: addition    (if a->b then 6a->1a)\n\r"+ white + 
-		"Example:      since 15552 -> 555\n\r"+
-		"                   615552 -> 1555\n\r"+
+		yellow + "Rule V: addition    (if a→b then 6a→1a)\n\r"+ white + 
+		"Example:      since 15552 → 555\n\r"+
+		"                   615552 → 1555\n\r"+
 		"Use rule V to return 1919\n\r",
 
-		yellow + "Rule VI: addition(2) (if a->b then 7a->2a\n\r"+ white +
-		"Example:      since 13432 -> 343\n\r"+
-		" 		    713432 -> 2343\n\r"+
+		yellow + "Rule VI: addition(2) (if a→b then 7a→2a\n\r"+ white +
+		"Example:      since 13432 → 343\n\r"+
+		" 		    713432 → 2343\n\r"+
 		"Use rule VI ro return 222\n\r",
 
 		red + "End of the rules\n\n\r"

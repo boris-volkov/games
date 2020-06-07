@@ -23,6 +23,10 @@ Edit: added a logic/programming game as proof of concept. This program can be us
   - TODO: get the dimensions of the users browser and based text-size on that, we want it to look good on any monitor!
   - TODO: a side-by side orientation like a book could be nice... 
 
+- screen_fit.png
+  - Ideally how I would like this to fit in a screen on first load and resize, etc
+  - always going for clean
+
 - princess.js
   - logic for the princess game and a record of her challenges
   - it doens't work all the way to the end yet. This is actually a really hard puzzle.
