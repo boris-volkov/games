@@ -1,5 +1,3 @@
-var bar = '\u2588';
-
 $(function () {
     var term = new Terminal({theme: {background: "#006699"}}, {cursorWidth: 100});
 
@@ -29,6 +27,8 @@ $(function () {
             const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 
             if (e.domEvent.keyCode === 13) {
+		if (buffer == "done")
+		    term.dispose();
 		term.write("\n buffer has:" + buffer);
 	        buffer = "";
                 prompt(term);
