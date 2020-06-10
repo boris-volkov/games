@@ -45,7 +45,7 @@ $(function () {
             if (e.domEvent.keyCode === 13) { // ENTER pressed: new line and clear buffer
 		if (buffer == "done")
 		    term.dispose();
-		term.write("\n\r buffer contains:" + buffer);
+		term.write("\n buffer has:" + buffer);
 	        buffer = "";
                 prompt(term);
             } else if (e.domEvent.keyCode === 8) { // Backspace pressed
