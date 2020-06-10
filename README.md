@@ -1,4 +1,4 @@
-### Terminal Games in the Browser! GUI programmers fear us...
+### Terminal Games in the Browser! GUI programmers don't want you to know this one simple trick!
 
 # About:
 This is an input/output API that emulates a terminal in the browser. I was inspired by the kinds of terminal programs you can run in replit through repl.run, for example:
