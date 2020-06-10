@@ -43,16 +43,11 @@ Edit: added a logic/programming game as proof of concept. This program can be us
   - TODO: KEITH needs to figure out how to make the fonts wider
   - The reason I want to have square is for games like connect4, etc. or anywhere you try to use the unicode bar as a "pixel"
 
-- only_term.html
+- browser_terminal_no_logic.html
   - most basic IO terminal template. most games will be built around this.
   - has my added logic to read a "buffer". might be redundant but i don't know.
   - fills the entire window with the terminal emulator
   - run in your browser to see the terminal
-
-- works.html
-  - a reference point for the terminal that "just works".
-  - webpage with terminal and some extra text on top that could be instructions
-  - a version of the webpage with a title on top
 
 - calculator_quest_stats.png
   - pyplot data from the arithmetic challenge in the links above
