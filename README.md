@@ -64,6 +64,10 @@ Edit: added a logic/programming game as proof of concept. This program can be us
   - a bunch of typescript files that make the terminal run
   - documentation at xtermjs.org
 
+- visual_design/..
+  - sample visual designs for a terminal game
+  - all done with unicode characters for shapes, and ansi escape sequences for colors. (like '\x1b[96m')
+
 
 
 #afterword: 
