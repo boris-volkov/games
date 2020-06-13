@@ -146,6 +146,8 @@ $(function () {
 
 		term.onKey(e => {
 			if (e.domEvent.keyCode === 27) term.dispose();
+			
+			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now they're buggy 
 
 			const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 			if (started == false) {
