@@ -10,36 +10,33 @@ const blue = '\x1b[94m';
 const red = '\x1b[91m';
 const green = '\x1b[92m';
 
-const INTRODUCTION = yellow + "There is a princess who lives far away.\n\r" + 
+const INTRODUCTION = yellow + "There is a princess who lives far away,\n\r" + 
 	"She has a way with numbers, by the way.\n\r" + 
 	"She has this game she plays, a number game:\n\r"+
-	"You send her a number, she'll do the same:\n\r"+
-	"Her number will be in response to yours.\n\r"+
+	"You send her a number, she'll do the same.\n\r"+
+	"Her number will be in response to yours,\n\r"+
 	"And yes, She'll teach you how it works, of course.\n\r"+
 	"She will reward the one that meets her test,\n\r"+
 	"Just learn six rules and figure out the rest.\n\r"+
-	"The princess is waiting.\n\r"+ 
-	"First she will teach you the rules...\n\n\r"+
+	"The princess is waiting...\n\r"+ 
+	"First she will teach you the rules.\n\n\r"+
 	"(Already know the rules? press ESC)\n\n\r"+
 	green + "Tell the princess you are ready:"
 
-
-
-
 const rules = 
 	[
-		yellow + "Rule 0: notation:\n\r"+ white + 
-		"-A single letter can be used to represent\n\r"+
-		"Either a single-digit number, or a multi-digit number\n\r"+
-		"not just digits, so x can be 2 or it can be 1234\n\r"+
-		"-No letter has any special meaning,\n\r"+
-		"they are all just variables (a,b,x)\n\r"+
-		"-When you see variables next to each other,\n\r"+
-		"it means concatenation, not multiplication\n\r"+
-		"so if a = 543 and b = 987 ab means 543987\n\r"+
-		"and 3a means 3543\n\r"+
-		"-a → b means: when you send the princess a,\n\r"+
-		"she will respond with b.\n\n\r"+
+		yellow + "Rule 0: notation\n\r"+ white + 
+		"▸ A single letter can be used to represent\n\r"+
+		"	either a single-digit, or a multi-digit number.\n\r"+
+		"	So x can be 2 or it can be 1234\n\r"+
+		"▸ No letter has any special meaning,\n\r"+
+		"	they are all just variables (a,b,x)\n\r"+
+		"▸ When you see variables next to each other,\n\r"+
+		"	it means concatenation, not multiplication\n\r"+
+		"	so if a = 543 and b = 987 ab means 543987\n\r"+
+		"	and 3a means 3543\n\r"+
+		"▸ a → b means: when you send the princess a,\n\r"+
+		"	       she will respond with b.\n\n\r"+
 		yellow + "Rule I: getting a response\n\r"+ white + 	
 		"		(1a2 → a)\n\r" + 
 		"Examples: 	16542 → 654\n\r"+
