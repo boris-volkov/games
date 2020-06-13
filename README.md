@@ -17,7 +17,7 @@ Edit: added a logic/programming game as proof of concept. This program can be us
 
 - princess.html
   - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
-  - run it in your favorite browser.
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/princess.html) 
   - runs two terminals in the same window, one to teach rules, one to conduct the challenge
   - TODO: fix the awkward placement and make things fit nicely to screen
   - TODO: get the dimensions of the users browser and based text-size on that, we want it to look good on any monitor!

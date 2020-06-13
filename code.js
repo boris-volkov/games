@@ -61,8 +61,8 @@ $(function () {
         });
     }
 
-    function prompt(term) { // I think it's wierd that this coexists with the other prompt
-      term.write('\r\n$ '); // are they both really necessary?
+    function prompt(term) { // I think it's wierd that this coexists with the other prompt function above
+      term.write('\r\n$ '); // is it really necessary to have both
     }
     
     runFakeTerminal();
