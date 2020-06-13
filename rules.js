@@ -10,7 +10,7 @@ const blue = '\x1b[94m';
 const red = '\x1b[91m';
 const green = '\x1b[92m';
 
-const INTRODUCTION = 	"There is a princess who lives far away.\n\r" + 
+const INTRODUCTION = yellow + "There is a princess who lives far away.\n\r" + 
 	"She has a way with numbers, by the way.\n\r" + 
 	"She has this game she plays, a number game:\n\r"+
 	"You send her a number, she'll do the same:\n\r"+
@@ -20,7 +20,11 @@ const INTRODUCTION = 	"There is a princess who lives far away.\n\r" +
 	"Just learn six rules and figure out the rest.\n\r"+
 	"The princess is waiting.\n\r"+ 
 	"First she will teach you the rules...\n\n\r"+
-	"Tell the princess you are ready:"
+	"(Already know the rules? press ESC)\n\n\r"+
+	green + "Tell the princess you are ready:"
+
+
+
 
 const rules = 
 	[
@@ -144,9 +148,12 @@ $(function () {
 				 // through term._core.buffer instead of building manually
 
 		term.onKey(e => {
+			if (e.domEvent.keyCode === 27) term.dispose();
+
 			const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 			if (started == false) {
 				term.reset();
+				buffer = "";
 				term.writeln(rules[0]);
 				prompt(term);
 				started = true;
