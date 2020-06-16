@@ -18,14 +18,9 @@ Edit: added a logic/programming game as proof of concept. This program can be us
 - princess.html
   - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
   - try it [here](https://boris-volkov.github.io/browser_terminal_games/princess.html) 
-  - runs two terminals in the same window, one to teach rules, one to conduct the challenge
-  - TODO: fix the awkward placement and make things fit nicely to screen
-  - TODO: get the dimensions of the users browser and based text-size on that, we want it to look good on any monitor!
-  - TODO: a side-by side orientation like a book could be nice... 
-
-- screen_fit.png
-  - Ideally how I would like this to fit in a screen on first load and resize, etc
-  - always going for clean
+  - runs two terminals in the same window, one to teach rules, one to conduct the challenge (right now they are loading simultaneously)
+  - TODO: would really like these terminals to run in sequence, instead of simultaneously. As soon as the first one is disposed, the second one should start.
+  - TODO: get the dimensions of the users browser and base the text-size on that, we want it to fit right on any monitor.
 
 - princess.js
   - logic for the princess game and a record of her challenges
@@ -62,7 +57,6 @@ Edit: added a logic/programming game as proof of concept. This program can be us
 - visual_design/..
   - sample visual designs for a terminal game
   - all done with unicode characters for shapes, and ansi escape sequences for colors. (like '\x1b[96m')
-
 
 
 #afterword: 

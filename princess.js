@@ -1,4 +1,3 @@
-
 //prompt("got here"); // this is just a debugging thing, put this somewhere as a breakpoint
 
 function princess(input){

@@ -132,7 +132,6 @@ $(function () {
 			return;
 		}
 
-
 		term._initialized = true;
 
 		term.write('\x1b[97m'); // sets text color
@@ -147,10 +146,11 @@ $(function () {
 		term.onKey(e => {
 			if (e.domEvent.keyCode === 27) term.dispose();
 			
-			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now they're buggy 
+			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now, they're buggy 
 
 			const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
-			if (started == false) {
+
+			if (started == false) { // started means they read the intro and are going through the rules now
 				term.reset();
 				buffer = "";
 				term.writeln(rules[0]);
@@ -158,6 +158,7 @@ $(function () {
 				started = true;
 				return;
 			}
+
 			if (e.domEvent.keyCode === 13) 
 			{
 				if (buffer == "") return; // don't let them send an empty string
