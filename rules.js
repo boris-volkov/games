@@ -4,6 +4,28 @@
  * Make sure uesr know how to use all of the rules
  */
 
+
+function princess(input){
+	var head = input.charAt(0);
+	var tail = input.charAt(input.length - 1);
+	var rest = input.substring(1);
+
+	if (head == "1" && tail == "2")
+		return input.substring(1,input.length - 1);
+	else if (head == "3")
+		return princess(rest) + princess(rest);
+	else if (head == "4")
+		return princess(rest).split("").reverse().join("");
+	else if (head == "5")
+		return princess(rest).substring(1);
+	else if (head == "6")
+		return "1" + princess(rest);
+	else if (head == "7")
+		return "2" + princess(rest);
+	else
+		return "";
+}
+
 const white = '\x1b[97m';
 const yellow = '\x1b[93m';
 const blue = '\x1b[94m';
@@ -144,7 +166,10 @@ $(function () {
 				 // through term._core.buffer instead of building manually
 
 		term.onKey(e => {
-			if (e.domEvent.keyCode === 27) term.dispose();
+			if (e.domEvent.keyCode === 27){
+				term.dispose();
+				location = "princess.html"; //this might be the fix: send to another html page with another terminal
+			}
 			
 			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now, they're buggy 
 

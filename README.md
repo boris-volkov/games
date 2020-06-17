@@ -15,11 +15,11 @@ I think this is a refreshingly simple way to engage with a website, and there's 
 
 Edit: added a logic/programming game as proof of concept. This program can be used as a math competition.
 
-- princess.html
+- princess.html+rules.html
   - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
-  - try it [here](https://boris-volkov.github.io/browser_terminal_games/princess.html) 
-  - runs two terminals in the same window, one to teach rules, one to conduct the challenge (right now they are loading simultaneously)
-  - TODO: would really like these terminals to run in sequence, instead of simultaneously. As soon as the first one is disposed, the second one should start.
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/rules.html)
+  - when player is finished with the rules, opens the next page with the game terminal.
+  - TODO: lot of repeated code here... figure out a way to have them pull from a shared module? 
   - TODO: get the dimensions of the users browser and base the text-size on that, we want it to fit right on any monitor.
 
 - princess.js

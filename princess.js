@@ -1,5 +1,12 @@
 //prompt("got here"); // this is just a debugging thing, put this somewhere as a breakpoint
 
+
+const white = '\x1b[97m';
+const yellow = '\x1b[93m';
+const blue = '\x1b[94m';
+const red = '\x1b[91m';
+const green = '\x1b[92m';
+
 function princess(input){
 	var head = input.charAt(0);
 	var tail = input.charAt(input.length - 1);
@@ -100,7 +107,7 @@ $(function () {
 		term.prompt = () => {
 			term.write(princess_prompt);
 		};
-		//term.write('\x1b[48;2;30;60;90m')
+		//term.write('\x1b[48;2;30;60;90m') // background
 		term.write('\x1b[97m');
 		term.writeln(prompts[i]);
 		prompt(term);
