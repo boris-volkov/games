@@ -188,7 +188,10 @@ $(function () {
 			{
 				if (buffer == "") return; // don't let them send an empty string
 
-				if (i == rules.length-1) term.dispose(); //done learning rules.
+				if (i == rules.length-1){
+					term.dispose(); //done learning rules.
+					location = "princess.html";
+				}
 
 				term.writeln("\n\rthe princess would return: " + princess(buffer));
 				if (test(buffer, i)){
