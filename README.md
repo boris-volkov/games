@@ -15,40 +15,25 @@ I think this is a refreshingly simple way to engage with a website, and there's 
 
 Edit: added a logic/programming game as proof of concept. This program can be used as a math competition.
 
-- princess.html+rules.html
-  - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
-  - try it [here](https://boris-volkov.github.io/browser_terminal_games/rules.html)
-  - when player is finished with the rules, opens the next page with the game terminal.
-  - TODO: lot of repeated code here... figure out a way to have them pull from a shared module? 
-  - TODO: get the dimensions of the users browser and base the text-size on that, we want it to fit right on any monitor.
+- basic_terminal_code.js
+  - the API for the browser terminal
+  - now supports resizing font with window resize!
 
-- princess.js
+- basic_terminal_page.html
+  - most basic IO terminal template. most games will be built around this.
+  - fills the entire window with the terminal emulator
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/basic_terminal_page.html)
+
+- princess/princess.html+rules.html
+  - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/princess/rules.html)
+  - when player is finished with the rules, opens the next page with the game terminal.
+  - TODO: lot of repeated code here... figure out a way to have them pull from a shared module?
+  - TODO: still has not integrated the resizing feature
+
+- princess/rules.js + princess.js
   - logic for the princess game and a record of her challenges
   - it doens't work all the way to the end yet. This is actually a really hard puzzle.
-
-- rules.js
-  - logic for the rules terminal which has users progress through the rules as a preliminary challenge.
-  - these two js files running in the same html file share data! This surprised me
-  - JavaScript is surpisingly "concurrent". I've often found lines acting "out of order"
-
-- code.js
-  - the API for the browser terminal
-  - currently saving the buffer into a string and printing it on ENTER press
-  - but this buffer string can be sent into another program for the game logic
-  - TODO: KEITH needs to figure out how to make the fonts wider
-  - The reason I want to have square is for games like connect4, etc. or anywhere you try to use the unicode bar as a "pixel"
-
-- browser_terminal_no_logic.html
-  - most basic IO terminal template. most games will be built around this.
-  - has my added logic to read a "buffer". might be redundant but i don't know.
-  - fills the entire window with the terminal emulator
-  - run in your browser to see the terminal
-
-- calculator_quest_stats.png
-  - pyplot data from the arithmetic challenge in the links above
-  - left is histogram of all players scores (around 200 unique players)
-  - right progress chart of the game's "biggest fan". about 5 months of progress.
-  - smart kids really enjoy these! they appreciate the speed of a terminal.
 
 - xterm/..
   - a bunch of typescript files that make the terminal run
@@ -57,7 +42,6 @@ Edit: added a logic/programming game as proof of concept. This program can be us
 - visual_design/..
   - sample visual designs for a terminal game
   - all done with unicode characters for shapes, and ansi escape sequences for colors. (like '\x1b[96m')
-
 
 #afterword: 
 This is an open source project! Anyone who has something to contribute please feel free. This is for education. You might as well help out. Think about it... you don't have anything better to do!
