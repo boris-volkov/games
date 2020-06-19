@@ -5,16 +5,31 @@
  * anywhere you want. This, or something similar will be necessary code in every terminal app.
  */
 
+
 $(function () {
+	//import { FitAddon } from 'xterm-addon-fit';
 	let width = window.innerWidth;
 	let height = window.innerHeight;
-	var term = new Terminal({theme: {background: "#006699"}}, {cursorWidth: 100});
-	term.setOption("fontSize", height/20);  // font now getting set based on window size... great!
-	term.setOption("fontWeight", 900); // these kinds of adjustments are all in docs xtermjs.org
-	const terminal_prompt = '\r\n$ ';
+	const term = new Terminal( 
+			{ 
+				theme: {
+					background: "#006699",
+				},
 
-	//term.setOption("fontFamily", "Ubuntu Mono");  //one way you can set font if you need to 
-	term.open(document.getElementById('terminal')); // this name is defined in the HTML caller
+				rows: 12,
+				cols: 40,
+				cursorBlink: true,
+				letterSpacing: 4,
+				fontSize: Math.floor(height/15),
+				fontWeight: 900
+
+			});
+
+	//const fitAddon = new FitAddon();
+	//Terminal.applyAddon(fullscreen);
+	const terminal_prompt = '$ ';
+	term.open(document.getElementById('terminal'));
+
 
 	function runFakeTerminal() {
 		if (term._initialized) {
@@ -23,16 +38,11 @@ $(function () {
 		term._initialized = true;
 
 		term.write('\x1b[97m') // this is how you change font color
-		term.writeln('This is a template terminal interface. Just Add Logic!');
+		term.writeln('This is a template terminal interface. \n\rJust Add Logic!');
 		prompt(term);
 		
 		var buffer = ""; // this is where you collect user input to route to program logic
 
-		/**
-		 * right now the handler is saving everything that gets typed into a buffer,
-		 * but it dosn't have to do that. For more interactive games the key-presses
-		 * can be routed to another handler. 
-		 */
 		term.onKey(e => {
 			const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 
@@ -41,8 +51,7 @@ $(function () {
 				buffer = ""; // reset buffer
 				prompt(term);
 			} else if (e.domEvent.keyCode === 8) { // Backspace pressed
-				// Do not delete the prompt
-				if (term._core.buffer.x > terminal_prompt.length - 2) {
+				if (term._core.buffer.x > terminal_prompt.length) {
 					buffer = buffer.substring(0, buffer.length - 1);
 					term.write('\b \b');
 				}
@@ -65,7 +74,7 @@ $(function () {
 	}
 
 	function prompt(term) {
-		term.write(terminal_prompt);
+		term.write('\n\r' + terminal_prompt);
 	}
 
 	runFakeTerminal();

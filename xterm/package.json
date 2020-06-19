@@ -100,5 +100,8 @@
   },
   "style": "css/xterm.css",
   "types": "typings/xterm.d.ts",
-  "version": "4.6.0"
+  "version": "4.6.0",
+  "dependencies": {
+    "xterm-addon-fit": "^0.4.0"
+  }
 }
