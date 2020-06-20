@@ -15,6 +15,13 @@ I think this is a refreshingly simple way to engage with a website, and there's 
 
 Edit: added a logic/programming game as proof of concept. This program can be used as a math competition.
 
+- /sixteens/sixteens.html + sixteens.js
+  - my original puzzle, rubik's cube style - mix it up and try to put it back together
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/sixteens/sixteens.html)
+  - i,j,k,l keys shift like around a torus
+  - w,a,s,d keys shift like around a real-projective-plane (mobius strip in every direction)
+  - I'm not sure if this exists already, but I came up with it while watching Joker (just a bit of trivia, doesn't mean anything)
+
 - basic_terminal_code.js
   - the API for the browser terminal
   - now supports resizing font with window resize!
