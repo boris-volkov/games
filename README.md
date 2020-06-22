@@ -22,6 +22,13 @@ Edit: added a logic/programming game as proof of concept. This program can be us
   - w,a,s,d keys shift like around a real-projective-plane (mobius strip in every direction)
   - I'm not sure if this exists already, but I came up with it while watching Joker (just a bit of trivia, doesn't mean anything)
 
+- /sixteens/gradient.html + color_shift.js
+  - uses the same logic as the sixteens game, but adds interface for creating arbitrary gradients
+  - '.' toggles on info display (feq is in terms of canvas size.
+  - to alter Red Phase, for example: hold r,p, and press up or down arrows to adjust.
+  - transformation works in the same way as in the sixteens game. 
+  - try it [here](https://boris-volkov.github.io/browser_terminal_games/sixteens/gradient.html?size=32)
+
 - basic_terminal_code.js
   - the API for the browser terminal
   - now supports resizing font with window resize!
