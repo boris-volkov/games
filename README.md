@@ -1,5 +1,3 @@
-### Terminal Games in the Browser! GUI programmers don't want you to know this one simple trick!
-
 # What is this?:
 Simple and functional browser-based games. 
 Running through the xterm terminal emulator and html canvas.
