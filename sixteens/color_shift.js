@@ -1,6 +1,6 @@
 $(function  ()
 {
-	// Get the canvas element using the DOM
+	//--------------------------------------------------------------------------Initialization of canvas and grid
 	var canvas = document.getElementById('puzzle_space');
 	var context = canvas.getContext('2d');
 	
@@ -19,7 +19,8 @@ $(function  ()
 		return grid;
 	}
 	
-
+	//--------------------------------------------------------------------------Color state information
+	//TODO lot of repetetive stuff for each color, make each color a separate object of a prototype?
 	var gradient = {
 		red_amp  	: 0,
 		red_freq 	: 6.28/grid_size,
@@ -83,7 +84,7 @@ $(function  ()
 				for (let j = 0; j < grid_size; j++){grid[j].unshift(row[j]);}}
 	function transpose() 	{grid =  grid[0].map((col, i) => grid.map(row => row[i]));}
 
-	//------------------------------------------------------------------------------------	
+	//------------------------------------------------------------------------------Draw colors to canvas	
 	var display = false;
 	function grid_to_canvas(){
 		var width = canvas.width;
@@ -108,7 +109,7 @@ $(function  ()
 	}	
 
 
-	//---------------------------------------key event listener
+	//---------------------------------------key event listener + key -> function maps
 	
 	var keys_down = {
 		'r' :		false,
@@ -225,6 +226,7 @@ $(function  ()
 	}
 	
 
+	//
 	if (grid_size == undefined) { grid_size = 32; }
 	var grid = populate_grid(grid_size);
 	gradient.generate_codes();
