@@ -17,10 +17,11 @@ $(function  ()
 		this.center = 125;
 		this.toString = function () {
 			return [ this.name   , 	'Mag:', this.amp, 
-				 'Frq:', Math.round(grid_size*this.freq/6.28*1000)/1000, 
-				 'Pha:', this.phase,     
-				 'Cen:', this.center].join(' ');
+						'Frq:', Math.round(grid_size*this.freq/6.28*1000)/1000, 
+				 		'Pha:', this.phase,     
+				 		'Cen:', this.center].join(' ');
 		};
+
 		this.sin = function (x) {
 			return Math.round(Math.sin(this.freq*(x+this.phase))*this.amp+this.center);
 
@@ -69,12 +70,12 @@ $(function  ()
 			context.fillRect(x, y, grid_div, grid_div);
 		}}
 		if (display){
-		font_height = Math.round(canvas.width/30);
-		context.font = font_height+"px Courier New";
-		context.fillStyle = '#000';
-		context.fillText(gradient.red.toString(),width/2,  font_height);
-		context.fillText(gradient.grn.toString(),width/2,2*font_height);
-		context.fillText(gradient.blu.toString(),width/2,3*font_height);
+			let font_height = Math.round(canvas.width/30);
+			context.font = font_height+"px Courier New";
+			context.fillStyle = '#000';
+			context.fillText(gradient.red.toString(), canvas.width/2,   font_height);
+			context.fillText(gradient.grn.toString(), canvas.width/2, 2*font_height);
+			context.fillText(gradient.blu.toString(), canvas.width/2, 3*font_height);
 		}
 	}	
 
