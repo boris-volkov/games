@@ -6,7 +6,6 @@ Bringing the 1970's terminal experience to the modern day internet consumer.
 ## [princess_test](https://boris-volkov.github.io/games/princess/rules.html)
   - proof of concept game for the project, based on one of Raymond Smullyan's puzzles
   - when player is finished with the rules, opens the next page with the game terminal.
-  
 
 ## [sixteen](https://boris-volkov.github.io/games/sixteens/sixteens.html)
   - topological rubik's cube style puzzle - mix it up and try to put it back together
@@ -15,10 +14,11 @@ Bringing the 1970's terminal experience to the modern day internet consumer.
 
 ## [gradient_phaser](https://boris-volkov.github.io/games/sixteens/gradient.html?size=32)
   - yes it just looks like a grey square at first.
-  - uses the same logic as the sixteens game, but adds interface for creating arbitrary gradients
-  - '.' toggles on info display (feq is in terms of canvas size.
+  - user controls parameters on three sine waves that determine RGB codes for a gradient
+  - '.' toggles an info display (freq is in terms of canvas size).
   - to alter Red Phase, for example: hold r,p, and press up or down arrows to adjust.
-  - transformation works in the same way as in the sixteens game. 
+  - for a first time, I reccomend setting all magnitudes to 125, green phase to 11, blue phase to 22, for a rainbow.
+  - translation works in the same way as in the sixteens game. 
   - source files in sixteens/ directory
 
 ## [blank_terminal](https://boris-volkov.github.io/games/basic_terminal_page.html)
