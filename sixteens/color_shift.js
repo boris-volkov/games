@@ -79,7 +79,7 @@ $(function  ()
 		}
 	}	
 
-	//----------------------------------------------------------key event listener + key -> function maps
+	//----------------------------------------------------------key event listener & key -> function maps
 	
 	var keys_down = {
 	'r': false, 	'g': false,  	'b': false, 	'p': false,
@@ -90,11 +90,11 @@ $(function  ()
 	'i': torus_up,		'k': torus_down,	'j': torus_left,
 	'l': torus_right,	'w': mobius_up,		's': mobius_down,
 	'a': mobius_left,	'd': mobius_right,      't': transpose,
-	'.': () => {display ^= true},
+	'.': () => { display ^= true }, '`': () => { alert(gradient.rgb_codes); },
 			
 	'ArrowUp' : () => 	{if (keys_down['r']){ 
 					if (keys_down['f'])
-						gradient.red.freq *= 1.1;
+						gradient.red.freq *= 1.01;
 					if (keys_down['p'])
 						gradient.red.phase += 1;
 					if (keys_down['m'])
@@ -104,7 +104,7 @@ $(function  ()
 					}
 				 if (keys_down['g']){ 
 					if (keys_down['f'])
-						gradient.grn.freq *= 1.1;
+						gradient.grn.freq *= 1.01;
 					if (keys_down['p'])
 						gradient.grn.phase += 1;
 					if (keys_down['m'])
@@ -114,7 +114,7 @@ $(function  ()
 					}
 				 if (keys_down['b']){ 
 					if (keys_down['f'])
-						gradient.blu.freq *= 1.1;
+						gradient.blu.freq *= 1.01;
 					if (keys_down['p'])
 						gradient.blu.phase += 1;
 					if (keys_down['m'])
@@ -126,7 +126,7 @@ $(function  ()
 
 	'ArrowDown' : () => 	{if (keys_down['r']){ 
 					if (keys_down['f'])
-						gradient.red.freq /= 1.1;
+						gradient.red.freq /= 1.01;
 					if (keys_down['p'])
 						gradient.red.phase -= 1;
 					if (keys_down['m'])
@@ -136,7 +136,7 @@ $(function  ()
 					}
 				 if (keys_down['g']){ 
 					if (keys_down['f'])
-						gradient.grn.freq /= 1.1;
+						gradient.grn.freq /= 1.01;
 					if (keys_down['p'])
 						gradient.grn.phase -= 1;
 					if (keys_down['m'])
@@ -146,7 +146,7 @@ $(function  ()
 					}
 				 if (keys_down['b']){ 
 					if (keys_down['f'])
-						gradient.blu.freq /= 1.1;
+						gradient.blu.freq /= 1.01;
 					if (keys_down['p'])
 						gradient.blu.phase -= 1;
 					if (keys_down['m'])
@@ -160,7 +160,7 @@ $(function  ()
 	window.addEventListener('keydown', (event) => {
 		if (keys_down.hasOwnProperty(event.key)){
 			keys_down[event.key] = true;
-			return;
+			//return;
 		}
 		key_function_map[event.key]();
 		gradient.generate_codes();

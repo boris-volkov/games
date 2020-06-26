@@ -4,6 +4,7 @@
  * Make sure uesr know how to use all of the rules
  */
 
+const desired_rows = 24
 
 function princess(input){
 	var head = input.charAt(0);
@@ -138,13 +139,21 @@ function test(input, i){
 	return ((input.startsWith(asserts[i][0])) && (princess(input) == asserts[i][1]));
 }
 
+	let height = window.innerHeight;
 
-$(function () {
-	var term = new Terminal({theme: {background: "#006699"}}, {cursorWidth: 100});
+        const term = new Terminal(
+                        {
+                                theme: {
+                                        background: "#006699",
+                                },
+                                rows: desired_rows,
+                                cols: 60,
+                                cursorBlink: true,
+                                fontSize: Math.floor(height/(desired_rows*5/4)),
+                                fontWeight: 700,
+				//fontFamily: "Times New Roman"
+                        });
 
-	term.setOption("fontSize", 30);
-	term.setOption("fontWeight", 900);
-	//term.setOption("fontFamily", "Ubuntu Mono");
 	term.open(document.getElementById('terminal'));
 
 	const term_prompt = '\r\nTry a number: ';
@@ -168,7 +177,7 @@ $(function () {
 		term.onKey(e => {
 			if (e.domEvent.keyCode === 27){
 				term.dispose();
-				location = "princess.html"; //this might be the fix: send to another html page with another terminal
+				location.replace("princess.html"); //this might be the fix: send to another html page with another terminal
 			}
 			
 			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now, they're buggy 
@@ -190,7 +199,7 @@ $(function () {
 
 				if (i == rules.length-1){
 					term.dispose(); //done learning rules.
-					location = "princess.html";
+					location.replace("princess.html");
 				}
 
 				term.writeln("\n\rthe princess would return: " + princess(buffer));
@@ -215,7 +224,19 @@ $(function () {
 				buffer = buffer + e.key;
 				term.write(e.key);
 			}
-		});
+
+			});
+
+	window.addEventListener("resize", resize_term);
+                function resize_term(){
+                        let width = window.innerWidth;
+                        let height = window.innerHeight;
+                        let font_height = Math.floor(height/(desired_rows*5/4));
+                        term.setOption("fontSize", font_height);
+                }
+
+
+
 	}
 
 	function prompt(term) {
@@ -223,4 +244,3 @@ $(function () {
 	}
 
 	runFakeTerminal();
-});

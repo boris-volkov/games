@@ -5,31 +5,24 @@
  * anywhere you want. This, or something similar will be necessary code in every terminal app.
  */
 
-
-$(function () {
-	//import { FitAddon } from 'xterm-addon-fit';
 	let width = window.innerWidth;
 	let height = window.innerHeight;
+	const desired_rows = 16;
+	var font_size = Math.floor(height/(desired_rows*5/4));
 	const term = new Terminal( 
 			{ 
 				theme: {
 					background: "#006699",
 				},
-
-				rows: 12,
+				rows: desired_rows,
 				cols: 40,
 				cursorBlink: true,
-				letterSpacing: 4,
-				fontSize: Math.floor(height/15),
+				fontSize: font_size,
 				fontWeight: 900
-
 			});
 
-	//const fitAddon = new FitAddon();
-	//Terminal.applyAddon(fullscreen);
 	const terminal_prompt = '$ ';
 	term.open(document.getElementById('terminal'));
-
 
 	function runFakeTerminal() {
 		if (term._initialized) {
@@ -65,10 +58,8 @@ $(function () {
 		function resize_term(){
 			let width = window.innerWidth;
 			let height = window.innerHeight;
-			let fontheight = width/40; 
-			//window.scrollTo(term._core.buffer.x, term._core.buffer.y*fontheight); // sort of works, could be better
-			term.setOption("fontSize", width/40);
-			// division by 40 is arbitrary.. just trying it out
+			let font_height = Math.floor(height/(desired_rows*5/4)); 
+			term.setOption("fontSize", font_height);
 		}
 
 	}
@@ -78,6 +69,5 @@ $(function () {
 	}
 
 	runFakeTerminal();
-});
 
 

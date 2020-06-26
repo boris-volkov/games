@@ -1,6 +1,8 @@
 //prompt("got here"); // this is just a debugging thing, put this somewhere as a breakpoint
 
 
+const desired_rows = 15;
+
 const white = '\x1b[97m';
 const yellow = '\x1b[93m';
 const blue = '\x1b[94m';
@@ -63,10 +65,9 @@ const reminder ="\n\rRule I                        "+green+"1"+white+"a"+green+"
 //TODO make these more engaging
 var prompts = 
 	[
-		yellow + "The first test:\n\r"+
-		"Send the princess a number that would make her\n\r"+
-		"respond with the exact same number\n\r" + blue + 
-		"x→x\n\n\r" + white,
+		yellow + "The first test: Echo\n\r"+
+		"Get the princess to echo your number.\n\r"+ blue + 
+		"	x→x\n\n\r" + white,
 
 		yellow + "The second test:\n\r"+ blue + 
 		"x→xx\n\n\r" + white,
@@ -85,13 +86,19 @@ var prompts =
 	]
 
 var tests = [test1, test2, test3, test4, test5, test6];
+        let height = window.innerHeight;
+        const term = new Terminal(
+                        {
+                                theme: {
+                                        background: "#882255",
+                                },
+                                rows: desired_rows,
+                                cols: 60,
+                                cursorBlink: true,
+                                fontSize: Math.floor(height/(desired_rows*5/4)),
+                                fontWeight: 900
+                        });
 
-$(function () {
-	var term = new Terminal({theme: {background: "#882255"}}, {cursorWidth: 100});
-
-	term.setOption("fontSize", 40);
-	term.setOption("fontWeight", 900);
-	//term.setOption("fontFamily", "Ubuntu Mono");
 	term.open(document.getElementById('terminal'));
 	const princess_prompt = '\r\nSend her a number...  ';
 
@@ -148,9 +155,20 @@ $(function () {
 		});
 	}
 
+	        window.addEventListener("resize", resize_term);
+                function resize_term(){
+                        let width = window.innerWidth;
+                        let height = window.innerHeight;
+                        let font_height = Math.floor(height/(desired_rows*5/4));
+                        term.setOption("fontSize", font_height);
+                }
+
+
+
+
+
 	function prompt(term) {
 		term.write(princess_prompt);
 	}
 
 	runFakeTerminal();
-});
