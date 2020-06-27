@@ -5,10 +5,12 @@
  * anywhere you want. This, or something similar will be necessary code in every terminal app.
  */
 
+	//--------------------------------------------------------------Terminal settings
+	
 	const NUM_COLS = 40;
 	const NUM_ROWS = 16;
 	const PROMPT = '$ ';
-	const term = new Terminal( 
+	const term = new Terminal( // takes object as perameter (see docs)
 		{ 
 			theme: {
 				background: "#006699",
@@ -19,15 +21,16 @@
 			fontSize: Math.floor(innerHeight*4/ (NUM_ROWS*5)),
 			fontWeight: 900
 		});
-
 	function prompt(term) { term.write('\n\r' + PROMPT); }
-	term.open(document.getElementById('terminal'));
 
+	var buffer = []; // TODO: might be accessible directly from term...
+	
+	//--------------------------------------------Open terminal and initiate listeners	
+
+	term.open(document.getElementById('terminal'));
 	term.write('\x1b[97m') // this is how you set font color
 	term.writeln('This is a template terminal interface. \n\rJust Add Logic!');
 	prompt(term);
-
-	var buffer = [];
 
 	term.onKey(e => {
 		const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
@@ -48,9 +51,7 @@
 		}
 	});
 	
-	onresize = function() {
-		let height = innerHeight;
-		let font_height = Math.floor(height/(NUM_ROWS*5/4)); 
-		term.setOption("fontSize", font_height);
-	}
+	onresize = function() { term.setOption("fontSize",
+				Math.floor(innerHeight*4/(NUM_ROWS*5)));}
 
+	//----------------------------------------------------------------------------------
