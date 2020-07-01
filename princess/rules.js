@@ -61,50 +61,50 @@ const rules =
 		"▸ a → b means: when you send the princess a,\n\r"+
 		"	       she will respond with b.\n\n\r"+
 		yellow + "Rule I: getting a response\n\r"+ white + 	
-		"		(1a2 → a)\n\r" + 
-		"Examples: 	16542 → 654\n\r"+
-		"		11922 → 192\n\r"+
+		"		("+green+"1"+white+"a"+green+"2"+white+" → a)\n\r" + 
+		"Examples: 	"+green+"1"+white+"654"+green+"2"+white+" → 654\n\r"+
+		"		"+green+"1"+white+"192"+green+"2"+white+" → 192\n\r"+
 		"Play with the rule. Does it make sense?\n\r"+
 		"What number would you send to get 1643 back\n\r"+
 		"in the notation: Find an x such that: x → 1643\n\n\r",
 
-		yellow + "RULE II: doubling\n\r"+ white +
-		"		(if a → b then 3a → bb)\n\r"+
+		yellow + "RULE II: doubling\n\r"+ 
+		"(if a → b then 3a → bb)\n\r"+ white +
 		"Examples:      Since 116432 → 1643\n\r"+
-		"		     3116432 → 16431643\n\r"+
+		"	       then "+green+"3"+white+"116432 → 16431643\n\r"+
 		"		Since 1432 → 43\n\r"+
-		"		     31432 → 4343\n\r"+
-		"               and 331432 → 43434343\n\r"+
+		"		then "+green+"3"+white+"1432 → 4343\n\r"+
+		"                and "+green+"33"+white+"1432 → 43434343\n\r"+
 		"Using rule II:\n\r"+
 		"What number would you send to get 123123 back?\n\r"+
 		"                   x → 123123\n\n\n\r",
 
-		yellow + "RULE III: reversal\n\r"+ white + 
-		"		(if a→b, then 4a → b↩ (b with its digits reversed))\n\r"+
+		yellow + "RULE III: reversal\n\r"+ 
+		"(if a → b, then 4a → b↩ (b with its digits reversed))\n\r"+ white +
 		"Example:      since 19872 → 987\n\r"+
-		"		    419872 → 789\n\r"+
+		"	      then "+green+"4"+white+"19872 → 789\n\r"+
 		"Use rule III to make her send back 123\n\r",
 
-		yellow + "Rule IV: ereasure\n\r"+ white + 
-		"(if a→b, then 5a→ ◌b (b with the first digit removed))\n\r"+
-		"Example:      since 127432 → 2743\n\r"+
-		"		    5127432 → 743\n\r"+
+		yellow + "Rule IV: ereasure\n\r"+
+		"(if a → b, then 5a→ ◌b (b with the first digit removed))\n\r"+ white +
+		"Example:     since  127432 → 2743\n\r"+
+		"	     then  "+green+"5"+white+"127432 → 743\n\r"+
 		"Use rule IV to make her send back 375\n\r",
 
-		yellow + "Rule V: addition(1) (if a→b then 6a→1b)\n\r"+ white + 
+		yellow + "Rule V: addition(1) (if a → b then 6a → 1b)\n\r"+ white + 
 		"Example:      since 15552 → 555\n\r"+
-		"                   615552 → 1555\n\r"+
+		"              then "+green+"6"+white+"15552 → 1555\n\r"+
 		"Use rule V to return 1919\n\r",
 
-		yellow + "Rule VI: addition(2) (if a→b then 7a→2b)\n\r"+ white +
+		yellow + "Rule VI: addition(2) (if a → b then 7a → 2b)\n\r"+ white +
 		"Example:      since 13432 → 343\n\r"+
-		" 		    713432 → 2343\n\r"+
-		"Use rule VI ro return 222\n\r",
+		"              then "+green+"7"+white+"13432 → 2343\n\r"+
+		"Use rule VI to return 222\n\r",
 
 		yellow + "Rule ∞: rules can be used in any combination\n\r"+ white +
 		"Example:      since   14342 →  434\n\r"+
-		"               and   614342 → 1434       (addition(1))\n\r"+
-		"              then  3614342 → 14341434   (doubling)\n\r"+
+		"               and   "+green+"6"+white+"14342 → 1434       (addition(1))\n\r"+
+		"              then  "+green+"36"+white+"14342 → 14341434   (doubling)\n\r"+
 		"Use rules IV(ereasure) and II(doubling) to get the \n\r"+
 		"princess to send you the number 47747\n\r",
 
@@ -117,7 +117,8 @@ const rules =
 		"Rule V         if a → b, then "+green+"6"+white+"a → 1b\n\r"+
 		"Rule VI        if a → b, then "+green+"7"+white+"a → 2b\n\n\r"+
 		"Now you are ready for the tests ↴\n\r"+
-		"Send the princess a ? if you need a reminder..."
+		"Send the princess a ? if you need a reminder...\n\r"+
+		"Press ENTER to go to the tests"
 	]
 
 // this is how we make sure they understand the rules
@@ -139,7 +140,6 @@ function test(input, i){
 	return ((input.startsWith(asserts[i][0])) && (princess(input) == asserts[i][1]));
 }
 
-	let height = window.innerHeight;
 
         const term = new Terminal(
                         {
@@ -149,9 +149,8 @@ function test(input, i){
                                 rows: desired_rows,
                                 cols: 60,
                                 cursorBlink: true,
-                                fontSize: Math.floor(height/(desired_rows*5/4)),
+                                fontSize: Math.floor(innerHeight/(desired_rows*5/4)),
                                 fontWeight: 700,
-				//fontFamily: "Times New Roman"
                         });
 
 	term.open(document.getElementById('terminal'));
@@ -205,7 +204,7 @@ function test(input, i){
 				term.writeln("\n\rthe princess would return: " + princess(buffer));
 				if (test(buffer, i)){
 					i++;
-					term.writeln(red + "\n\n\n    Correct\n\n\n\n\r");
+					term.writeln(green + "\n\n\n    Correct\n\n\n\n\r");
 					term.writeln(rules[i]);
 					if (i == rules.length - 1) return; // so we don't prompt after the rules print out
 								           // is it stupid to check this twice? probably.		
@@ -225,17 +224,13 @@ function test(input, i){
 				term.write(e.key);
 			}
 
-			});
+		});
 
 	window.addEventListener("resize", resize_term);
                 function resize_term(){
-                        let width = window.innerWidth;
-                        let height = window.innerHeight;
-                        let font_height = Math.floor(height/(desired_rows*5/4));
+                        let font_height = Math.floor(innerHeight/(desired_rows*5/4));
                         term.setOption("fontSize", font_height);
                 }
-
-
 
 	}
 

@@ -30,28 +30,12 @@ function princess(input){
 		return "";
 }
 
-function test1(input){
-	return (princess(input) == input);
-}
-function test2(input){
-	return (princess(input) == input + input);
-}
-
-function test3(input){
-	return (princess(input) == input.split("").reverse().join(""));
-}
-
-function test4(input){
-	return (princess(input) == input.substring(0,input.length-1));
-}
-
-function test5(input){
-	return (princess(princess(input)) == input);
-}
-
-function test6(input){
-	return (princess(princess(input)) ==  input.split("").reverse().join(""));
-}
+function test1(input){return (princess(input) == input);}
+function test2(input){return (princess(input) == input + input);}
+function test3(input){return (princess(input) == input.split("").reverse().join(""));}
+function test4(input){return (princess(input) == input.substring(0,input.length-1));}
+function test5(input){return (princess(princess(input)) == input);}
+function test6(input){return (princess(princess(input)) ==  input.split("").reverse().join(""));}
 
 
 const reminder ="\n\rRule I                        "+green+"1"+white+"a"+green+"2"+white+" → a\n\r"+
@@ -67,26 +51,25 @@ var prompts =
 	[
 		yellow + "The first test: Echo\n\r"+
 		"Get the princess to echo your number.\n\r"+ blue + 
-		"	x→x\n\n\r" + white,
+		"	x → x\n\n\r" + white,
 
 		yellow + "The second test:\n\r"+ blue + 
-		"x→xx\n\n\r" + white,
+		"	x → xx\n\n\r" + white,
 
 		yellow + "the third test:\n\r"+ blue + 
-		"x→x'(digits reversed)\n\n\r" + white,
+		"	x → x↩\n\n\r" + white,
 
 		yellow + "the fourth test:\n\r"+ blue + 
-		"x→x'(with the final digit removed)\n\n\r",
+		"	x → x◌ (final digit removed)\n\n\r",
 
 		yellow + "the fifth test:\n\r"+ blue + 
-		"x→y→x find a cyclic element of order 2\n\n\r", // is that right Tim?
+		"	x → y → x\n\n\r",
 
 		yellow + "the sixth test:\n\r"+ blue + 
-		"x→y→x'(with its digits reversed).\n\n\r"
+		"	x → y → x↩'.\n\n\r"
 	]
 
 var tests = [test1, test2, test3, test4, test5, test6];
-        let height = window.innerHeight;
         const term = new Terminal(
                         {
                                 theme: {
@@ -95,7 +78,7 @@ var tests = [test1, test2, test3, test4, test5, test6];
                                 rows: desired_rows,
                                 cols: 60,
                                 cursorBlink: true,
-                                fontSize: Math.floor(height/(desired_rows*5/4)),
+                                fontSize: Math.floor(innerHeight/(desired_rows*5/4)),
                                 fontWeight: 900
                         });
 
@@ -105,16 +88,6 @@ var tests = [test1, test2, test3, test4, test5, test6];
 	function runFakeTerminal() {
 		var i = 0;
 
-		if (term._initialized) {
-			return;
-		}
-
-		term._initialized = true;
-
-		term.prompt = () => {
-			term.write(princess_prompt);
-		};
-		//term.write('\x1b[48;2;30;60;90m') // background
 		term.write('\x1b[97m');
 		term.writeln(prompts[i]);
 		prompt(term);
@@ -157,14 +130,9 @@ var tests = [test1, test2, test3, test4, test5, test6];
 
 	        window.addEventListener("resize", resize_term);
                 function resize_term(){
-                        let width = window.innerWidth;
-                        let height = window.innerHeight;
-                        let font_height = Math.floor(height/(desired_rows*5/4));
+                        let font_height = Math.floor(innerHeight/(desired_rows*5/4));
                         term.setOption("fontSize", font_height);
                 }
-
-
-
 
 
 	function prompt(term) {
