@@ -25,6 +25,13 @@ Bringing the 1970's terminal experience to the modern day internet consumer.
   - most basic IO terminal template. text games will be built around this.
   - fills the entire window with the terminal emulator
 
+## [calculator_quest](https://boris-volkov.github.io/games/quest/quest.html)
+  - UNDER CONSTRUCTION
+  - the timer bar and terminal prompt operate asynchronously now
+  - TODO: put the actual game in duh
+  - TODO: figure out how to send scores to a permanent scoreboard
+  - TODO: color design, have it change color with time of day, blue in the morning and red in the night, as is most humane.
+
 ## directories:
 - xterm/..
   - The terminal emulator library
