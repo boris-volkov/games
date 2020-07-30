@@ -73,7 +73,8 @@
 	}
 	//let color1 = gradient.rgb_codes[color_picker()];
 	//let color2 = gradient.rgb_codes[color_picker()];
-	let color1 = '#cc9922';
+	//let color1 = '#cc9922';
+	let color1 = '#FFF';
 	let color2 = '#255585';
 	
 	function progress_bar(){
@@ -85,7 +86,7 @@
 		context.fillRect(widthFull, 0, canvas.width-widthFull, canvas.height);
 	}
 
-	const TIME_LIMIT = 1000 * 60 * 5;
+	const TIME_LIMIT = 1000 * 60 * 60;
 
 	function isTimeOut() {
    		return START_TIME + TIME_LIMIT < Date.now();
@@ -108,6 +109,6 @@
 	// main() I guess
 	//at start of playing
 	var START_TIME = Date.now()
-	setInterval(draw_canvas, 100);
+	setInterval(draw_canvas, 1000);
 
 	//play
