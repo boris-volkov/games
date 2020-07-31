@@ -1,5 +1,4 @@
 
-	import START_TIME from "./progress_bar.js"
 	var level = 5;
 	var question = {};
 	var question_start;
@@ -26,11 +25,9 @@
 		if (parseInt(ans) == question.ans){
 			time_taken = Date.now() - question_start;
 			level += score(time_taken);	
-			if (isTimeOut()){
-				term.write("out of time");
-			} else {
-			generate_add(level);
-			}
+			generate_add(level)
+			if (isTimeOut())
+				term.write("out of time");;
 		}
 	}
 
@@ -45,12 +42,12 @@
 			},
 			rows: NUM_ROWS,
 			cols: 40,
-			cursorBlink: false,
+			cursorBlink: true,
 			fontSize: Math.floor(innerHeight*4/ (NUM_ROWS*6)),
 			fontWeight: 900
 		});
 
-	var buffer = [];.
+	var buffer = []; // TODO: might be accessible directly from term...
 	
 	//--------------------------------------------Open terminal and initiate listeners	
 
@@ -67,7 +64,6 @@
 			check(buffer.join(''));
 			buffer = []; // reset buffer
 			prompt(term);
-			term.write(START_TIME.toString());
 		} else if (e.domEvent.keyCode === 8) { // Backspace pressed
 			if (term._core.buffer.x > PROMPT().length) {
 				buffer.pop()
