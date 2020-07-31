@@ -28,7 +28,7 @@
 		context.fillRect(widthFull, 0, canvas.width-widthFull, canvas.height);
 	}
 
-	var TIME_LIMIT = 1000 * 10;
+	var TIME_LIMIT = 1000 * 60 * 3;
 
 	function isTimeOut() {
    		return START_TIME + TIME_LIMIT < Date.now();
