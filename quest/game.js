@@ -16,7 +16,7 @@
 		return Math.min(1, part);
 	}
 	
-	let color1 = '#FFF';
+	let color1 = '#4499EE';
 	let color2 = '#255585';
 	
 	function progress_bar(){
@@ -28,7 +28,7 @@
 		context.fillRect(widthFull, 0, canvas.width-widthFull, canvas.height);
 	}
 
-	var TIME_LIMIT = 1000 * 60 * 3;
+	var TIME_LIMIT = 1000 * 30;
 
 	function isTimeOut() {
    		return START_TIME + TIME_LIMIT < Date.now();
@@ -79,7 +79,7 @@
 	const NUM_COLS = 16;
 	const NUM_ROWS = 4;
 	const digits = "0123456789";
-	var level = 5;
+	var level = 0;
 	var question_start;
 	
 	var question = {};
@@ -96,7 +96,6 @@
 		question.bot_cushion = ' '.repeat(question.widest - question.b.toString().length);
 		question.ans_cushion = ' '.repeat(question.widest - question.ans.toString().length + 1);
 		question.margin = ' '.repeat(Math.floor((NUM_COLS - question.widest)/2));
-
 	}
 
 	generate_add(level); // first question
@@ -111,7 +110,13 @@
 	}
 	
 	function score(time_taken) {
-		return 1;
+		if (time_taken < 1000)
+			return 3;
+		if (time_taken < 2000)
+			return 2;
+		if (time_taken < 3000)
+			return 1;
+		return 0;
 	}
 
 	function prompt(term) { term.write('\n\r' + PROMPT()); }	
@@ -121,14 +126,16 @@
 			time_taken = Date.now() - question_start;
 			level += score(time_taken);	
 			generate_add(level)
+			question_start = Date.now();
 			if (isTimeOut()){
 				ready = !1;
 				between_games = true;
 				clearInterval(id);
 				//display press enter to play again
 				term.clear();
-				term.writeln("\n\n\n\rlevel " + level.toString());
-
+				term.writeln("\n\n\rlevel: " + level.toString());
+				term.writeln("\x1b[95m<enter> again?");
+				term.writeln("  or <escape>?\x1b[97m");
 			}
 
 		}
@@ -153,33 +160,41 @@
 	//--------------------------------------------Open terminal and initiate listeners	
 	
 	term.open(document.getElementById('terminal'));
-	term.write('\x1b[97m') // font color
+	//term.write('\x1b[95m') // font color
 	term.onKey(e => {
 		const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
 			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
-
-		if (e.domEvent.keyCode === 13) { // ENTER pressed
-			if (!ready) {ready = true;
+		
+		// ENTER pressed
+		if (e.domEvent.keyCode === 13) {
+			if (!ready) {
+				ready = true;
 				START_TIME = Date.now();
 				id = setInterval(draw_canvas, 50); 
-				level = 5;
+				level = 0;
 			}
 			if (between_games){
-				term.write("your level is " + level.toString());
 				between_games = false;
 			}
 			check(buffer.join(''));
 			buffer = []; // reset buffer
 			if (!isTimeOut())
 				prompt(term);
-		} else if (e.domEvent.keyCode === 8) { // Backspace pressed
-			if (term._core.buffer.x > (question.ans_cushion.length + question.margin.length)){
+		
+		// BACKSPACE
+		} else if (e.domEvent.keyCode === 8 && 
+		term._core.buffer.x > (question.ans_cushion.length + 
+							   question.margin.length)){
 				buffer.pop();
 				term.write('\b \b');
-			}
-		} else if (digits.includes(e.key) && buffer.length < question.ans.toString().length) { // standard character
+			
+		// LEGIT INPUT
+		} else if (	digits.includes(e.key) && 
+					(buffer.length < question.ans.toString().length)){
 			buffer.push(e.key);
 			term.write(e.key);
+
+		// FULL SCREEN
 		} else if ("Ff".includes(e.key)){
 			openFullscreen();
 			term.scrollToBottom();
@@ -188,8 +203,9 @@
 	});
 
 	//TODO control both width and height. keep it at a 2:3 ratio or something
-	onresize = function() { term.setOption("fontSize",
-				Math.floor(innerHeight*4/(NUM_ROWS*6)));
+	onresize = function() { 
+		// make it minimum with a width-based measurement
+		term.setOption("fontSize", Math.floor(innerHeight*4/(NUM_ROWS*6)));
 		term.clear();
 		if (ready) prompt(term);
 	}
@@ -199,5 +215,6 @@
 
 	window.onload = function() {
 		term.focus();
-		term.write("ⓕ  for fullscreen \n\r[enter] to begin");
+		term.write("Calculator Quest");
+		term.write("\n\r\x1b[95m<f> for fullscreen \n\r<enter> to begin\x1b[97m");
 	};
