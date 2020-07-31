@@ -97,40 +97,43 @@
 
 	term.open(document.getElementById('terminal'));
 	term.write('\x1b[97m') // font color
-	prompt(term);
-
 	term.onKey(e => {
 		const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
 			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 
 		if (e.domEvent.keyCode === 13) { // ENTER pressed
+			if (!ready) {ready = true;
+				START_TIME = Date.now();
+				setInterval(draw_canvas, 100); }
 			check(buffer.join(''));
 			buffer = []; // reset buffer
 			prompt(term);
 		} else if (e.domEvent.keyCode === 8) { // Backspace pressed
-			if (term._core.buffer.x > question.ans_cushion.length){
+			if (term._core.buffer.x >= (question.ans_cushion.length + question.margin.length)){
 				buffer.pop();
 				term.write('\b \b');
 			}
-		} else if (digits.includes(e.key)) { // standard character
+		} else if (digits.includes(e.key) && buffer.length < question.ans.toString().length) { // standard character
 			buffer.push(e.key);
 			term.write(e.key);
 		} else if ("Ff".includes(e.key)){
 			openFullscreen();
-			prompt(term);
+			term.scrollToBottom();
 		}
 
 	});
 
 	//TODO control both width and height. keep it at a 2:3 ratio or something
 	onresize = function() { term.setOption("fontSize",
-				Math.floor(innerHeight*4/(NUM_ROWS*6)));}
+				Math.floor(innerHeight*4/(NUM_ROWS*6)));
+		term.clear();
+		prompt(term);
+	}
 
 	//----------------------------------------------------------------------------------
 
 
 	window.onload = function() {
-		openFullscreen();
 		term.focus();
-		prompt(term);
+		term.write("Press ⓕ \n\r then ENTER");
 	};
