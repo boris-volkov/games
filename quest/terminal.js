@@ -1,4 +1,33 @@
 
+	var elem = document.documentElement;
+
+	/* View in fullscreen */
+	function openFullscreen() {
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen();
+		} else if (elem.mozRequestFullScreen) { /* Firefox */
+			elem.mozRequestFullScreen();
+		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+			elem.webkitRequestFullscreen();
+		} else if (elem.msRequestFullscreen) { /* IE/Edge */
+			elem.msRequestFullscreen();
+		}
+	}
+
+	/* Close fullscreen */
+	function closeFullscreen() {
+		if (document.exitFullscreen) {
+			document.exitFullscreen();
+		} else if (document.mozCancelFullScreen) { /* Firefox */
+			document.mozCancelFullScreen();
+		} else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+			document.webkitExitFullscreen();
+		} else if (document.msExitFullscreen) { /* IE/Edge */
+			document.msExitFullscreen();
+		}
+	}
+
+	const digits = "0123456789";
 	var level = 5;
 	var question = {};
 	var question_start;
@@ -19,7 +48,7 @@
 		return 1;
 	}
 
-	function prompt(term) { term.write('\n\r' + PROMPT()); }
+	function prompt(term) { term.write('\n\r' + PROMPT()); }	
 
 	function check(ans) {
 		if (parseInt(ans) == question.ans){
@@ -52,8 +81,7 @@
 	//--------------------------------------------Open terminal and initiate listeners	
 
 	term.open(document.getElementById('terminal'));
-	term.write('\x1b[97m') // this is how you set font color
-	//term.writeln('Coming Soon: Calculator Quest'); 
+	term.write('\x1b[97m') // font color
 	prompt(term);
 
 	term.onKey(e => {
@@ -69,10 +97,13 @@
 				buffer.pop()
 				term.write('\b \b');
 			}
-		} else if (printable) { // standard character
+		} else if (digits.includes(e.key)) { // standard character
 			buffer.push(e.key);
 			term.write(e.key);
+		} else if ("Ff".includes(e.key)){
+			openFullscreen();
 		}
+
 	});
 
 	//TODO control both width and height. keep it at a 2:3 ratio or something
@@ -81,3 +112,8 @@
 
 	//----------------------------------------------------------------------------------
 
+
+	window.onload = function() {
+		openFullscreen();
+		term.focus();
+	};
