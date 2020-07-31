@@ -29,18 +29,19 @@ Bringing the 1970's terminal experience to the modern day internet consumer.
   - TODO: figure out how to send scores to a permanent scoreboard
   - TODO: color design, have it change color with time of day, blue in the morning and red in the night, as is most humane.
 
+### [terminal_template](https://boris-volkov.github.io/games/basic_terminal_page.html)
+  - most basic IO terminal template. text games will be built around this.
+  - fills the entire window with the terminal emulator
+
 ## directories:
 - xterm/..
   - The terminal emulator library
   - documentation at xtermjs.org
 
-### [terminal_template](https://boris-volkov.github.io/games/basic_terminal_page.html)
-  - most basic IO terminal template. text games will be built around this.
-  - fills the entire window with the terminal emulator
 - visual_design/..
   - sample visual designs for a terminal game
   
-### TODO:
+## General TODO:
 - would like to figure out how to use the xterm addons without getting CORS errors
 - port over these games:
   - http://stocks.borisvolk.repl.run/
