@@ -169,9 +169,10 @@
 		if (e.domEvent.keyCode === 13) {
 			if (!ready) {
 				ready = true;
+				level = 0;
+				generate_add(level);
 				START_TIME = Date.now();
 				id = setInterval(draw_canvas, 50); 
-				level = 0;
 			}
 			if (between_games){
 				between_games = false;
