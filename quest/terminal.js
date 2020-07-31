@@ -27,21 +27,38 @@
 		}
 	}
 
+	const NUM_COLS = 16;
+	const NUM_ROWS = 4;
 	const digits = "0123456789";
 	var level = 5;
-	var question = {};
 	var question_start;
+	
+	var question = {};
 	function generate_add(level){
-		question.a = level;
-		question.b = level;
+		question.a = Math.round(2*level*Math.random());
+		question.b = Math.round(2*level*Math.random());
 		question.ans = question.a + question.b;
+		question.widest = Math.max(	question.a.toString().length, 
+						question.b.toString().length,
+						question.ans.toString().length);
 		question.op = '+';
+		question.bar = '―'.repeat(question.widest + 1);
+		question.top_cushion = ' '.repeat(question.widest - question.a.toString().length + 1);
+		question.bot_cushion = ' '.repeat(question.widest - question.b.toString().length);
+		question.ans_cushion = ' '.repeat(question.widest - question.ans.toString().length + 1);
+		question.margin = ' '.repeat(Math.floor((NUM_COLS - question.widest)/2));
+
 	}
 
 	generate_add(level); // first question
 	question_start = Date.now();
+	
 	function PROMPT() {
-		return question.a.toString() + question.op + question.b.toString() + '=';
+		return 	question.margin + 		question.top_cushion + question.a.toString() +"\n\r"+ 
+			question.margin + question.op + 	question.bot_cushion + question.b.toString() + "\n\r"+
+			question.margin + question.bar +  "\n\r"+ 
+			question.margin + 		question.ans_cushion; 	
+			
 	}
 	
 	function score(time_taken) {
@@ -61,8 +78,6 @@
 	}
 
 	//--------------------------------------------------------------Terminal settings
-	const NUM_COLS = 40;
-	const NUM_ROWS = 10;
 
 	const term = new Terminal( // takes object as perameter (see docs)
 		{ 
@@ -71,8 +86,8 @@
 			},
 			rows: NUM_ROWS,
 			cols: 40,
-			cursorBlink: true,
-			fontSize: Math.floor(innerHeight*4/ (NUM_ROWS*6)),
+			cursorBlink: false,
+			fontSize: Math.floor(innerHeight/ (NUM_ROWS*2)),
 			fontWeight: 900
 		});
 
@@ -93,8 +108,8 @@
 			buffer = []; // reset buffer
 			prompt(term);
 		} else if (e.domEvent.keyCode === 8) { // Backspace pressed
-			if (term._core.buffer.x > PROMPT().length) {
-				buffer.pop()
+			if (term._core.buffer.x > question.ans_cushion.length){
+				buffer.pop();
 				term.write('\b \b');
 			}
 		} else if (digits.includes(e.key)) { // standard character
@@ -102,6 +117,7 @@
 			term.write(e.key);
 		} else if ("Ff".includes(e.key)){
 			openFullscreen();
+			prompt(term);
 		}
 
 	});
@@ -116,4 +132,5 @@
 	window.onload = function() {
 		openFullscreen();
 		term.focus();
+		prompt(term);
 	};
