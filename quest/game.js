@@ -1,12 +1,16 @@
+	//-------------------------------------------Global Flags
+	//TODO these can probably be collapsed into one
 	var ready = false;
 	var between_games = false;
-
 
 	//-------------------------------------------Initialization of progress bar	
 	var canvas = document.getElementById('puzzle_space');
 	var context = canvas.getContext('2d');
 	const urlParams = new URLSearchParams(window.location.search);
+	var mins = urlParams.get('mins');
+	if (isNaN(parseInt(mins))) mins = 5;
 	var START_TIME = -1;       	
+	var TIME_LIMIT = 1000 * 60 * mins;
 
 	function computeDecimalFull(time) {
 		if (START_TIME < 0)
@@ -18,7 +22,6 @@
 	
 	let color1 = '#4499EE';
 	let color2 = '#255585';
-	
 	function progress_bar(){
 		const decimalFull = computeDecimalFull(Date.now());
 		const widthFull = decimalFull*canvas.width;
@@ -28,11 +31,7 @@
 		context.fillRect(widthFull, 0, canvas.width-widthFull, canvas.height);
 	}
 
-	var TIME_LIMIT = 1000 * 30;
-
-	function isTimeOut() {
-   		return START_TIME + TIME_LIMIT < Date.now();
-	}
+	function isTimeOut() { return START_TIME + TIME_LIMIT < Date.now();}
 
 	//-------------------------------------------------------Resize Event Listener
 	window.addEventListener("resize", draw_canvas);
@@ -45,11 +44,8 @@
 		canvas.width = canvas.width; canvas.height = canvas.height;
 		progress_bar();
 	}
-
-	//at start of playing
 	
 	var elem = document.documentElement;
-
 	/* View in fullscreen */
 	function openFullscreen() {
 		if (elem.requestFullscreen) {
@@ -63,49 +59,36 @@
 		}
 	}
 
-	/* Close fullscreen */
-	function closeFullscreen() {
-		if (document.exitFullscreen) {
-			document.exitFullscreen();
-		} else if (document.mozCancelFullScreen) { /* Firefox */
-			document.mozCancelFullScreen();
-		} else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
-			document.webkitExitFullscreen();
-		} else if (document.msExitFullscreen) { /* IE/Edge */
-			document.msExitFullscreen();
-		}
-	}
-
 	const NUM_COLS = 16;
 	const NUM_ROWS = 4;
 	const digits = "0123456789";
 	var level = 0;
-	var question_start;
+	var quest_start;
 	
-	var question = {};
+	var quest = {};
 	function generate_add(level){
-		question.a = Math.round(2*level*Math.random());
-		question.b = Math.round(2*level*Math.random());
-		question.ans = question.a + question.b;
-		question.widest = Math.max(	question.a.toString().length, 
-						question.b.toString().length,
-						question.ans.toString().length);
-		question.op = '+';
-		question.bar = '―'.repeat(question.widest + 1);
-		question.top_cushion = ' '.repeat(question.widest - question.a.toString().length + 1);
-		question.bot_cushion = ' '.repeat(question.widest - question.b.toString().length);
-		question.ans_cushion = ' '.repeat(question.widest - question.ans.toString().length + 1);
-		question.margin = ' '.repeat(Math.floor((NUM_COLS - question.widest)/2));
+		quest.a = Math.round(2*level*Math.random());
+		quest.b = Math.round(2*level*Math.random());
+		quest.ans = quest.a + quest.b;
+		quest.widest = Math.max(	quest.a.toString().length, 
+						quest.b.toString().length,
+						quest.ans.toString().length);
+		quest.op 		= '+';
+		quest.bar 		= '―'.repeat(quest.widest + 1);
+		quest.top_cushion 	= ' '.repeat(quest.widest - quest.a.toString().length + 1);
+		quest.bot_cushion 	= ' '.repeat(quest.widest - quest.b.toString().length);
+		quest.ans_cushion	= ' '.repeat(quest.widest - quest.ans.toString().length + 1);
+		quest.margin 		= ' '.repeat(Math.floor((NUM_COLS - quest.widest)/2));
 	}
 
-	generate_add(level); // first question
-	question_start = Date.now();
+	generate_add(level); // first quest
+	quest_start = Date.now();
 	
 	function PROMPT() {
-		return 	question.margin + 		question.top_cushion + question.a.toString() +"\n\r"+ 
-			question.margin + question.op + 	question.bot_cushion + question.b.toString() + "\n\r"+
-			question.margin + question.bar +  "\n\r"+ 
-			question.margin + 		question.ans_cushion; 	
+		return 	quest.margin + 		  quest.top_cushion + quest.a.toString() + "\n\r" + 
+			quest.margin + quest.op + quest.bot_cushion + quest.b.toString() + "\n\r" +
+			quest.margin + quest.bar+ "\n\r"+ 
+			quest.margin + 		  quest.ans_cushion; 	
 			
 	}
 	
@@ -122,17 +105,15 @@
 	function prompt(term) { term.write('\n\r' + PROMPT()); }	
 
 	function check(ans) {
-		if (parseInt(ans) == question.ans){
-			time_taken = Date.now() - question_start;
+		if (parseInt(ans) == quest.ans){
+			time_taken = Date.now() - quest_start;
 			level += score(time_taken);	
 			generate_add(level)
-			question_start = Date.now();
+			quest_start = Date.now();
 			if (isTimeOut()){
-				ready = !1;
+				ready = false;
 				between_games = true;
 				clearInterval(id);
-				//display press enter to play again
-				term.clear();
 				term.writeln("\n\n\rlevel: " + level.toString());
 				term.writeln("\x1b[95m<enter> again?");
 				term.writeln("  or <escape>?\x1b[97m");
@@ -178,20 +159,20 @@
 				between_games = false;
 			}
 			check(buffer.join(''));
-			buffer = []; // reset buffer
-			if (!isTimeOut())
+			buffer = [];
+			if (!isTimeOut()) // TODO let the last one through! 
 				prompt(term);
 		
 		// BACKSPACE
 		} else if (e.domEvent.keyCode === 8 && 
-		term._core.buffer.x > (question.ans_cushion.length + 
-							   question.margin.length)){
+		term._core.buffer.x > (quest.ans_cushion.length + 
+							   quest.margin.length)){
 				buffer.pop();
 				term.write('\b \b');
 			
 		// LEGIT INPUT
 		} else if (	digits.includes(e.key) && 
-					(buffer.length < question.ans.toString().length)){
+					(buffer.length < quest.ans.toString().length)){
 			buffer.push(e.key);
 			term.write(e.key);
 
