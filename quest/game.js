@@ -56,44 +56,42 @@
 	
 	var quest = {}; // "object oriented programming"
 
-	//TODO may want to use this normally distributed variable generator
-	//     to make the difficulty not jump around so drastically.
-	//     this would replace the calls to Math.random() in the quest generators.
+	// random normally distributed variable: sd=1 mean=0
 	function randn_bm() {
 	    var u = 0, v = 0;
 	    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
 	    while(v === 0) v = Math.random();
-	    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+	    return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
 	}	
 
 	//TODO color code the op chars?
 	function generate_add(level){
-		quest.a 	= Math.round(2*level*Math.random());
-		quest.b 	= Math.round(2*level*Math.random());
+		quest.a 	= Math.abs(Math.round(level + level/2*randn_bm()));
+		quest.b 	= Math.abs(Math.round(level + level/2*randn_bm()));
 		quest.ans 	= quest.a + quest.b;
 		quest.op 			= '+';
 		generate_prompt();
 	}
 
 	function generate_mul(level){
-		quest.a 	= Math.round(level*Math.random());
-		quest.b 	= 2 + Math.round(level*Math.random()/10);
+		quest.a 	= Math.abs(Math.round(level*(2/3) + 10*randn_bm()));
+		quest.b 	= 1 + Math.ceil(Math.random()*12);
 		quest.ans 	= quest.a * quest.b;
 		quest.op			= 'x';
 		generate_prompt();
 	}
 
 	function generate_sub(level){
-		quest.b 	= Math.round(2*level*Math.random());
+		quest.b 	= Math.abs(Math.round(level + 10*randn_bm()));
 		quest.ans 	= Math.round(2*level*Math.random());
 		quest.a 	= quest.ans + quest.b; 
-		quest.op 			= '-';
+		quest.op 			= '―';
 		generate_prompt();
 	}
 
 	function generate_div(level){
-		quest.b 	= Math.ceil(level*Math.random()/2); 
-		quest.ans 	= Math.ceil(level*Math.random()/2);
+		quest.ans 	= Math.abs(Math.round(level/3 + 10*randn_bm())); 
+		quest.b 	= 2 + Math.ceil(level*Math.random()/3);
 		quest.a 	= quest.b * quest.ans;
 		quest.op 			= '÷';
 		generate_prompt();
@@ -122,11 +120,13 @@
 	}
 	
 	function score(time_taken) {
-		if (time_taken < 1000)
-			return 3;
-		if (time_taken < 2000)
-			return 2;
-		return 1;
+		if (time_taken < 1000 + level*10)
+			return 5
+		if (time_taken < 2000 + level*10)
+			return 3
+		if (time_taken < 3000 + level*10)
+			return 2
+		return 1
 	}
 
 	function prompt(term) { term.write('\n\r' + PROMPT()); }	
