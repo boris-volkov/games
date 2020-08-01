@@ -56,6 +56,16 @@
 	
 	var quest = {}; // "object oriented programming"
 
+	//TODO may want to use this normally distributed variable generator
+	//     to make the difficulty not jump around so drastically.
+	//     this would replace the calls to Math.random() in the quest generators.
+	function randn_bm() {
+	    var u = 0, v = 0;
+	    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+	    while(v === 0) v = Math.random();
+	    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+	}	
+
 	//TODO color code the op chars?
 	function generate_add(level){
 		quest.a 	= Math.round(2*level*Math.random());
@@ -93,10 +103,10 @@
 	//TODO make the op_cycle dependent on URL parameters
 	const op_cycle = [generate_add, generate_mul, generate_sub, generate_div];
 	
-	function generate_prompt(){ //TODO: make this generic by operation
+	function generate_prompt(){
 		quest.widest = Math.max(	quest.a.toString().length, 
-									quest.b.toString().length,
-									quest.ans.toString().length);
+						quest.b.toString().length,
+						quest.ans.toString().length);
 		quest.bar 			= '―'.repeat(quest.widest + 2);
 		quest.top_cushion 	= ' '.repeat(quest.widest - quest.a.toString().length + 2);
 		quest.bot_cushion 	= ' '.repeat(quest.widest - quest.b.toString().length + 1);
@@ -139,6 +149,13 @@
 	}
 
 	//--------------------------------------------------------------Terminal settings
+	/*TODO I think I want to make my own terminal emulator and use
+	 * it instead of the term.js thing. It's much bulkier than what
+	 * I need, both memory-wise and in the number of features. 
+	 * I need to use something lighter, that basically only does put_char()
+	 * and get_line(). I will have a much easier time scaling it since
+	 * html canvas 
+	 */
 
 	const term = new Terminal( // takes object as perameter (see docs)
 		{ 
@@ -148,6 +165,9 @@
 			rows: NUM_ROWS,
 			cols: 40,
 			cursorBlink: false,
+			// this upcoming font size is a total guess, it seems to fit on a 
+			// standard screen width but does not handle resizes well. 
+			// another thing that making an emulator from scratch would free me from
 			fontSize: Math.floor(innerHeight/ (NUM_ROWS*2)),
 			fontWeight: 900
 		});
@@ -162,13 +182,13 @@
 	
 	term.open(document.getElementById('terminal'));
 	//term.write('\x1b[95m') // font color
-	term.onKey(e => {
+	term.onKey(e => { // this listener can be linked to anything, even the canvas terminal
 		const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
 			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
 		
 		// ENTER pressed
 		if (e.domEvent.keyCode === 13) {
-			if (!ready) { 
+			if (!ready) { // put this in reset() subroutine
 				ready = true;
 				level = 1;
 				op_cycle[(op_counter++)%op_cycle.length](level);
