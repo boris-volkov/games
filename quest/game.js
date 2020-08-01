@@ -1,39 +1,43 @@
-	//-------------------------------------------Global Flags
+	//------------------------------------------------------Global Flags
 	//TODO these can probably be collapsed into one
 	var ready = false;
 	var between_games = false;
 
-	//-------------------------------------------Initialization of progress bar	
-	var canvas = document.getElementById('puzzle_space');
+	//------------------------------------Initialization of progress bar	
+	var canvas = document.getElementById('progress_bar');
 	var context = canvas.getContext('2d');
+
 	const urlParams = new URLSearchParams(window.location.search);
 	var mins = urlParams.get('mins');
+	var debug = urlParams.get('debug');
 	if (isNaN(parseInt(mins))) mins = 5;
-	var START_TIME = -1;       	
+	else mins = parseInt(mins);
 	var TIME_LIMIT = 1000 * 60 * mins;
 
+	//-------------------------------------------------------Progress Bar Stuff
+	var START_TIME = -1; // temporarily negative before game starts	
+
 	function computeDecimalFull(time) {
-		if (START_TIME < 0)
-			return 0;
-		let elapsed = time - START_TIME;
-		let part = elapsed / TIME_LIMIT;
-		return Math.min(1, part);
+		if (START_TIME < 0) return 0;
+		return Math.min(1, (time - START_TIME)/TIME_LIMIT);
 	}
-	
 	let color1 = '#4499EE';
 	let color2 = '#255585';
 	function progress_bar(){
 		const decimalFull = computeDecimalFull(Date.now());
 		const widthFull = decimalFull*canvas.width;
-		context.fillStyle = color1; // ?? fix name
+		context.fillStyle = color1;
 		context.fillRect(0,0, widthFull, canvas.height);
 		context.fillStyle = color2;
 		context.fillRect(widthFull, 0, canvas.width-widthFull, canvas.height);
+		if (debug == '1'){
+			context.fillStyle = '#000';
+			context.fillText(level.toString(),10,10);
+		}
 	}
 
 	function isTimeOut() { return START_TIME + TIME_LIMIT < Date.now();}
 
-	//-------------------------------------------------------Resize Event Listener
 	window.addEventListener("resize", draw_canvas);
 	const PROGRESS_BAR_SCALE = 1.1;
 	function draw_canvas(){ //rename to resize?
@@ -44,52 +48,67 @@
 		canvas.width = canvas.width; canvas.height = canvas.height;
 		progress_bar();
 	}
-	
-	var elem = document.documentElement;
-	/* View in fullscreen */
-	function openFullscreen() {
-		if (elem.requestFullscreen) {
-			elem.requestFullscreen();
-		} else if (elem.mozRequestFullScreen) { /* Firefox */
-			elem.mozRequestFullScreen();
-		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-			elem.webkitRequestFullscreen();
-		} else if (elem.msRequestFullscreen) { /* IE/Edge */
-			elem.msRequestFullscreen();
-		}
-	}
-
 	const NUM_COLS = 16;
 	const NUM_ROWS = 4;
 	const digits = "0123456789";
-	var level = 0;
+	var level = 1;
 	var quest_start;
 	
-	var quest = {};
+	var quest = {}; // "object oriented programming"
+
+	//TODO color code the op chars?
 	function generate_add(level){
-		quest.a = Math.round(2*level*Math.random());
-		quest.b = Math.round(2*level*Math.random());
-		quest.ans = quest.a + quest.b;
-		quest.widest = Math.max(	quest.a.toString().length, 
-						quest.b.toString().length,
-						quest.ans.toString().length);
-		quest.op 		= '+';
-		quest.bar 		= '―'.repeat(quest.widest + 1);
-		quest.top_cushion 	= ' '.repeat(quest.widest - quest.a.toString().length + 1);
-		quest.bot_cushion 	= ' '.repeat(quest.widest - quest.b.toString().length);
-		quest.ans_cushion	= ' '.repeat(quest.widest - quest.ans.toString().length + 1);
-		quest.margin 		= ' '.repeat(Math.floor((NUM_COLS - quest.widest)/2));
+		quest.a 	= Math.round(2*level*Math.random());
+		quest.b 	= Math.round(2*level*Math.random());
+		quest.ans 	= quest.a + quest.b;
+		quest.op 			= '+';
+		generate_prompt();
 	}
 
-	generate_add(level); // first quest
-	quest_start = Date.now();
+	function generate_mul(level){
+		quest.a 	= Math.round(level*Math.random());
+		quest.b 	= 2 + Math.round(level*Math.random()/10);
+		quest.ans 	= quest.a * quest.b;
+		quest.op			= 'x';
+		generate_prompt();
+	}
+
+	function generate_sub(level){
+		quest.b 	= Math.round(2*level*Math.random());
+		quest.ans 	= Math.round(2*level*Math.random());
+		quest.a 	= quest.ans + quest.b; 
+		quest.op 			= '-';
+		generate_prompt();
+	}
+
+	function generate_div(level){
+		quest.b 	= Math.ceil(level*Math.random()/2); 
+		quest.ans 	= Math.ceil(level*Math.random()/2);
+		quest.a 	= quest.b * quest.ans;
+		quest.op 			= '÷';
+		generate_prompt();
+	}
+
+	var op_counter = 0;
+	//TODO make the op_cycle dependent on URL parameters
+	const op_cycle = [generate_add, generate_mul, generate_sub, generate_div];
+	
+	function generate_prompt(){ //TODO: make this generic by operation
+		quest.widest = Math.max(	quest.a.toString().length, 
+									quest.b.toString().length,
+									quest.ans.toString().length);
+		quest.bar 			= '―'.repeat(quest.widest + 2);
+		quest.top_cushion 	= ' '.repeat(quest.widest - quest.a.toString().length + 2);
+		quest.bot_cushion 	= ' '.repeat(quest.widest - quest.b.toString().length + 1);
+		quest.ans_cushion	= ' '.repeat(quest.widest - quest.ans.toString().length + 2);
+		quest.margin 		= ' '.repeat(Math.floor((NUM_COLS - quest.widest)/2));
+	}
 	
 	function PROMPT() {
-		return 	quest.margin + 		  quest.top_cushion + quest.a.toString() + "\n\r" + 
-			quest.margin + quest.op + quest.bot_cushion + quest.b.toString() + "\n\r" +
-			quest.margin + quest.bar+ "\n\r"+ 
-			quest.margin + 		  quest.ans_cushion; 	
-			
+		return 	quest.margin 				+ quest.top_cushion + quest.a + "\n\r" + 
+				quest.margin + quest.op 	+ quest.bot_cushion + quest.b + "\n\r" +
+				quest.margin + quest.bar	+ "\n\r"+ 
+				quest.margin 				+ quest.ans_cushion; 	
 	}
 	
 	function score(time_taken) {
@@ -97,9 +116,7 @@
 			return 3;
 		if (time_taken < 2000)
 			return 2;
-		if (time_taken < 3000)
-			return 1;
-		return 0;
+		return 1;
 	}
 
 	function prompt(term) { term.write('\n\r' + PROMPT()); }	
@@ -108,7 +125,7 @@
 		if (parseInt(ans) == quest.ans){
 			time_taken = Date.now() - quest_start;
 			level += score(time_taken);	
-			generate_add(level)
+			op_cycle[(op_counter++)%op_cycle.length](level);
 			quest_start = Date.now();
 			if (isTimeOut()){
 				ready = false;
@@ -118,7 +135,6 @@
 				term.writeln("\x1b[95m<enter> again?");
 				term.writeln("  or <escape>?\x1b[97m");
 			}
-
 		}
 	}
 
@@ -138,6 +154,10 @@
 
 	var buffer = []; // TODO: might be accessible directly from term...
 	
+	function reset() {
+		return 0;
+	}
+
 	//--------------------------------------------Open terminal and initiate listeners	
 	
 	term.open(document.getElementById('terminal'));
@@ -148,20 +168,23 @@
 		
 		// ENTER pressed
 		if (e.domEvent.keyCode === 13) {
-			if (!ready) {
+			if (!ready) { 
 				ready = true;
-				level = 0;
-				generate_add(level);
+				level = 1;
+				op_cycle[(op_counter++)%op_cycle.length](level);
 				START_TIME = Date.now();
+				quest_start = START_TIME; // First question
 				id = setInterval(draw_canvas, 50); 
 			}
+
 			if (between_games){
 				between_games = false;
 			}
+
+			// if the answer is wrong, don't send it?
 			check(buffer.join(''));
 			buffer = [];
-			if (!isTimeOut()) // TODO let the last one through! 
-				prompt(term);
+			if (!isTimeOut()) prompt(term);
 		
 		// BACKSPACE
 		} else if (e.domEvent.keyCode === 8 && 
@@ -181,9 +204,9 @@
 			openFullscreen();
 			term.scrollToBottom();
 		}
-
 	});
 
+	//----------------------------------------------------------------------------------
 	//TODO control both width and height. keep it at a 2:3 ratio or something
 	onresize = function() { 
 		// make it minimum with a width-based measurement
@@ -192,11 +215,24 @@
 		if (ready) prompt(term);
 	}
 
-	//----------------------------------------------------------------------------------
-
-
 	window.onload = function() {
 		term.focus();
 		term.write("Calculator Quest");
-		term.write("\n\r\x1b[95m<f> for fullscreen \n\r<enter> to begin\x1b[97m");
+		term.write("\n\r\x1b[95m<f> : fullscreen \n\r<enter> : begin\x1b[97m");
 	};
+	
+	var elem = document.documentElement;
+	/* View in fullscreen */
+	function openFullscreen() {
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen();
+		} else if (elem.mozRequestFullScreen) { /* Firefox */
+			elem.mozRequestFullScreen();
+		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+			elem.webkitRequestFullscreen();
+		} else if (elem.msRequestFullscreen) { /* IE/Edge */
+			elem.msRequestFullscreen();
+		}
+	}
+
+
