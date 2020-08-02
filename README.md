@@ -3,7 +3,7 @@ Simple and responsive browser-based games.
 Bringing the 1970's terminal experience to the modern day internet consumer.  
 Explore puzzles in math, programming, and operating systems.  
 
-# [TERMINAL](https://boris-volkov.github.io.games/terminal.html)
+# [TERMINAL](https://boris-volkov.github.io/games/terminal.html)
   - type help to get started.
   - A custom terminal shell emulator with some strange options
   - this page can navigate the rest of the site through program commands

@@ -305,8 +305,10 @@ function sixteen(){
 
 var ps1 = "$";
 function prompt(){
-	write(ps1); 
-	cursor_col++;
+	if (ps1){
+		write(ps1); 
+		cursor_col++;
+	}
 }
 
 function echo(buffer) {
@@ -328,16 +330,16 @@ function unscramble(){
 	grid_to_canvas();
 }
 
-command_list = ["clear", "echo", "help", "programs (listing)", "reboot", "reset (colors)", "rgb", "undo", "unscramble",
+command_list = ["clear", "echo", "help", "programs (listing)", "reboot", "reset (colors)", "rgb", "rmps1", "undo", "unscramble",
 		"[esc] -> phase mode", "  *   -> terminal mode"];
 program_list = ["quest", "princess", "sixteen"]
 
 function help(title, list){
-	echo(title);
-	echo('●' + '―'.repeat(title.length-1));
+	echo(title + " ".repeat(grid_size-title.length - 1));
+	echo('●' + '―'.repeat(grid_size-3) + "●");
 	for (let i = 0; i < list.length; i++)
-		echo("| " + list[i]);
-	echo('●' + '―'.repeat(title.length-1));
+		echo("| " + list[i] + " ".repeat(grid_size-list[i].length - 4) + "|");
+	echo('●' + '―'.repeat(grid_size-3) + "●");
 }
 
 function execute_command(buffer) {
@@ -357,6 +359,7 @@ function execute_command(buffer) {
 	if (command == "princess") 		princess();
 	if (command == "sixteen")		sixteen();
 	if (command == "reboot")		location.reload();
+	if (command == "rmps1")			ps1 = "";
 }
 
 var b_grid;
