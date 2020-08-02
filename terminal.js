@@ -1,15 +1,14 @@
 // A fully custom terminal interface with some very strange capabilities.
 
 /*
- * TODO make an equalize utility to bring colors back to normal
- * unscramble the matrix.
+ * TODO
  * keep a stack of commands and run their inveres
  * make function-inverse map
  * have it play back as an animation.
  **/
 
 //----------------------------------------------------------------Initialization of canvas and grid
-var canvas = document.getElementById('puzzle_space');
+var canvas = document.getElementById('terminal');
 var context = canvas.getContext('2d');
 const urlParams = new URLSearchParams(window.location.search);
 var grid_size = parseInt( urlParams.get('size'));
@@ -17,9 +16,8 @@ if (isNaN(grid_size)) { grid_size = 32; }
 
 //TODO make these independent... grid_size is one of the most commonly used
 //numbers in the whole code
-grid_width = 24;
-grid_height = 24;
-
+grid_width = 32;
+grid_height = 32;
 
 var grid = Array(grid_size);
 function initialize_grid(){
@@ -68,8 +66,7 @@ var gradient = {
 
 var gradient;
 
-function reset_colors() {	
-	
+function reset_colors() {		
 		gradient.red 		= new Color('[Red]'),
 		gradient.grn 		= new Color('[Grn]'),
 		gradient.blu 		= new Color('[Blu]'),
@@ -84,7 +81,6 @@ function reset_colors() {
 
 		gradient.generate_codes();
 }
-
 
 reset_colors();
 
@@ -106,6 +102,7 @@ function mobius_right()	{let row = []; for (let i = 0; i < grid_size; i++)
 function transpose() 	{grid =  grid[0].map((col, i) => grid.map(row => row[i]));}
 //------------------------------------------------------------------------------Draw colors to canvas	
 var display = false;
+var text_hidden = false;
 var cursor_color = '#369';
 function grid_to_canvas(){
 	var grid_div = canvas.width/grid_size;
@@ -115,13 +112,18 @@ function grid_to_canvas(){
 			let y = i * grid_div;
 			let color = gradient.rgb_codes[grid[i][j][0]]; // color element
 			context.fillStyle = color;
-			if (insert_mode && cursor_row == i && cursor_col == j)
-				context.fillStyle = cursor_color;
-			context.fillRect(x , y, grid_div, grid_div);
-			if (grid[i][j][1] != -1){
-				context.fillStyle = "#FFF";
-				if ("$₽".includes(grid[i][j][1])) context.fillStyle = '#369';
-				context.fillText(grid[i][j][1], Math.round(x+grid_div/5), Math.round(y+grid_div/12));
+			if (text_hidden){
+				context.fillRect(x , y, grid_div, grid_div);	
+			} else {
+				if (insert_mode && cursor_row == i && cursor_col == j)
+					context.fillStyle = cursor_color;
+				context.fillRect(x , y, grid_div, grid_div);
+				if (grid[i][j][1] != -1){
+					context.fillStyle = "#FFF";
+					if ("●◷◶―|$₽".includes(grid[i][j][1])) 
+						context.fillStyle = '#369';
+					context.fillText(grid[i][j][1],Math.round(x+grid_div/5), Math.round(y+grid_div/12));
+				}
 			}
 		}
 	}
@@ -143,7 +145,8 @@ function red(){
 
 var keys_down = {
 	'r': false, 	'g': false,  	'b': false, 	'p': false,
-	'f': false,		'm': false, 	'c': false, 	'e': false
+	'f': false,	'm': false, 	'c': false, 	'e': false,
+	'h': false,
 };
 
 var cursor_col = 0;
@@ -154,85 +157,89 @@ function write(key) {
 	grid[cursor_row][cursor_col][1] = key;
 	var grid_div = canvas.width/grid_size;
 	//context.fillText(key, cursor_col*grid_div, cursor_row*grid_div);
+	// would like to be able to draw a single char without redrawing the 
+	// whole screen
 	if (cursor_col == grid_size - 1){
 		cursor_col = 0;
 		cursor_row = (cursor_row+1)%grid_size;
 	} else {
 		cursor_col += 1;
 	}
-	grid_to_canvas();
+	//grid_to_canvas();
 }
 
 const key_function_map = {
-	'*': () => { insert_mode ^= true; grid_to_canvas();},
+	'*': () => { insert_mode ^= true; text_hidden = false;},
 	'i': torus_up,		'k': torus_down,	'j': torus_left,
 	'l': torus_right,	'w': mobius_up,		's': mobius_down,
 	'a': mobius_left,	'd': mobius_right,      't': transpose,
-	'.': () => { display ^= true }, '`': () => { alert(gradient.rgb_codes); },
+	'.': () => { display ^= true; }, 
+	'`': () => { alert(gradient.rgb_codes); },
+	'h': () => { text_hidden ^= true; },
 
 	'ArrowUp' : () => 	{if (keys_down['r']){ 
-		if (keys_down['f'])
-			gradient.red.freq *= 1.01;
-		if (keys_down['p'])
-			gradient.red.phase += 1;
-		if (keys_down['m'])
-			gradient.red.amp += 5;
-		if (keys_down['c'])
-			gradient.red.center += 5;
-	}
-		if (keys_down['g']){ 
-			if (keys_down['f'])
-				gradient.grn.freq *= 1.01;
-			if (keys_down['p'])
-				gradient.grn.phase += 1;
-			if (keys_down['m'])
-				gradient.grn.amp += 5;
-			if (keys_down['c'])
-				gradient.grn.center += 5;
-		}
-		if (keys_down['b']){ 
-			if (keys_down['f'])
-				gradient.blu.freq *= 1.01;
-			if (keys_down['p'])
-				gradient.blu.phase += 1;
-			if (keys_down['m'])
-				gradient.blu.amp += 5;
-			if (keys_down['c'])
-				gradient.blu.center += 5;
-		}
-	},
+					if (keys_down['f'])
+						gradient.red.freq *= 1.01;
+					if (keys_down['p'])
+						gradient.red.phase += 1;
+					if (keys_down['m'])
+						gradient.red.amp += 5;
+					if (keys_down['c'])
+						gradient.red.center += 5;
+				}
+				if (keys_down['g']){ 
+					if (keys_down['f'])
+						gradient.grn.freq *= 1.01;
+					if (keys_down['p'])
+						gradient.grn.phase += 1;
+					if (keys_down['m'])
+						gradient.grn.amp += 5;
+					if (keys_down['c'])
+						gradient.grn.center += 5;
+				}
+				if (keys_down['b']){ 
+					if (keys_down['f'])
+						gradient.blu.freq *= 1.01;
+					if (keys_down['p'])
+						gradient.blu.phase += 1;
+					if (keys_down['m'])
+						gradient.blu.amp += 5;
+					if (keys_down['c'])
+						gradient.blu.center += 5;
+				}
+			},
 
 	'ArrowDown' : () => 	{if (keys_down['r']){ 
-		if (keys_down['f'])
-			gradient.red.freq /= 1.01;
-		if (keys_down['p'])
-			gradient.red.phase -= 1;
-		if (keys_down['m'])
-			gradient.red.amp -= 5;
-		if (keys_down['c'])
-			gradient.red.center -= 5;
-	}
-		if (keys_down['g']){ 
-			if (keys_down['f'])
-				gradient.grn.freq /= 1.01;
-			if (keys_down['p'])
-				gradient.grn.phase -= 1;
-			if (keys_down['m'])
-				gradient.grn.amp -= 5;
-			if (keys_down['c'])
-				gradient.grn.center -= 5;
-		}
-		if (keys_down['b']){ 
-			if (keys_down['f'])
-				gradient.blu.freq /= 1.01;
-			if (keys_down['p'])
-				gradient.blu.phase -= 1;
-			if (keys_down['m'])
-				gradient.blu.amp -= 5;
-			if (keys_down['c'])
-				gradient.blu.center -= 5;
-		}
-	}
+					if (keys_down['f'])
+						gradient.red.freq /= 1.01;
+					if (keys_down['p'])
+						gradient.red.phase -= 1;
+					if (keys_down['m'])
+						gradient.red.amp -= 5;
+					if (keys_down['c'])
+						gradient.red.center -= 5;
+				}
+					if (keys_down['g']){ 
+						if (keys_down['f'])
+							gradient.grn.freq /= 1.01;
+						if (keys_down['p'])
+							gradient.grn.phase -= 1;
+						if (keys_down['m'])
+							gradient.grn.amp -= 5;
+						if (keys_down['c'])
+							gradient.grn.center -= 5;
+					}
+					if (keys_down['b']){ 
+						if (keys_down['f'])
+							gradient.blu.freq /= 1.01;
+						if (keys_down['p'])
+							gradient.blu.phase -= 1;
+						if (keys_down['m'])
+							gradient.blu.amp -= 5;
+						if (keys_down['c'])
+							gradient.blu.center -= 5;
+					}
+				}
 };
 
 // to fix negative cursor indices...
@@ -284,6 +291,18 @@ function clear(){
 	cursor_col = 0;
 }
 
+function quest(){
+	location.assign('./quest/quest.html');
+}
+
+function princess(){
+	location.assign('./princess/rules.html');
+}
+
+function sixteen(){
+	location.assign('./sixteens/sixteens.html');
+}
+
 var ps1 = "$";
 function prompt(){
 	write(ps1); 
@@ -309,27 +328,35 @@ function unscramble(){
 	grid_to_canvas();
 }
 
-command_list = ["clear", "echo", "help", "reset", "rgb", "undo", "unscramble"];
+command_list = ["clear", "echo", "help", "programs (listing)", "reboot", "reset (colors)", "rgb", "undo", "unscramble",
+		"[esc] -> phase mode", "  *   -> terminal mode"];
+program_list = ["quest", "princess", "sixteen"]
 
-function help(){
-	echo('Available commands');
-	echo('―'.repeat(18));
-	for (let i = 0; i<command_list.length; i++)
-		echo("· " + command_list[i]);
+function help(title, list){
+	echo(title);
+	echo('●' + '―'.repeat(title.length-1));
+	for (let i = 0; i < list.length; i++)
+		echo("| " + list[i]);
+	echo('●' + '―'.repeat(title.length-1));
 }
 
 function execute_command(buffer) {
 	let command = buffer.join("");
-	if (command == "clear") clear();
-	if (command.startsWith("echo ")) echo(buffer.slice(5));
-	if (command == "help") help();
-	if (command == "rgb") rgb();
-	if (command == "unscramble") unscramble();
-	if (command == "reset") reset_colors();
-	if (command == "red") red();
-	if (command == "rubles") ps1 = "₽";
-	if (command == "dollars") ps1 = "$";
-	if (command == "undo") grid = JSON.parse(JSON.stringify(b_grid));
+	if (command == "clear") 		clear();
+	if (command.startsWith("echo ")) 	echo(buffer.slice(5));
+	if (command == "help") 			help("Commands Available", command_list);
+	if (command == "programs")		help("Program Listing", program_list);
+	if (command == "rgb") 			rgb();
+	if (command == "unscramble") 		unscramble();
+	if (command == "reset") 		reset_colors();
+	if (command == "red") 			red();
+	if (command == "rubles") 		ps1 = "₽";
+	if (command == "dollars") 		ps1 = "$";
+	if (command == "undo") 			grid = JSON.parse(JSON.stringify(b_grid));
+	if (command == "quest") 		quest();
+	if (command == "princess") 		princess();
+	if (command == "sixteen")		sixteen();
+	if (command == "reboot")		location.reload();
 }
 
 var b_grid;
@@ -393,15 +420,18 @@ window.addEventListener('keydown', (event) => {
 			event.preventDefault();
 			buffer.push(event.key);
 			write(event.key);
+			grid_to_canvas();
+			return;
 		}
 		return;
 	}
 
 	if (keys_down.hasOwnProperty(event.key)){
 		keys_down[event.key] = true;
-		//return;
 	}
-	key_function_map[event.key]();
+	if (key_function_map.hasOwnProperty(event.key))
+		key_function_map[event.key]();
+
 	gradient.generate_codes();
 	grid_to_canvas();
 });

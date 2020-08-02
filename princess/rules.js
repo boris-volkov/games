@@ -141,101 +141,101 @@ function test(input, i){
 }
 
 
-        const term = new Terminal(
-                        {
-                                theme: {
-                                        background: "#006699",
-                                },
-                                rows: desired_rows,
-                                cols: 60,
-                                cursorBlink: true,
-                                fontSize: Math.floor(innerHeight/(desired_rows*5/4)),
-                                fontWeight: 700,
-                        });
+const term = new Terminal(
+	{
+		theme: {
+			background: "#006699",
+		},
+		rows: desired_rows,
+		cols: 60,
+		cursorBlink: true,
+		fontSize: Math.floor(innerHeight/(desired_rows*5/4)),
+		fontWeight: 700,
+	});
 
-	term.open(document.getElementById('terminal'));
+term.open(document.getElementById('terminal'));
 
-	const term_prompt = '\r\nTry a number: ';
-	
-	function runFakeTerminal() {
-		if (term._initialized) {
+const term_prompt = '\r\nTry a number: ';
+
+function runFakeTerminal() {
+	if (term._initialized) {
+		return;
+	}
+
+	term._initialized = true;
+
+	term.write('\x1b[97m'); // sets text color
+	term.write(INTRODUCTION);
+
+	var i = 0; 		// index to iterate through the rules
+	started = false;
+
+	var buffer = ""; // initialize an empty buffer. I think this can be accessed 
+	// through term._core.buffer instead of building manually
+
+	term.onKey(e => {
+		if (e.domEvent.keyCode === 27){
+			term.dispose();
+			location.replace("princess.html"); //this might be the fix: send to another html page with another terminal
+		}
+
+		if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now, they're buggy 
+
+		const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
+
+		if (started == false) { // started means they read the intro and are going through the rules now
+			term.reset();
+			buffer = "";
+			term.writeln(rules[0]);
+			prompt(term);
+			started = true;
 			return;
 		}
 
-		term._initialized = true;
+		if (e.domEvent.keyCode === 13) 
+		{
+			if (buffer == "") return; // don't let them send an empty string
 
-		term.write('\x1b[97m'); // sets text color
-		term.write(INTRODUCTION);
-
-		var i = 0; 		// index to iterate through the rules
-		started = false;
-
-		var buffer = ""; // initialize an empty buffer. I think this can be accessed 
-				 // through term._core.buffer instead of building manually
-
-		term.onKey(e => {
-			if (e.domEvent.keyCode === 27){
-				term.dispose();
-				location.replace("princess.html"); //this might be the fix: send to another html page with another terminal
-			}
-			
-			if ([37,39,38,40].includes(e.domEvent.keyCode)) return; // disable arrow keys for now, they're buggy 
-
-			const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
-
-			if (started == false) { // started means they read the intro and are going through the rules now
-				term.reset();
-				buffer = "";
-				term.writeln(rules[0]);
-				prompt(term);
-				started = true;
-				return;
+			if (i == rules.length-1){
+				term.dispose(); //done learning rules.
+				location.replace("princess.html");
 			}
 
-			if (e.domEvent.keyCode === 13) 
-			{
-				if (buffer == "") return; // don't let them send an empty string
-
-				if (i == rules.length-1){
-					term.dispose(); //done learning rules.
-					location.replace("princess.html");
-				}
-
-				term.writeln("\n\rthe princess would return: " + princess(buffer));
-				if (test(buffer, i)){
-					i++;
-					term.writeln(green + "\n\n\n    Correct\n\n\n\n\r");
-					term.writeln(rules[i]);
-					if (i == rules.length - 1) return; // so we don't prompt after the rules print out
-								           // is it stupid to check this twice? probably.		
-				}
-
-				buffer = "";
-				prompt(term);
-
-			} else if (e.domEvent.keyCode === 8) { // backspace
-				// Do not delete the prompt
-				if (term._core.buffer.x > term_prompt.length - 2) {
-					buffer = buffer.substring(0, buffer.length - 1);
-					term.write('\b \b');
-				}
-			} else if (printable) {
-				buffer = buffer + e.key;
-				term.write(e.key);
+			term.writeln("\n\rthe princess would return: " + princess(buffer));
+			if (test(buffer, i)){
+				i++;
+				term.writeln(green + "\n\n\n    Correct\n\n\n\n\r");
+				term.writeln(rules[i]);
+				if (i == rules.length - 1) return; // so we don't prompt after the rules print out
+				// is it stupid to check this twice? probably.		
 			}
 
-		});
+			buffer = "";
+			prompt(term);
+
+		} else if (e.domEvent.keyCode === 8) { // backspace
+			// Do not delete the prompt
+			if (term._core.buffer.x > term_prompt.length - 2) {
+				buffer = buffer.substring(0, buffer.length - 1);
+				term.write('\b \b');
+			}
+		} else if (printable) {
+			buffer = buffer + e.key;
+			term.write(e.key);
+		}
+
+	});
 
 	window.addEventListener("resize", resize_term);
-                function resize_term(){
-                        let font_height = Math.floor(innerHeight/(desired_rows*5/4));
-                        term.setOption("fontSize", font_height);
-                }
-
+	function resize_term(){
+		let font_height = Math.floor(innerHeight/(desired_rows*5/4));
+		term.setOption("fontSize", font_height);
 	}
 
-	function prompt(term) {
-		term.write(term_prompt);
-	}
+}
 
-	runFakeTerminal();
+function prompt(term) {
+	term.write(term_prompt);
+}
+
+runFakeTerminal();
