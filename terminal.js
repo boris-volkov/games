@@ -120,8 +120,10 @@ function grid_to_canvas(){
 				context.fillRect(x , y, grid_div, grid_div);
 				if (grid[i][j][1] != -1){
 					context.fillStyle = "#FFF";
-					if ("●◷◶―|$₽".includes(grid[i][j][1])) 
-						context.fillStyle = '#369';
+					if ("●◷◶―|".includes(grid[i][j][1])) 
+						context.fillStyle = '#f60';
+					if ("$₽".includes(grid[i][j][1]))
+						context.fillStyle = "#369";
 					context.fillText(grid[i][j][1],Math.round(x+grid_div/5), Math.round(y+grid_div/12));
 				}
 			}
