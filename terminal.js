@@ -481,5 +481,10 @@ function draw_canvas(){ //rename to resize?
 	//context.font = "900 " + font_size_pixels+"px Courier New";
 	grid_to_canvas();
 }
+
+function change_font(font) {
+	return;
+}
+
 gradient.generate_codes();
 draw_canvas();
