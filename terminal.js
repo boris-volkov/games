@@ -346,7 +346,7 @@ function unscramble(){
 
 command_list = ["clear", "color [RGB] (hex)", "echo", 
 	"help", "programs (listing)", "reboot", "reset (colors)", "rgb", "rmps1", "undo", "unscramble",
-		"[esc] -> phase mode", "  *   -> terminal mode"];
+		"[esc] → phase mode", " [*]  → terminal mode"];
 program_list = ["quest", "princess", "sixteen"]
 
 function help(title, list){
