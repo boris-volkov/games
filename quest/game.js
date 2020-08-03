@@ -21,6 +21,7 @@
 		if (START_TIME < 0) return 0;
 		return Math.min(1, (time - START_TIME)/TIME_LIMIT);
 	}
+
 	let color1 = '#4499EE';
 	let color2 = '#255585';
 	function progress_bar(){
@@ -90,9 +91,12 @@
 	}
 
 	function generate_div(level){
-		quest.ans 	= Math.abs(Math.round(level/3 + 10*randn_bm())); 
-		quest.b 	= 2 + Math.ceil(level*Math.random()/3);
-		quest.a 	= quest.b * quest.ans;
+		quest.a = level*11;
+		while (quest.a > level*10){
+			quest.ans 	= Math.abs(Math.round(level/3 + 10*randn_bm())); 
+			quest.b 	= 2 + Math.ceil(level*Math.random()/3);
+			quest.a 	= quest.b * quest.ans;
+		}
 		quest.op 			= '÷';
 		generate_prompt();
 	}
