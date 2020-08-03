@@ -39,9 +39,9 @@ function Color(name){
 	this.phase = 0;
 	this.center = 0;
 	this.toString = function () {
-		return [ this.name   , 	'Mag:', this.amp, 
-			'Frq:', Math.round(grid_size*this.freq/6.28*1000)/1000, 
-			'Pha:', this.phase,     
+		return [ this.name   , 	'Mag:', this.amp, '|',
+			'Frq:', Math.round(grid_size*this.freq/6.28*1000)/1000, '|',
+			'Pha:', this.phase,    '|', 
 			'Cen:', this.center].join(' ');
 	};
 
@@ -84,6 +84,17 @@ function reset_colors() {
 
 reset_colors();
 
+function set_text_color(rgb) {
+	if (isHexColor(rgb))
+		text_color = "#" + rgb;
+}
+
+function isHexColor (hex) {
+  return typeof hex === 'string'
+      && (hex.length === 3 || hex.length === 6)
+      && !isNaN(Number('0x' + hex))
+}
+
 //-----------------------------------------------------------------------------------Motion functions
 function torus_up()		{let temp = grid.shift(); grid.push(temp);}
 function torus_down()	{let temp = grid.pop(); grid.unshift(temp);}
@@ -104,6 +115,7 @@ function transpose() 	{grid =  grid[0].map((col, i) => grid.map(row => row[i]));
 var display = false;
 var text_hidden = false;
 var cursor_color = '#369';
+var text_color = '#FFF';
 function grid_to_canvas(){
 	var grid_div = canvas.width/grid_size;
 	for (var i = 0; i < grid_size; i++){
@@ -119,10 +131,10 @@ function grid_to_canvas(){
 					context.fillStyle = cursor_color;
 				context.fillRect(x , y, grid_div, grid_div);
 				if (grid[i][j][1] != -1){
-					context.fillStyle = "#FFF";
+					context.fillStyle = text_color;
 					if ("●◷◶―|".includes(grid[i][j][1])) 
 						context.fillStyle = '#f60';
-					if ("$₽".includes(grid[i][j][1]))
+					if (":$₽".includes(grid[i][j][1]))
 						context.fillStyle = "#369";
 					context.fillText(grid[i][j][1],Math.round(x+grid_div/5), Math.round(y+grid_div/12));
 				}
@@ -140,7 +152,7 @@ function grid_to_canvas(){
 }	
 
 function red(){
-	echo(gradient.red.toString());
+	echo(gradient.red.toString().replace(/\s/g,''));
 }
 
 //----------------------------------------------------------key event listener & key -> function maps
@@ -332,7 +344,8 @@ function unscramble(){
 	grid_to_canvas();
 }
 
-command_list = ["clear", "echo", "help", "programs (listing)", "reboot", "reset (colors)", "rgb", "rmps1", "undo", "unscramble",
+command_list = ["clear", "color [RGB] (hex)", "echo", 
+	"help", "programs (listing)", "reboot", "reset (colors)", "rgb", "rmps1", "undo", "unscramble",
 		"[esc] -> phase mode", "  *   -> terminal mode"];
 program_list = ["quest", "princess", "sixteen"]
 
@@ -362,6 +375,7 @@ function execute_command(buffer) {
 	if (command == "sixteen")		sixteen();
 	if (command == "reboot")		location.reload();
 	if (command == "rmps1")			ps1 = "";
+	if (command.startsWith("color "))	set_text_color(buffer.slice(6).join(''));
 }
 
 var b_grid;
@@ -463,7 +477,8 @@ function draw_canvas(){ //rename to resize?
 	context.textAlign = "start";
 	context.textBaseline = "top";
 	let font_size_pixels = Math.round(square_side/grid_size*0.8);
-	context.font = "900 " + font_size_pixels+"px Courier New";
+	context.font = "Bold " + font_size_pixels+"px Courier";
+	//context.font = "900 " + font_size_pixels+"px Courier New";
 	grid_to_canvas();
 }
 gradient.generate_codes();
