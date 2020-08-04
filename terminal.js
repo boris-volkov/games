@@ -64,7 +64,7 @@ var gradient = {
 	}
 };
 
-var gradient;
+//var gradient;
 
 function reset_colors() {		
 		gradient.red 		= new Color('[Red]'),
@@ -344,9 +344,13 @@ function unscramble(){
 	grid_to_canvas();
 }
 
+
+// TODO pull from properties of command map rather than actually writing this list
 command_list = ["clear", "color [RGB] (hex)", "echo", 
-	"help", "programs (listing)", "reboot", "reset (colors)", "rgb", "rmps1", "undo", "unscramble",
+	"help", "programs (listing)", "reboot", "reset (colors)", "rgb", "undo",
 		"[esc] → phase mode", " [*]  → terminal mode"];
+
+
 program_list = ["quest", "princess", "sixteen"]
 
 function help(title, list){
@@ -357,6 +361,8 @@ function help(title, list){
 	echo('●' + '―'.repeat(grid_size-3) + "●");
 }
 
+
+// put these in a function map?
 function execute_command(buffer) {
 	let command = buffer.join("");
 	if (command == "clear") 		clear();
@@ -378,12 +384,14 @@ function execute_command(buffer) {
 	if (command.startsWith("color "))	set_text_color(buffer.slice(6).join(''));
 }
 
+// im paranoid about asynchronous 
 var b_grid;
 function backup_grid() {
 	b_grid = JSON.parse(JSON.stringify(grid))
 	return 0;
 }
 
+//TODO need separate handler for every mode this is getting bloated
 var buffer = [] /* IMPORTANT : input buffer  */
 window.addEventListener('keydown', (event) => {
 
@@ -432,7 +440,6 @@ window.addEventListener('keydown', (event) => {
 		if (event.key == 'Tab'){
 			tab();
 			event.preventDefault();
-			canvas.focus();
 			return
 		}
 		if (event.key.length === 1){
