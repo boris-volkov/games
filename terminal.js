@@ -162,26 +162,6 @@ var keys_down = {
 	'f': false,	'm': false, 	'c': false, 	'e': false,
 	'h': false,
 };
-
-var cursor_col = 0;
-var cursor_row = 0;
-var insert_mode = true;
-
-function write(key) {
-	grid[cursor_row][cursor_col][1] = key;
-	var grid_div = canvas.width/grid_size;
-	//context.fillText(key, cursor_col*grid_div, cursor_row*grid_div);
-	// would like to be able to draw a single char without redrawing the 
-	// whole screen
-	if (cursor_col == grid_size - 1){
-		cursor_col = 0;
-		cursor_row = (cursor_row+1)%grid_size;
-	} else {
-		cursor_col += 1;
-	}
-	//grid_to_canvas();
-}
-
 const key_function_map = {
 	'*': () => { insert_mode ^= true; text_hidden = false;},
 	'i': torus_up,		'k': torus_down,	'j': torus_left,
@@ -325,11 +305,29 @@ function prompt(){
 	}
 }
 
+var cursor_col = 0;
+var cursor_row = 0;
+var insert_mode = true;
+
+function write(key) {
+	grid[cursor_row][cursor_col][1] = key;
+	var grid_div = canvas.width/grid_size;
+	//context.fillText(key, cursor_col*grid_div, cursor_row*grid_div);
+	if (cursor_col == grid_size - 1){
+		cursor_col = 0;
+		cursor_row = (cursor_row+1)%grid_size;
+	} else {
+		cursor_col += 1;
+	}
+}
+
 function echo(buffer) {
 	for (let i = 0; i < buffer.length; i++)
 		write(buffer[i]);
-	cursor_row = (cursor_row+1)%grid_size;
-	cursor_col = 0;
+	if (cursor_col > 0){
+		cursor_row = (cursor_row+1)%grid_size;
+		cursor_col = 0;
+	}
 }
 
 function rgb(){
@@ -354,11 +352,11 @@ command_list = ["clear", "color [RGB] (hex)", "echo",
 program_list = ["quest", "princess", "sixteen"]
 
 function help(title, list){
-	echo(title + " ".repeat(grid_size-title.length - 1));
-	echo('●' + '―'.repeat(grid_size-3) + "●");
+	echo(title + " ".repeat(grid_size-title.length));
+	echo('●' + '―'.repeat(grid_size-2) + "●");
 	for (let i = 0; i < list.length; i++)
-		echo("| " + list[i] + " ".repeat(grid_size-list[i].length - 4) + "|");
-	echo('●' + '―'.repeat(grid_size-3) + "●");
+		echo("| " + list[i] + " ".repeat(grid_size-list[i].length - 3) + "|");
+	echo('●' + '―'.repeat(grid_size-2) + "●");
 }
 
 
