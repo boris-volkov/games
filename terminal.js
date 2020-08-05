@@ -15,25 +15,28 @@ var grid_size = parseInt( urlParams.get('size'));
 if (isNaN(grid_size)) { grid_size = 32; }
 
 var drawing_mode = false;
+var pen_down = false;
 var bb;
 canvas.onpointerdown = (event) => {
-		drawing_mode = true;
+	if (drawing_mode){
+		pen_down = true;
 		bb = canvas.getBoundingClientRect(); 
 		let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 		let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 		context.moveTo(x,y);
 		context.strokeStyle = "#369";
+	}
 }
 
 canvas.onpointermove = draw_handler;
 
 canvas.onpointerup = () => {
 		context.closePath();
-		drawing_mode = false;
+		pen_down = false;
 }
 
 function draw_handler(event){
-	if (drawing_mode){
+	if (pen_down){
 			let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 			let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 			context.lineTo(x,y);
@@ -442,6 +445,11 @@ function backup(grid) {//TODO decide whether this is multi-purpose or not
 //TODO need separate handler for every mode this is getting bloated
 var buffer = [] /* IMPORTANT : input buffer  */
 window.addEventListener('keydown', (event) => {
+
+	if (event.key == 'F2'){
+		drawing_mode ^= true;
+		return;
+	}
 
 	if (terminal_mode == true){
 		if (event.key == 'Escape'){
