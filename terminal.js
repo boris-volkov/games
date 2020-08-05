@@ -14,6 +14,40 @@ const urlParams = new URLSearchParams(window.location.search);
 var grid_size = parseInt( urlParams.get('size'));
 if (isNaN(grid_size)) { grid_size = 32; }
 
+var drawing_mode = false;
+var bb;
+canvas.onpointerdown = (event) => {
+	bb = canvas.getBoundingClientRect(); 
+	let x = (event.clientX-bb.left)*(canvas.width/bb.width);
+	let y = (event.clientY-bb.top)*(canvas.height/bb.height);
+	context.moveTo(x,y);
+	context.lineCap = "round";
+	context.lineJoin = "round";
+	context.strokeStyle = "#369";
+	context.lineWidth = 3;
+	drawing_mode = true;
+}
+
+
+canvas.onpointermove = draw_handler;
+
+canvas.onpointerup = () => {
+		//drawing_mode = false;
+}
+
+function draw_handler(event){
+	if (drawing_mode && event.pointerType == 'mouse'){
+			let x = (event.clientX-bb.left)*(canvas.width/bb.width);
+			let y = (event.clientY-bb.top)*(canvas.height/bb.height);
+			//context.fillRect(x,y,3,3);
+			context.lineTo(x,y);
+			context.stroke();
+			//context.beginPath();
+			context.moveTo(x,y);
+	}
+}
+
+
 var num_cols = grid_size;
 var num_rows = grid_size;
 
@@ -138,10 +172,10 @@ function grid_to_canvas(){
 					context.fillStyle = cursor_color;
 
 				context.fillRect(x , y, grid_div, grid_div);
-
+				
 				if (text_map(i,j) != -1){ // need to draw char.
 					context.fillStyle = text_color;
-					if ("●◷◶―|".includes(text_map(i,j))) // orange special chars
+					if ("●◷◶→←―|".includes(text_map(i,j))) // orange special chars
 						context.fillStyle = '#f60';
 					if (":$₽".includes(text_map(i,j)))   // blue special chars
 						context.fillStyle = "#369";
@@ -150,6 +184,10 @@ function grid_to_canvas(){
 			}
 		}
 	}
+
+	//context.rotate(0.1); investigate this! this is how you get rotated characters bro!
+	//context.translate(x,y)
+	//context.transform(a,b,c,d,e,f) most advanced transformations
 	if (display){
 		context.fillStyle = '#FFF';
 		context.textAlign = "center";
@@ -268,8 +306,9 @@ function back_space(){
 }
 
 function delete_row(){
-	for (let i = 0; i < num_cols; i++)
-		text_matrix[cursor_row][i] = -1;
+	//for (let i = 0; i < num_cols; i++)
+	//	text_matrix[cursor_row][i] = -1;
+	fit_canvas();
 }
 
 function tab(){
@@ -354,7 +393,7 @@ function prompt(){
 command_list = ["clear", "codes", "color [RGB] (hex)", "echo", 
 				"help", "programs (listing)", "reboot", "reset (colors)", "rgb",
 				"[esc] → phase mode", "[*]   → terminal mode",
-				"[F1] terminal ⇄ text edit"		
+				"[F1] terminal ←→ text edit"		
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
@@ -500,7 +539,7 @@ window.addEventListener("onload", canvas.focus);
 window.addEventListener("onload", prompt());
 
 function fit_canvas(){ 
-	var context = canvas.getContext('2d');
+	context = canvas.getContext('2d');
 	let square_side = Math.min(window.innerWidth, window.innerHeight) - 30;
 	square_side -= square_side%(grid_size); 
 	canvas.setAttribute('width', square_side.toString()); 
@@ -509,7 +548,7 @@ function fit_canvas(){
 	context.textAlign = "start";
 	context.textBaseline = "top";
 	let font_size_pixels = Math.round(square_side/grid_size*0.8);
-	context.font = "Bold " + font_size_pixels+"px Courier";
+	context.font = "Bold " + font_size_pixels+"px Courier";	
 	grid_to_canvas();
 }
 
