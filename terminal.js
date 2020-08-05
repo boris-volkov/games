@@ -277,6 +277,8 @@ function tab(){
 }
 
 function clear(){
+	term_memory = [];
+	forward_memory = [];
 	initialize_text_matrix();
 	cursor_row = 0;
 	cursor_col = 0;
