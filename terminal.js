@@ -14,8 +14,14 @@ const urlParams = new URLSearchParams(window.location.search);
 var grid_size = parseInt( urlParams.get('size'));
 if (isNaN(grid_size)) { grid_size = 32; }
 
-num_cols = grid_size;
-num_rows = grid_size;
+var num_cols = grid_size;
+var num_rows = grid_size;
+
+var term_memory = [];
+var forward_memory = [];
+
+var backup_history = [];
+var backup_future = [];
 
 var text_matrix = Array(num_rows); 
 function initialize_text_matrix(){
@@ -240,10 +246,14 @@ Number.prototype.mod = function(n) {
 };
 
 function cursor_up(){
-	cursor_row = (cursor_row-1).mod(grid_size);
+	if (cursor_row == 0 && term_memory.length)
+		old_line();
+	else cursor_row = Math.max(cursor_row - 1, 0);
 }
 function cursor_down(){
-	cursor_row = (cursor_row+1)%grid_size;
+	if (cursor_row == (num_rows - 1) && forward_memory.length)
+		back_from_the_future();
+	else cursor_row = Math.min(cursor_row + 1, num_rows - 1);
 }
 function cursor_right(){
 	cursor_col = (cursor_col+1)%grid_size;
@@ -253,9 +263,8 @@ function cursor_left(){
 }
 
 function back_space(){
-	if (cursor_col > 0){
+	if (cursor_col > 0)
 		text_matrix[cursor_row][--cursor_col] = -1;
-	}
 }
 
 function delete_row(){
@@ -287,13 +296,33 @@ var cursor_row = 0;
 var terminal_mode = true;
 var text_mode = false;
 
+function new_line() {
+	term_memory.push(text_matrix.shift());
+	text_matrix.push(Array(num_cols).fill(-1));
+}
+
+function old_line() {
+	if (term_memory.length)
+		text_matrix.unshift(term_memory.pop());
+	forward_memory.push(text_matrix.pop());
+}
+
+function back_from_the_future() {
+	if (forward_memory.length){
+		term_memory.push(text_matrix.shift());
+		text_matrix.push(forward_memory.pop());
+	}
+}
+
 function write(key) {
 	text_matrix[cursor_row][cursor_col] = key;
 	//var grid_div = canvas.width/grid_size;
 	//context.fillText(key, cursor_col*grid_div, cursor_row*grid_div);
 	if (cursor_col == grid_size - 1){
 		cursor_col = 0;
-		cursor_row = (cursor_row+1)%grid_size;
+		if ((cursor_row + 1) == num_rows)
+			new_line();
+		else cursor_row = (cursor_row+1)%grid_size;
 	} else {
 		cursor_col += 1;
 	}
@@ -302,8 +331,10 @@ function write(key) {
 function echo(buffer) {
 	for (let i = 0; i < buffer.length; i++)
 		write(buffer[i]);
-	if (cursor_col > 0){
-		cursor_row = (cursor_row+1)%grid_size;
+	if (cursor_col > 0){ // linebreak after printing
+		if ((cursor_row + 1) == num_rows)
+			new_line();
+		else cursor_row++;
 		cursor_col = 0;
 	}
 }
@@ -328,8 +359,6 @@ command_list = ["clear", "codes", "color [RGB] (hex)", "echo",
 program_list = ["quest", "princess", "sixteen"]
 
 function help(title, list){ //TODO does not handle long lines
-	if (cursor_row > num_rows - list.length - 3)
-		cursor_row = 0;
 	echo(title + " ".repeat(grid_size-title.length));
 	echo('●' + '―'.repeat(grid_size-2) + "●");
 	for (let i = 0; i < list.length; i++)
@@ -363,13 +392,20 @@ function execute_command(buffer) {
 
 // im paranoid about asynchronous functions changing 
 // the grid before it is fully printed
+
+
+var cursor_backup;
 var b_grid; //backup grid
+
 function backup(grid) {
 	b_grid = JSON.parse(JSON.stringify(grid));
+	backup_history = JSON.parse(JSON.stringify(term_memory));
+	backup_future = JSON.parse(JSON.stringify(forward_memory));
+	term_memory = [];
+	forward_memory = [];
 	return 0;
 }
 
-var cursor_backup;
 
 //TODO need separate handler for every mode this is getting bloated
 var buffer = [] /* IMPORTANT : input buffer  */
@@ -381,13 +417,15 @@ window.addEventListener('keydown', (event) => {
 		}
 
 		if (event.key == "F1"){
-			if (text_mode){
+			if (text_mode){ // return to terminal mode
 				ps1 = "$";
 				text_mode = false;
 				text_matrix = b_grid;
 				cursor_row = cursor_backup[0];
 				cursor_col = cursor_backup[1];
-			} else {
+				term_memory = backup_history;
+				forward_memory = backup_future;
+			} else { // switch to text mode
 				backup(text_matrix);
 				cursor_backup = [cursor_row, cursor_col]
 				clear();
@@ -398,7 +436,9 @@ window.addEventListener('keydown', (event) => {
 
 		if (event.key == 'Enter'){
 			cursor_col = 0;
-			cursor_row = (cursor_row+1).mod(grid_size);
+			if ((cursor_row + 1) == num_rows)
+				new_line();
+			else cursor_row++;
 			if (buffer.length && !text_mode){
 				execute_command(Array.from(buffer));
 			}
