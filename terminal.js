@@ -16,26 +16,36 @@ if (isNaN(grid_size)) { grid_size = 32; }
 
 //TODO make these independent... grid_size is one of the most commonly used
 //numbers in the whole code
-grid_width = 32;
-grid_height = 32;
+num_cols = grid_size;
+num_rows = grid_size;
 
-var grid = Array(grid_size);
+var text_matrix = Array(num_rows); 
+function initialize_text_matrix(){
+	for (let i = 0; i < num_rows; i++)
+		text_matrix[i] = Array(num_cols).fill(-1);
+}
+initialize_text_matrix();
+
+var grid = Array(num_rows);
 function initialize_grid(){
-	for (let i = 0; i < grid_size; i++){
-		grid[i] = Array(grid_size);
-		for (let j = 0; j < grid_size; j++){
-			grid[i][j] = Array(2);
-			grid[i][j][0] = i;
-			grid[i][j][1] = -1;
+	for (let i = 0; i < num_rows; i++){
+		grid[i] = Array(num_cols);
+		for (let j = 0; j < num_cols; j++){
+			grid[i][j] = [i,j];
 		}
 	}	
 }
 initialize_grid();
+
+function text_map(i,j) {
+	return text_matrix[grid[i][j][0]][grid[i][j][1]];
+}
+
 //--------------------------------------------------------------------------Color state and methods
 function Color(name){
 	this.name = name;
 	this.amp = 0;
-	this.freq = 6.283/grid_size;
+	this.freq = 6.283/num_rows;
 	this.phase = 0;
 	this.center = 0;
 	this.toString = function () {
@@ -54,10 +64,10 @@ var gradient = {
 	red 		: new Color('[Red]'),
 	grn 		: new Color('[Grn]'),
 	blu 		: new Color('[Blu]'),
-	rgb_codes	: new Array(grid_size),
+	rgb_codes	: new Array(num_rows),
 
 	generate_codes  : function() {
-		for (var i = 0; i < grid_size; ++i){
+		for (var i = 0; i < num_rows; ++i){
 			this.rgb_codes[i] = ('rgb('+this.red.sin(i)+','+
 				this.grn.sin(i)+','+
 				this.blu.sin(i)+')');}
@@ -70,10 +80,10 @@ function reset_colors() {
 		gradient.red 		= new Color('[Red]'),
 		gradient.grn 		= new Color('[Grn]'),
 		gradient.blu 		= new Color('[Blu]'),
-		gradient.rgb_codes	= new Array(grid_size),
+		gradient.rgb_codes	= new Array(num_rows),
 
 		gradient.generate_codes  = function() {
-			for (var i = 0; i < grid_size; ++i){
+			for (var i = 0; i < num_rows; ++i){
 				this.rgb_codes[i] = ('rgb('+this.red.sin(i)+','+
 					this.grn.sin(i)+','+
 					this.blu.sin(i)+')');}
@@ -118,25 +128,28 @@ var cursor_color = '#369';
 var text_color = '#FFF';
 function grid_to_canvas(){
 	var grid_div = canvas.width/grid_size;
+	var block_width = canvas.width/num_cols;
+	var block_height  = canvas.height/num_rows;
 	for (var i = 0; i < grid_size; i++){
 		for (var j = 0; j < grid_size; j++){
-			let x = j * grid_div;
-			let y = i * grid_div;
+			let x = j * block_width;
+			let y = i * block_height;
 			let color = gradient.rgb_codes[grid[i][j][0]]; // color element
 			context.fillStyle = color;
 			if (text_hidden){
-				context.fillRect(x , y, grid_div, grid_div);	
+				context.fillRect(x , y, block_width, block_height);	
 			} else {
-				if (insert_mode && cursor_row == i && cursor_col == j)
+				if (insert_mode && cursor_row == grid[i][j][0] && cursor_col == grid[i][j][1])
 					context.fillStyle = cursor_color;
 				context.fillRect(x , y, grid_div, grid_div);
-				if (grid[i][j][1] != -1){
+
+				if (text_map(i,j) != -1){ // need to draw char.
 					context.fillStyle = text_color;
-					if ("●◷◶―|".includes(grid[i][j][1])) 
+					if ("●◷◶―|".includes(text_map(i,j)))
 						context.fillStyle = '#f60';
-					if (":$₽".includes(grid[i][j][1]))
+					if (":$₽".includes(text_map(i,j)))
 						context.fillStyle = "#369";
-					context.fillText(grid[i][j][1],Math.round(x+grid_div/5), Math.round(y+grid_div/12));
+					context.fillText(text_map(i,j),Math.round(x+grid_div/5), Math.round(y+grid_div/12));
 				}
 			}
 		}
@@ -151,8 +164,10 @@ function grid_to_canvas(){
 	}
 }	
 
-function red(){
+function colors(){
 	echo(gradient.red.toString().replace(/\s/g,''));
+	echo(gradient.grn.toString().replace(/\s/g,''));
+	echo(gradient.blu.toString().replace(/\s/g,''));
 }
 
 //----------------------------------------------------------key event listener & key -> function maps
@@ -243,59 +258,42 @@ Number.prototype.mod = function(n) {
 
 function cursor_up(){
 	cursor_row = (cursor_row-1).mod(grid_size);
-	grid_to_canvas();
 }
 function cursor_down(){
 	cursor_row = (cursor_row+1)%grid_size;
-	grid_to_canvas();
 }
 function cursor_right(){
 	cursor_col = (cursor_col+1)%grid_size;
-	grid_to_canvas();
 }
 function cursor_left(){
 	cursor_col = (cursor_col-1).mod(grid_size);
-	grid_to_canvas();
 }
 
 function back_space(){
 	if (cursor_col > 0){
-		grid[cursor_row][--cursor_col][1] = -1;
-		grid_to_canvas();
+		text_matrix[cursor_row][--cursor_col] = -1;
 	}
 }
 
 function forward_space(){
 	if (cursor_col < grid_size-1){
 		grid[cursor_row][++cursor_col][1] = -1;
-		grid_to_canvas();
 	}
 }
 
 function tab(){
 	cursor_col = (cursor_col+4)%grid_size;
-	grid_to_canvas();
 }
 
 function clear(){
-	for (let row = 0; row < grid_size; row++)
-		for (let col = 0; col < grid_size; col++)
-			grid[row][col][1] = -1;
+	initialize_text_matrix();
 	cursor_row = 0;
 	cursor_col = 0;
 }
 
-function quest(){
-	location.assign('./quest/quest.html');
-}
-
-function princess(){
-	location.assign('./princess/rules.html');
-}
-
-function sixteen(){
-	location.assign('./sixteens/sixteens.html');
-}
+function quest(){location.assign('./quest/quest.html');}
+function princess(){ location.assign('./princess/rules.html');}
+function sixteen(){ location.assign('./sixteens/sixteens.html');}
 
 var ps1 = "$";
 function prompt(){
@@ -310,8 +308,8 @@ var cursor_row = 0;
 var insert_mode = true;
 
 function write(key) {
-	grid[cursor_row][cursor_col][1] = key;
-	var grid_div = canvas.width/grid_size;
+	text_matrix[cursor_row][cursor_col] = key;
+	//var grid_div = canvas.width/grid_size;
 	//context.fillText(key, cursor_col*grid_div, cursor_row*grid_div);
 	if (cursor_col == grid_size - 1){
 		cursor_col = 0;
@@ -336,9 +334,6 @@ function rgb(){
 
 function unscramble(){
 	initialize_grid();
-	gradient.generate_codes();
-	cursor_row = 0;
-	cursor_col = 0;
 	grid_to_canvas();
 }
 
@@ -397,8 +392,6 @@ window.addEventListener('keydown', (event) => {
 		if (event.key == 'Escape'){
 			backup_grid();
 			insert_mode = false;
-			grid_to_canvas();
-			return;
 		}
 		if (event.key == 'Enter'){
 			cursor_col = 0;
@@ -406,47 +399,37 @@ window.addEventListener('keydown', (event) => {
 			execute_command(Array.from(buffer));
 			buffer = [];
 			prompt();
-			grid_to_canvas();
-			return;
 		}
 		if (event.key == 'Backspace'){
 			if (buffer.length)
 				buffer.pop();
 			back_space();
-			return;
 		}
 		if (event.key == 'Delete'){
 			forward_space();
-			return;
 		}
 		if (event.key == 'ArrowUp'){
 			cursor_up();
-			return;
 		}
 		if (event.key == 'ArrowDown'){
 			cursor_down();
-			return;
 		}
 		if (event.key == 'ArrowRight'){
 			cursor_right();
-			return;
 		}
 		if (event.key == 'ArrowLeft'){
 			cursor_left();
-			return;
 		}
 		if (event.key == 'Tab'){
 			tab();
 			event.preventDefault();
-			return
 		}
 		if (event.key.length === 1){
 			event.preventDefault();
 			buffer.push(event.key);
 			write(event.key);
-			grid_to_canvas();
-			return;
 		}
+		grid_to_canvas();
 		return;
 	}
 
