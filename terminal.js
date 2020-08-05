@@ -17,36 +17,30 @@ if (isNaN(grid_size)) { grid_size = 32; }
 var drawing_mode = false;
 var bb;
 canvas.onpointerdown = (event) => {
-	if (drawing_mode){
+		drawing_mode = true;
 		bb = canvas.getBoundingClientRect(); 
 		let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 		let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 		context.moveTo(x,y);
-		context.lineCap = "round";
-		context.lineJoin = "round";
 		context.strokeStyle = "#369";
-		context.lineWidth = 3;
-	}
 }
 
 canvas.onpointermove = draw_handler;
 
 canvas.onpointerup = () => {
-		//drawing_mode = false;
+		context.closePath();
+		drawing_mode = false;
 }
 
 function draw_handler(event){
 	if (drawing_mode){
 			let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 			let y = (event.clientY-bb.top)*(canvas.height/bb.height);
-			//context.fillRect(x,y,3,3);
 			context.lineTo(x,y);
 			context.stroke();
-			//context.beginPath();
 			context.moveTo(x,y);
 	}
 }
-
 
 var num_cols = grid_size;
 var num_rows = grid_size;
@@ -471,8 +465,6 @@ window.addEventListener('keydown', (event) => {
 				text_mode = true;
 			}
 		}
-		if (event.key == "Insert") {
-			drawing_mode ^= true;	}
 
 		if (event.key == 'Enter'){
 			cursor_col = 0;
@@ -549,6 +541,9 @@ function fit_canvas(){
 	canvas.width = canvas.width; canvas.height = canvas.height;
 	context.textAlign = "start";
 	context.textBaseline = "top";
+	context.lineCap = "round";
+	context.lineJoin = "round";
+	context.lineWidth = 3;
 	let font_size_pixels = Math.round(square_side/grid_size*0.8);
 	context.font = "Bold " + font_size_pixels+"px Courier";	
 	grid_to_canvas();
