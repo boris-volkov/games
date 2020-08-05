@@ -387,17 +387,14 @@ function execute_command(buffer) {
 	else if (command == "reboot")		location.reload();
 	else if (command == "rmps1")			ps1 = "";
 	else if (command.startsWith("color "))	set_text_color(buffer.slice(6).join(''));
-	else echo ("● Invalid command. Type help. ●");
+	else echo ("● Invalid command ● Type help ●");
 }
-
-// im paranoid about asynchronous functions changing 
-// the grid before it is fully printed
 
 
 var cursor_backup;
 var b_grid; //backup grid
 
-function backup(grid) {
+function backup(grid) {//TODO decide whether this is multi-purpose or not
 	b_grid = JSON.parse(JSON.stringify(grid));
 	backup_history = JSON.parse(JSON.stringify(term_memory));
 	backup_future = JSON.parse(JSON.stringify(forward_memory));
