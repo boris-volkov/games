@@ -14,8 +14,6 @@ const urlParams = new URLSearchParams(window.location.search);
 var grid_size = parseInt( urlParams.get('size'));
 if (isNaN(grid_size)) { grid_size = 32; }
 
-//TODO make these independent... grid_size is one of the most commonly used
-//numbers in the whole code
 num_cols = grid_size;
 num_rows = grid_size;
 
@@ -24,7 +22,6 @@ function initialize_text_matrix(){
 	for (let i = 0; i < num_rows; i++)
 		text_matrix[i] = Array(num_cols).fill(-1);
 }
-initialize_text_matrix();
 
 var grid = Array(num_rows);
 function initialize_grid(){
@@ -35,13 +32,15 @@ function initialize_grid(){
 		}
 	}	
 }
-initialize_grid();
 
-function text_map(i,j) {
+// for mapping from the grid to the text_matrix:
+function text_map(i,j) { 
 	return text_matrix[grid[i][j][0]][grid[i][j][1]];
 }
 
-//--------------------------------------------------------------------------Color state and methods
+initialize_text_matrix();
+initialize_grid();
+//----------------------------------------------------------------Everything related to colors.
 function Color(name){
 	this.name = name;
 	this.amp = 0;
@@ -74,7 +73,9 @@ var gradient = {
 	}
 };
 
-//var gradient;
+function invert_color(string){
+	return;
+}
 
 function reset_colors() {		
 		gradient.red 		= new Color('[Red]'),
@@ -92,8 +93,6 @@ function reset_colors() {
 		gradient.generate_codes();
 }
 
-reset_colors();
-
 function set_text_color(rgb) {
 	if (isHexColor(rgb))
 		text_color = "#" + rgb;
@@ -105,23 +104,13 @@ function isHexColor (hex) {
       && !isNaN(Number('0x' + hex))
 }
 
-//-----------------------------------------------------------------------------------Motion functions
-function torus_up()		{let temp = grid.shift(); grid.push(temp);}
-function torus_down()	{let temp = grid.pop(); grid.unshift(temp);}
-function torus_left()	{for (let i = 0; i < grid_size; i++) 
-	{let temp = grid[i].shift(); grid[i].push(temp)}}
-function torus_right()	{for (let i = 0; i < grid_size; i++) 
-	{let temp = grid[i].pop(); grid[i].unshift(temp)}}
-function mobius_up()	{let temp = grid.shift(); grid.push(temp.reverse())}
-function mobius_down()	{let temp = grid.pop(); grid.unshift(temp.reverse());}
-function mobius_left()	{let row = []; for (let i = 0; i < grid_size; i++)
-	{row.unshift(grid[i].shift());}
-	for (let j = 0; j < grid_size; j++){grid[j].push(row[j]);}}
-function mobius_right()	{let row = []; for (let i = 0; i < grid_size; i++)
-	{row.unshift(grid[i].pop());}
-	for (let j = 0; j < grid_size; j++){grid[j].unshift(row[j]);}}
-function transpose() 	{grid =  grid[0].map((col, i) => grid.map(row => row[i]));}
-//------------------------------------------------------------------------------Draw colors to canvas	
+function rgb(){
+	alert(gradient.rgb_codes);
+}
+
+
+reset_colors();
+//--------------------------------------------------------------Drawing to canvas.
 var display = false;
 var text_hidden = false;
 var cursor_color = '#369';
@@ -139,17 +128,18 @@ function grid_to_canvas(){
 			if (text_hidden){
 				context.fillRect(x , y, block_width, block_height);	
 			} else {
-				if (insert_mode && cursor_row == grid[i][j][0] && cursor_col == grid[i][j][1])
+				if (terminal_mode && cursor_row == grid[i][j][0] && cursor_col == grid[i][j][1])
 					context.fillStyle = cursor_color;
+
 				context.fillRect(x , y, grid_div, grid_div);
 
 				if (text_map(i,j) != -1){ // need to draw char.
 					context.fillStyle = text_color;
-					if ("●◷◶―|".includes(text_map(i,j)))
+					if ("●◷◶―|".includes(text_map(i,j))) // orange special chars
 						context.fillStyle = '#f60';
-					if (":$₽".includes(text_map(i,j)))
+					if (":$₽".includes(text_map(i,j)))   // blue special chars
 						context.fillStyle = "#369";
-					context.fillText(text_map(i,j),Math.round(x+grid_div/5), Math.round(y+grid_div/12));
+					context.fillText(text_map(i,j),Math.round(x+grid_div/4), Math.round(y+grid_div/5));
 				}
 			}
 		}
@@ -163,28 +153,21 @@ function grid_to_canvas(){
 		context.textAlign = "start";
 	}
 }	
-
-function colors(){
-	echo(gradient.red.toString().replace(/\s/g,''));
-	echo(gradient.grn.toString().replace(/\s/g,''));
-	echo(gradient.blu.toString().replace(/\s/g,''));
-}
-
 //----------------------------------------------------------key event listener & key -> function maps
 
 var keys_down = {
 	'r': false, 	'g': false,  	'b': false, 	'p': false,
-	'f': false,	'm': false, 	'c': false, 	'e': false,
+	'f': false,		'm': false, 	'c': false, 	'e': false,
 	'h': false,
 };
 const key_function_map = {
-	'*': () => { insert_mode ^= true; text_hidden = false;},
 	'i': torus_up,		'k': torus_down,	'j': torus_left,
 	'l': torus_right,	'w': mobius_up,		's': mobius_down,
 	'a': mobius_left,	'd': mobius_right,      't': transpose,
 	'.': () => { display ^= true; }, 
 	'`': () => { alert(gradient.rgb_codes); },
 	'h': () => { text_hidden ^= true; },
+	'*': () => { terminal_mode ^= true; text_hidden = false;},
 
 	'ArrowUp' : () => 	{if (keys_down['r']){ 
 					if (keys_down['f'])
@@ -275,10 +258,9 @@ function back_space(){
 	}
 }
 
-function forward_space(){
-	if (cursor_col < grid_size-1){
-		grid[cursor_row][++cursor_col][1] = -1;
-	}
+function delete_row(){
+	for (let i = 0; i < num_cols; i++)
+		text_matrix[cursor_row][i] = -1;
 }
 
 function tab(){
@@ -291,21 +273,19 @@ function clear(){
 	cursor_col = 0;
 }
 
-function quest(){location.assign('./quest/quest.html');}
-function princess(){ location.assign('./princess/rules.html');}
-function sixteen(){ location.assign('./sixteens/sixteens.html');}
-
-var ps1 = "$";
-function prompt(){
-	if (ps1){
-		write(ps1); 
-		cursor_col++;
-	}
+function waves(){
+	echo(gradient.red.toString().replace(/\s/g,''));
+	echo(gradient.grn.toString().replace(/\s/g,''));
+	echo(gradient.blu.toString().replace(/\s/g,''));
 }
+
+
+//--------------------------------------------------Printing utility functions
 
 var cursor_col = 0;
 var cursor_row = 0;
-var insert_mode = true;
+var terminal_mode = true;
+var text_mode = false;
 
 function write(key) {
 	text_matrix[cursor_row][cursor_col] = key;
@@ -328,25 +308,28 @@ function echo(buffer) {
 	}
 }
 
-function rgb(){
-	alert(gradient.rgb_codes);
+
+var ps1 = "$";
+function prompt(){
+	if (ps1){
+		write(ps1); 
+		cursor_col++;
+	}
 }
 
-function unscramble(){
-	initialize_grid();
-	grid_to_canvas();
-}
-
-
+//---------------------------------------------------------------Commands and maps
+command_list = ["clear", "codes", "color [RGB] (hex)", "echo", 
+				"help", "programs (listing)", "reboot", "reset (colors)", "rgb",
+				"[esc] → phase mode", "[*]   → terminal mode",
+				"[F1] terminal ⇄ text edit"		
+				];
 // TODO pull from properties of command map rather than actually writing this list
-command_list = ["clear", "color [RGB] (hex)", "echo", 
-	"help", "programs (listing)", "reboot", "reset (colors)", "rgb", "undo",
-		"[esc] → phase mode", " [*]  → terminal mode"];
-
 
 program_list = ["quest", "princess", "sixteen"]
 
-function help(title, list){
+function help(title, list){ //TODO does not handle long lines
+	if (cursor_row > num_rows - list.length - 3)
+		cursor_row = 0;
 	echo(title + " ".repeat(grid_size-title.length));
 	echo('●' + '―'.repeat(grid_size-2) + "●");
 	for (let i = 0; i < list.length; i++)
@@ -355,58 +338,80 @@ function help(title, list){
 }
 
 
-// put these in a function map?
+// put these in a function map
 function execute_command(buffer) {
 	let command = buffer.join("");
 	if (command == "clear") 		clear();
-	if (command.startsWith("echo ")) 	echo(buffer.slice(5));
-	if (command == "help") 			help("Commands Available", command_list);
-	if (command == "programs")		help("Program Listing", program_list);
-	if (command == "rgb") 			rgb();
-	if (command == "unscramble") 		unscramble();
-	if (command == "reset") 		reset_colors();
-	if (command == "red") 			red();
-	if (command == "rubles") 		ps1 = "₽";
-	if (command == "dollars") 		ps1 = "$";
-	if (command == "undo") 			grid = JSON.parse(JSON.stringify(b_grid));
-	if (command == "quest") 		quest();
-	if (command == "princess") 		princess();
-	if (command == "sixteen")		sixteen();
-	if (command == "reboot")		location.reload();
-	if (command == "rmps1")			ps1 = "";
-	if (command.startsWith("color "))	set_text_color(buffer.slice(6).join(''));
+	else if (command.startsWith("echo ")) 	echo(buffer.slice(5));
+	else if (command == "help") 			help("Commands Available", command_list);
+	else if (command == "programs")		help("Program Listing", program_list);
+	else if (command == "codes") 		rgb();
+	else if (command == "unscramble") 	initialize_grid();
+	else if (command == "reset") 		reset_colors();
+	else if (command == "rgb") 			waves();
+	else if (command == "rubles") 		ps1 = "₽";
+	else if (command == "dollars") 		ps1 = "$";
+	//else if (command == "undo") 		grid = JSON.parse(JSON.stringify(b_grid));
+	else if (command == "quest") 		quest();
+	else if (command == "princess") 	princess();
+	else if (command == "sixteen")		sixteen();
+	else if (command == "reboot")		location.reload();
+	else if (command == "rmps1")			ps1 = "";
+	else if (command.startsWith("color "))	set_text_color(buffer.slice(6).join(''));
+	else echo ("● Invalid command. Type help. ●");
 }
 
-// im paranoid about asynchronous 
-var b_grid;
-function backup_grid() {
-	b_grid = JSON.parse(JSON.stringify(grid))
+// im paranoid about asynchronous functions changing 
+// the grid before it is fully printed
+var b_grid; //backup grid
+function backup(grid) {
+	b_grid = JSON.parse(JSON.stringify(grid));
 	return 0;
 }
+
+var cursor_backup;
 
 //TODO need separate handler for every mode this is getting bloated
 var buffer = [] /* IMPORTANT : input buffer  */
 window.addEventListener('keydown', (event) => {
 
-	if (insert_mode == true){
+	if (terminal_mode == true){
 		if (event.key == 'Escape'){
-			backup_grid();
-			insert_mode = false;
+			terminal_mode = false;
 		}
+
+		if (event.key == "F1"){
+			if (text_mode){
+				ps1 = "$";
+				text_mode = false;
+				text_matrix = b_grid;
+				cursor_row = cursor_backup[0];
+				cursor_col = cursor_backup[1];
+			} else {
+				backup(text_matrix);
+				cursor_backup = [cursor_row, cursor_col]
+				clear();
+				ps1 = "";
+				text_mode = true;
+			}
+		}
+
 		if (event.key == 'Enter'){
 			cursor_col = 0;
 			cursor_row = (cursor_row+1).mod(grid_size);
-			execute_command(Array.from(buffer));
+			if (buffer.length && !text_mode){
+				execute_command(Array.from(buffer));
+			}
 			buffer = [];
 			prompt();
 		}
 		if (event.key == 'Backspace'){
-			if (buffer.length)
+			if (buffer.length && !text_mode)
 				buffer.pop();
 			back_space();
 		}
 		if (event.key == 'Delete'){
-			forward_space();
+			delete_row();
 		}
 		if (event.key == 'ArrowUp'){
 			cursor_up();
@@ -426,7 +431,8 @@ window.addEventListener('keydown', (event) => {
 		}
 		if (event.key.length === 1){
 			event.preventDefault();
-			buffer.push(event.key);
+			if (!text_mode)
+				buffer.push(event.key);
 			write(event.key);
 		}
 		grid_to_canvas();
@@ -448,14 +454,13 @@ window.addEventListener('keyup', (event) => {
 		keys_down[event.key] = false;
 });
 
-
 //-------------------------------------------------------Resize Event Listener
-window.addEventListener("resize", draw_canvas);
-window.addEventListener("onload", draw_canvas);
+window.addEventListener("resize", fit_canvas);
+window.addEventListener("onload", fit_canvas);
 window.addEventListener("onload", canvas.focus);
 window.addEventListener("onload", prompt());
 
-function draw_canvas(){ //rename to resize?
+function fit_canvas(){ 
 	var context = canvas.getContext('2d');
 	let square_side = Math.min(window.innerWidth, window.innerHeight) - 30;
 	square_side -= square_side%(grid_size); 
@@ -466,7 +471,6 @@ function draw_canvas(){ //rename to resize?
 	context.textBaseline = "top";
 	let font_size_pixels = Math.round(square_side/grid_size*0.8);
 	context.font = "Bold " + font_size_pixels+"px Courier";
-	//context.font = "900 " + font_size_pixels+"px Courier New";
 	grid_to_canvas();
 }
 
@@ -475,4 +479,25 @@ function change_font(font) {
 }
 
 gradient.generate_codes();
-draw_canvas();
+fit_canvas();
+
+//-----------------------------------------------------------------------------------Motion functions
+function torus_up()		{let temp = grid.shift(); grid.push(temp);}
+function torus_down()	{let temp = grid.pop(); grid.unshift(temp);}
+function torus_left()	{for (let i = 0; i < grid_size; i++) 
+	{let temp = grid[i].shift(); grid[i].push(temp)}}
+function torus_right()	{for (let i = 0; i < grid_size; i++) 
+	{let temp = grid[i].pop(); grid[i].unshift(temp)}}
+function mobius_up()	{let temp = grid.shift(); grid.push(temp.reverse())}
+function mobius_down()	{let temp = grid.pop(); grid.unshift(temp.reverse());}
+function mobius_left()	{let row = []; for (let i = 0; i < grid_size; i++)
+	{row.unshift(grid[i].shift());}
+	for (let j = 0; j < grid_size; j++){grid[j].push(row[j]);}}
+function mobius_right()	{let row = []; for (let i = 0; i < grid_size; i++)
+	{row.unshift(grid[i].pop());}
+	for (let j = 0; j < grid_size; j++){grid[j].unshift(row[j]);}}
+function transpose() 	{grid =  grid[0].map((col, i) => grid.map(row => row[i]));}
+//----------------------------------------------------------------------------------Out-links
+function quest(){location.assign('./quest/quest.html');}
+function princess(){ location.assign('./princess/rules.html');}
+function sixteen(){ location.assign('./sixteens/sixteens.html');}
