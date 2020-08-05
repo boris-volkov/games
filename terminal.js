@@ -17,17 +17,17 @@ if (isNaN(grid_size)) { grid_size = 32; }
 var drawing_mode = false;
 var bb;
 canvas.onpointerdown = (event) => {
-	bb = canvas.getBoundingClientRect(); 
-	let x = (event.clientX-bb.left)*(canvas.width/bb.width);
-	let y = (event.clientY-bb.top)*(canvas.height/bb.height);
-	context.moveTo(x,y);
-	context.lineCap = "round";
-	context.lineJoin = "round";
-	context.strokeStyle = "#369";
-	context.lineWidth = 3;
-	drawing_mode = true;
+	if (drawing_mode){
+		bb = canvas.getBoundingClientRect(); 
+		let x = (event.clientX-bb.left)*(canvas.width/bb.width);
+		let y = (event.clientY-bb.top)*(canvas.height/bb.height);
+		context.moveTo(x,y);
+		context.lineCap = "round";
+		context.lineJoin = "round";
+		context.strokeStyle = "#369";
+		context.lineWidth = 3;
+	}
 }
-
 
 canvas.onpointermove = draw_handler;
 
@@ -36,7 +36,7 @@ canvas.onpointerup = () => {
 }
 
 function draw_handler(event){
-	if (drawing_mode && event.pointerType == 'mouse'){
+	if (drawing_mode){
 			let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 			let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 			//context.fillRect(x,y,3,3);
@@ -471,6 +471,8 @@ window.addEventListener('keydown', (event) => {
 				text_mode = true;
 			}
 		}
+		if (event.key == "Insert") {
+			drawing_mode ^= true;	}
 
 		if (event.key == 'Enter'){
 			cursor_col = 0;
