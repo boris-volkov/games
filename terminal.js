@@ -277,8 +277,8 @@ function set_text_color(rgb) {
 		text_color = "#" + rgb;
 	else {
 		echo(invalid_usage);
-		echo("::color must be called with an RGB hex code");
-		echo("::example usage : color fff or color 3366ff");
+		echo("::txtcolor must be called with an RGB hex code");
+		echo("::example usage: txtcolor fff or txtcolor 3366ff");
 	}
 }
 
@@ -428,8 +428,9 @@ const key_function_map = {
 				}
 };
 //---------------------------------------------------------------Commands and maps
-command_list = ["cat", "clear", "codes", "color", "echo", 
+command_list = ["cat", "clear", "codes", "echo", 
 				"help", "ls", "programs", "reboot", "rgb",
+				"txtcolor",
 				"[esc]  terminal mode ←→ phase mode" ,
 				"[F1]   terminal mode ←→ text mode"		
 				];
@@ -442,7 +443,7 @@ function execute_command(buffer) {
 	let command = buffer.join("");
 	if (command == "clear") 		clear();
 	else if (command.startsWith("echo")) 	echo(buffer.slice(5));
-	else if (command.startsWith("color"))	set_text_color(buffer.slice(6).join(''));
+	else if (command.startsWith("txtcolor"))	set_text_color(buffer.slice(9).join(''));
 	else if (command.startsWith("cat"))    cat(buffer.slice(4).join(''));
 	else if (command == "help") 			help("Commands Available", command_list);
 	else if (command == "programs")		help("Program Listing", program_list);
