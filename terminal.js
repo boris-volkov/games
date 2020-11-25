@@ -436,7 +436,7 @@ command_list = ["cat", "clear", "codes", "echo",
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
-program_list = ["quest", "princess", "sixteen"]
+program_list = ["quest", "princess", "fifteen", "sixteen"]
 
 // put these in a function map
 function execute_command(buffer) {
@@ -457,6 +457,7 @@ function execute_command(buffer) {
 	else if (command == "quest") 		quest();
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
+	else if (command == "fifteen")		fifteen();
 	else if (command == "reboot")		location.reload();
 	else if (command == "rmps1")			ps1 = "";
 	else if (command == "ls")			ls();
@@ -673,9 +674,11 @@ function transpose() {
 		grid =  grid[0].map((col, i) => grid.map(row => row[i]));
 }
 //----------------------------------------------------------------------------------Out-links
+
 function quest(){location.assign('./quest/quest.html');}
 function princess(){ location.assign('./princess/rules.html');}
 function sixteen(){ location.assign('./sixteens/sixteens.html');}
+function fifteen(){ location.assign('./sixteens/fifteen.html');}
 
 var file_list = {
 	"about" : 
