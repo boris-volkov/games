@@ -432,11 +432,11 @@ command_list = ["cat", "clear", "codes", "echo",
 				"help", "ls", "programs", "reboot", "rgb",
 				"txtcolor",
 				"[esc]  terminal mode ←→ phase mode" ,
-				"[F1]   terminal mode ←→ text mode"		
+				"[F1]   terminal mode ←→ text mode",		
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
-program_list = ["quest", "princess", "fifteen", "sixteen"]
+program_list = ["quest", "princess", "fifteen", "sixteen", "game"]
 
 // put these in a function map
 function execute_command(buffer) {
