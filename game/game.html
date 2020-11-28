@@ -9,9 +9,18 @@ body {
 	background: #369;
 }
 
-#canvas {
+ canvas {
+  cursor : crosshair;
+  border-width : 10px;
+  border-style : solid;
+  border-color : white;
   background: #fff;
   border-radius: 5px;
+  padding-left : 0 ;
+  padding-right : 0;
+  margin-left : auto;
+  margin-right : auto;
+  display : block;
 }
 
 img {
@@ -20,9 +29,9 @@ img {
 </style>
   </head>
   <body>
-	<canvas id="game_space" width="1800" height="700"></canvas>
-	<img src= "link.png" alt="" id="right" />
-	<img src= "link_left.png" alt="" id="left" />
+	<canvas id="game_space"></canvas>
+	<img src= "zelda_right.png" alt="" id="right" />
+	<img src= "zelda_left.png" alt="" id="left" />
 	<script src = "game.js"> </script>
   </body>
 </html>
