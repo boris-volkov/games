@@ -455,6 +455,7 @@ function execute_command(buffer) {
 	else if (command == "dollars") 		ps1 = "$";
 	//else if (command == "undo") 		grid = JSON.parse(JSON.stringify(b_grid));
 	else if (command == "quest") 		quest();
+	else if (command == "game" )     	game();
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
 	else if (command == "fifteen")		fifteen();
@@ -675,10 +676,11 @@ function transpose() {
 }
 //----------------------------------------------------------------------------------Out-links
 
-function quest(){location.assign('./quest/quest.html');}
-function princess(){ location.assign('./princess/rules.html');}
-function sixteen(){ location.assign('./sixteens/sixteens.html');}
-function fifteen(){ location.assign('./sixteens/fifteen.html');}
+function quest()	{location.assign('./quest/quest.html');}
+function princess()	{location.assign('./princess/rules.html');}
+function sixteen()	{location.assign('./sixteens/sixteens.html');}
+function fifteen()	{location.assign('./sixteens/fifteen.html');}
+function game() 	{location.assign('./game/game.html'); }
 
 var file_list = {
 	"about" : 
