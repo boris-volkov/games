@@ -5,6 +5,7 @@ const platform1 = {
 	x: 0,
 	y: 400,
 	dx : 1,
+	dy : 0,
 }
 
 const platform2 = {
@@ -13,6 +14,7 @@ const platform2 = {
 	x: 0,
 	y: 500,
 	dx : 3,
+	dy : 0,
 }
 
 const platform3 = {
@@ -21,6 +23,7 @@ const platform3 = {
 	x: 0,
 	y: 300,
 	dx : 2,
+	dy : 0,
 }
 
 const platform4 = {
@@ -29,6 +32,7 @@ const platform4 = {
 	x:0,
 	y : 100,
 	dx : 4,
+	dy : 0,
 }
 
 const platform5 = {
@@ -37,6 +41,7 @@ const platform5 = {
 	x: 0,
 	y : 200,
 	dx : 6,
+	dy : 0,
 }
 
 const floor = {
@@ -45,9 +50,38 @@ const floor = {
 	x : 0,
 	y : canvas.height,
 	dx : 0,
+	dy : 0,
 }
 
-const platforms = [platform1, platform2, platform3, platform4, platform5, floor];
+
+const ceiling = {
+	w : canvas.width,
+	h : 40,
+	x : 0,
+	y : -40,
+	dx : 0,
+	dy : 0,
+}
+
+const right_wall = {
+	w : 40,
+	h : canvas.height,
+	x : canvas.width,
+	y : 0,
+	dx: 0,
+	dy: 0,
+}
+
+const left_wall = {
+	w : 40,
+	h : canvas.height,
+	x : -40,
+	y : 0,
+	dx: 0,
+	dy: 0,
+}
+
+const platforms = [platform1, platform2, platform3, platform4, platform5, floor, ceiling, left_wall, right_wall];
 
 let engaged_platform = undefined;
 

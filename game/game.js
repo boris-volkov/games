@@ -1,10 +1,10 @@
 const gravity = 2;
 const friction = 1;
-const terminal_vel = 30;
+const terminal_vel = 20;
 
 const player = {
 	w: 40,
-	h: 60,
+	h: 40,
 	x: canvas.width - 200,
 	y: 0,
 	jump: 25,
@@ -17,9 +17,9 @@ function update() {
 	clear();
 	move_platform();
 	on_platform();
+	detect_collisions();
 	new_vel();
 	new_pos();
-	detect_collisions();
 	draw_player();
 	draw_platform();
 	info();
@@ -56,17 +56,16 @@ function new_vel() {
 	if (keys_down['d'] || keys_down['ArrowRight']){
 		image = right;
 		player.ddx = 2;
-		player.dx += player.ddx
 		player.dx = Math.min(terminal_vel, player.dx + player.ddx);
 	} else if (keys_down['a'] || keys_down['ArrowLeft']){
 		image = left;
 		player.ddx = -2
 		player.dx = Math.max(-terminal_vel, player.dx + player.ddx);
 	} else {
-		player.ddx = 0;
+		player.ddx /= 2;
 	}
 
-	player.jump = 15 + Math.round(Math.abs(player.dx/2));
+	player.jump = 15 + Math.round(Math.abs(player.dx));
 	
 
 	if (engaged_platform){
@@ -86,47 +85,14 @@ function new_pos() {
 function inside_x(a ,b)	{ return (((a.x + a.w) > b.x) && (a.x < (b.x + b.w)));}
 function inside_y(a ,b)	{ return (((a.y + a.h) > b.y) && (a.y < (b.y + b.h)));}
 
-// TODO 20 just seems to work here, need to set it based on current velocity
-// and how far the player can move in a single frame. 
-function on   (a, b)	{ return (  Math.abs(a.y + a.h - b.y) <= player.dy ) }
-function under(a, b)	{ return (  Math.abs(a.y - b.y - b.h) <= player.dy ) }
-function r_hit(a, b) 	{ return (  Math.abs(a.x + a.w - b.x) <= player.dx ) }
-function l_hit(a, b)	{ return (  Math.abs(a.x - b.x - b.w) <= player.dx ) }	
+function on     (a, b)	{ return (  Math.abs(a.y + a.h - b.y) <= (a.dy - b.dy)) }
+function beside (a, b) 	{ return (  Math.abs(a.x + a.w - b.x) <= (a.dx - b.dx)) }
 
 
 //TODO generalize the hit detection to all surfaces.
 // generalize walls into platforms.
 function detect_collisions() {
-	// Left wall
-	if (player.x < 0) {
-		player.x = 0;
-		player.dx *= -0.5;
-	}
-
-	// Right Wall
-	if (player.x + player.w > canvas.width) {
-		player.x = canvas.width - player.w;
-		player.dx *= -0.5;
-	}
-
-	// Top wall
-	if (player.y < 0) {
-		player.y = 0;
-		player.dy = 0;
-	}
-
-	// floor or platform
-	 if (engaged_platform){
-		player.y = engaged_platform.y - player.h;
-		player.dy = 0;
-	} else {	
-		player.dy += gravity;
-	}
-
-	if (player.y + player.h > canvas.height) {
-		player.y = canvas.height - player.h;
-	}
-
+	
 	// platform against wall
 	platforms.forEach(platform => {
 		if (platform.x + platform.w >= canvas.width){
@@ -137,11 +103,36 @@ function detect_collisions() {
 			platform.dx *= -1;
 		}
 	});
+
+	// walls or ceiling
+	for (let i = 0; i < platforms.length; i++) {
+		if (inside_y(player, platforms[i]))
+			if (beside(player, platforms[i]) || beside(platforms[i], player)){
+				player.dx *= -0.5;
+			}
+		if (inside_x(player, platforms[i]))
+			if (on(platforms[i], player)){
+				player.dy = 0;
+			}
+	}	
+	
+	// floor or platform
+	 if (engaged_platform){
+		player.y = engaged_platform.y - player.h;
+		player.dy = 0;
+	} else {	
+		player.dy += gravity;
+	}
+
+	// went totally through floor
+	if (player.y + player.h > canvas.height) {
+		player.y = canvas.height - player.h;
+	}
 }
+
 function draw_player() {
 	ctx.drawImage(image, player.x, player.y, player.w, player.h);
 }
-
 
 // KEY LISTENERS
 
