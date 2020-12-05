@@ -30,9 +30,9 @@ class Platform {
 }
 
 let platforms = [
-	new Platform("5",300,40,0,100,4,0),
-	new Platform("4",300,40,0,200,6,0),
-	new Platform("3",300,40,0,300,2,0),
+	new Platform("5",50,40,0,100,4,0),
+	new Platform("4",100,40,0,200,6,0),
+	new Platform("3",200,40,0,300,2,0),
 	new Platform("2",300,40,0,400,1,0),
 	new Platform("1",600,40,0,500,3,0),
 	new Platform("f",canvas.width,40,0,canvas.height,0,0),
