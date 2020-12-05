@@ -16,13 +16,14 @@ reset_background_fill();
 
 function info() {
 	ctx.fillStyle = '#fff';
-	ctx.fillText('x    ' + player.x,  10, 20  );
-	ctx.fillText('y    ' + player.y,  10, 40  );
-	ctx.fillText('dx:  ' + player.dx, 10, 60  );
-	ctx.fillText('dy:  ' + player.dy, 10, 80  );
-	ctx.fillText('ddx: ' + player.ddx, 10, 100);
-	ctx.fillText('ddy: ' + player.ddy, 10, 120);
-	ctx.fillText('on:  ' + player.standing_on, 10, 140);
+	ctx.fillText('  x : ' + player.x,  10, 20  );
+	ctx.fillText('  y : ' + player.y,  10, 40  );
+	ctx.fillText(' dx : ' + player.dx, 10, 60  );
+	ctx.fillText(' dy : ' + player.dy, 10, 80  );
+	ctx.fillText('ddx : ' + player.ddx, 10, 100);
+	ctx.fillText('ddy : ' + player.ddy, 10, 120);
+	ctx.fillText('Mdx : ' + player.max_dx, 10, 140)
+	ctx.fillText('Mdy : ' + player.max_dy, 10, 160);
 	reset_background_fill();
 }
 

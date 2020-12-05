@@ -9,13 +9,18 @@ const player = {
 	ddy 		: 1  		,
 	on			: undefined	,
 	jumped   	: 0			,
-	friction 	: 1			,
+	friction 	: 0.5			,
+	max_dx		:0,
+	max_dy		:0,
+};
+
+Number.prototype.mod = function(n) {
+        return ((this%n)+n)%n;
 };
 
 function new_vel() {
 
-	on_platform()
-	
+	on_platform()	
 	player.dx += player.ddx;
 	if (player.on){ //friction
 		if (player.dx > player.on.dx)
@@ -26,7 +31,11 @@ function new_vel() {
 	} else {
 		player.dy += player.ddy;
 	}
+	player.max_dx = Math.max(player.max_dx, Math.abs(player.dx));
+	player.max_dy = Math.max(player.max_dy, player.dy);
 }
+
+
 
 function new_pos() { 
 	
@@ -34,12 +43,12 @@ function new_pos() {
 		player.y = player.on.y - player.h;
 	}
 	
-	player.x += player.dx
-	player.y += player.dy
-	
-	player.x = Math.round(player.x);
-	player.y = Math.round(player.y);
-	
+	player.x += Math.round(player.dx)
+	player.y += Math.round(player.dy)
+
+	player.x = player.x.mod(canvas.width);
+	player.y = player.y.mod(canvas.height);
+
 }
 
 function jump() {
@@ -70,11 +79,11 @@ function keyDown(e) {
 			}
 			break;
 		case 'a':
-			player.ddx = -2;
+			player.ddx = -1;
 			image = left;
 			break;
 		case 'd':
-			player.ddx = 2;
+			player.ddx = 1;
 			image = right;
 			break;
 		case 'p':

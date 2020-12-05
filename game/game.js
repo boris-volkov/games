@@ -5,7 +5,7 @@ let interval_id = setInterval( () => {
 	new_pos();
 	draw_player();
 	info();
-}, 25);
+}, 20);
 
 function inside_x(a ,b)	{ return (((a.x + a.w) > b.x) && (a.x < (b.x + b.w)));}
 function inside_y(a ,b)	{ return (((a.y + a.h) > b.y) && (a.y < (b.y + b.h)));}
