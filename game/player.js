@@ -60,6 +60,7 @@ function draw_player() {
 
 function keyDown(e) {
 	switch (e.key){
+		case ' ':
 		case 'w':
 			if (player.on) {
 				player.on = undefined;
@@ -85,6 +86,7 @@ function keyDown(e) {
 
 function keyUp(e) {
 	switch (e.key){
+		case ' ':
 		case 'w':
 			player.jumped = 0;
 			break;
