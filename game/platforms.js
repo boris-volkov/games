@@ -43,9 +43,9 @@ let platforms = [
 	new Platform("3",300,40,0,300,2,0),
 	new Platform("2",300,40,0,400,1,0),
 	new Platform("1",600,40,0,500,3,0),
+	new Platform("",canvas.width,40,0,canvas.height-10,0,0),
 ]
 
-	new Platform("f",canvas.width,40,0,canvas.height,0,0),
 	new Platform("c",canvas.width,40,0,-40,0,0),
 	new Platform("r",40,canvas.height,canvas.width,0,0,0),
 	new Platform("l",40,canvas.height,-40,0,0,0)

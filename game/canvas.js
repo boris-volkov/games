@@ -2,11 +2,22 @@ const canvas = document.getElementById('game_space');
 canvas.width = 1200;
 canvas.height = 700;
 const ctx = canvas.getContext('2d');
-const right = document.getElementById('right');
-const left = document.getElementById('left');
+const robot_standing 	= document.getElementById('robot_standing');
+const robot_flying 		= document.getElementById('robot_flying');
+const caught_standing 	= document.getElementById('caught_standing');
+const caught_flying 	= document.getElementById('caught_flying');
 ctx.font = "Bold " + 20  +"px Courier";
 
-let image = left;
+window.oncontextmenu = function () {
+  return false;
+}
+
+
+let animations = 
+[
+	[caught_flying, caught_standing ],
+	[robot_flying, robot_standing ]
+]
 
 function reset_background_fill() {
 	ctx.fillStyle = "#89a";
@@ -22,14 +33,15 @@ function info() {
 	ctx.fillText(' dy : ' + player.dy, 10, 80  );
 	ctx.fillText('ddx : ' + player.ddx, 10, 100);
 	ctx.fillText('ddy : ' + player.ddy, 10, 120);
-	ctx.fillText('Mdx : ' + player.max_dx, 10, 140)
-	ctx.fillText('Mdy : ' + player.max_dy, 10, 160);
+	ctx.fillText('-----', 				10, 140); 
+	ctx.fillText('  x : ' + ball.x,  10, 160  );
+	ctx.fillText('  y : ' + ball.y,  10, 180 );
+	ctx.fillText(' dx : ' + ball.dx, 10, 200  );
+	ctx.fillText(' dy : ' + ball.dy, 10, 220  );
 	reset_background_fill();
 }
 
 function clear() {
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
-
- 
 

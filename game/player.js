@@ -9,18 +9,21 @@ const player = {
 	ddy 		: 1  		,
 	on			: undefined	,
 	jumped   	: 0			,
-	friction 	: 0.5			,
-	max_dx		:0,
-	max_dy		:0,
+	friction 	: 0.5		,
+	max_dx		: 0			,
+	max_dy		: 0			,
 };
 
+// need this because javascript % is 
+// wierd with negative numbers
 Number.prototype.mod = function(n) {
         return ((this%n)+n)%n;
 };
 
-function new_vel() {
+let image = robot_standing;
 
-	on_platform()	
+function new_vel() {
+	on_platform(player);	
 	player.dx += player.ddx;
 	if (player.on){ //friction
 		if (player.dx > player.on.dx)
@@ -35,10 +38,7 @@ function new_vel() {
 	player.max_dy = Math.max(player.max_dy, player.dy);
 }
 
-
-
-function new_pos() { 
-	
+function new_pos() { 	
 	if (player.on){
 		player.y = player.on.y - player.h;
 	}
@@ -50,15 +50,6 @@ function new_pos() {
 	player.y = player.y.mod(canvas.height);
 
 }
-
-function jump() {
-	if (engaged_platform && player.dy === 0) {
-		player.dy -= player.jump;
-		player.dx *= 0.5;
-		engaged_platform = undefined;
-	}
-}
-
 
 function draw_player() {
 	ctx.drawImage(image, player.x, player.y, player.w, player.h);
@@ -80,11 +71,11 @@ function keyDown(e) {
 			break;
 		case 'a':
 			player.ddx = -1;
-			image = left;
+			//image = left;
 			break;
 		case 'd':
 			player.ddx = 1;
-			image = right;
+			//image = right;
 			break;
 		case 'p':
 			clearInterval(interval_id);
