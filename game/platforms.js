@@ -51,7 +51,10 @@ let platforms1 = [
 	new Platform("l",40,canvas.height,-40,0,0,0)
 
 platforms2 = [
-	new Platform("",canvas.width,40,0,canvas.height-10,0,0),	
+	new Platform("",canvas.width,40,0,canvas.height-10,0,0)
+]
+
+platforms3 = [
 ];
 
 

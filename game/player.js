@@ -43,8 +43,8 @@ function new_pos() {
 		player.y = player.on.y - player.h;
 	}
 	
-	player.x += Math.round(player.dx)
-	player.y += Math.round(player.dy)
+	player.x += Math.round(player.dx);
+	player.y += Math.round(player.dy);
 
 	player.x = player.x.mod(canvas.width);
 	player.y = player.y.mod(canvas.height);
@@ -57,7 +57,6 @@ function draw_player() {
 
 
 // KEY LISTENERS
-
 function keyDown(e) {
 	switch (e.key){
 		case ' ':
@@ -74,18 +73,29 @@ function keyDown(e) {
 		case 'a':
 		case 'ArrowLeft':
 			player.ddx = -1;
-			//image = left;
 			break;
 		case 'd':
-		case 'ArrowDown':
+		case 'ArrowRight':
 			player.ddx = 1;
-			//image = right;
 			break;
 		case 'p':
 			clearInterval(interval_id);
 			break;
+		case 'h':
+			switch (platforms){
+				case platforms1:
+					platforms = platforms2;
+					break;
+				case platforms2:
+					platforms = platforms3;
+					break;
+				case platforms3:
+					platforms = platforms1;
+					break;
+			}
+			break;
 		case '.':
-			platforms = (platforms === platforms1)? platforms2 : platforms1;
+			show_info ^= true;
 			break;
 		case '=':
 			MAX_TRAIL_RADIUS += 1;
@@ -94,7 +104,7 @@ function keyDown(e) {
 			MAX_TRAIL_RADIUS = Math.max(0, MAX_TRAIL_RADIUS - 1);
 			break;
 		case ']':
-			TRAIL_LENGTH += 1;
+			TRAIL_LENGTH = Math.min(MAX_TRAIL_LENGTH, TRAIL_LENGTH + 1);;
 			break;
 		case '[':
 			TRAIL_LENGTH = Math.max(0, TRAIL_LENGTH - 1);
@@ -107,12 +117,15 @@ function keyUp(e) {
 	switch (e.key){
 		case ' ':
 		case 'w':
+		case 'ArrowUp':
 			player.jumped = 0;
 			break;
 		case 'a':
+		case 'ArrowLeft':
 			player.ddx = 0;
 			break;
 		case 'd':
+		case'ArrowRight':
 			player.ddx = 0;
 			break;
 	}

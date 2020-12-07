@@ -13,7 +13,7 @@ const ball = {
 	caught : 1,
 	on: undefined,
 	friction: 0.1,
-	max_vel: 50,
+	max_vel: Infinity,
 }
 
 
@@ -27,6 +27,7 @@ function follow_player(){
 follow_player();
 
 let TRAIL_LENGTH = 0;
+const MAX_TRAIL_LENGTH = 500;
 ball_trail = [];
 
 canvas.onpointerdown = (event) => {
@@ -34,14 +35,13 @@ canvas.onpointerdown = (event) => {
 		bb = canvas.getBoundingClientRect();
 		let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 		let y = (event.clientY-bb.top)*(canvas.height/bb.height);
-		ball.dx = Math.round((x - ball.x)/10);
-		ball.dy = Math.round((y - ball.y)/10);
+		ball.dx = Math.round((x - ball.x)/10) + player.dx;
+		ball.dy = Math.round((y - ball.y)/10) + player.dy;;
 		while (inside_x(ball, player) && inside_y(ball, player)){
 			ball.x += ball.dx;
 			ball.y += ball.dy;
 		}
 		ball.caught = 0;
-		//ball_trail = [];
 		image = robot_standing;
 	}
 };
@@ -73,7 +73,6 @@ function ball_vel() {
 	} else {
 		ball.dy += ball.ddy;
 	}
-	//correct_vel();
 }
 
 function correct_vel(){
@@ -103,6 +102,7 @@ function ball_pos(){
 		return;
 	} else {
 		touching_wall();
+		correct_vel();
 		ball.x += ball.dx;
 		ball.y += ball.dy;
 	}
@@ -132,7 +132,7 @@ function draw_ball(x = ball.x, y = ball.y, r = ball.r){
 	ctx.arc(x, y, r + 1, 0, 2*PI, false);
 	ctx.fill();
 	//ctx.stroke();
-	ctx.fillStyle = "#3388ff";
+	ctx.fillStyle = "#336699";
 	ctx.beginPath();
 	ctx.arc(x, y, 2*r/3, 0, 2*PI, false);
 	ctx.fill();
