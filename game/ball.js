@@ -35,6 +35,8 @@ canvas.onpointerdown = (event) => {
 		bb = canvas.getBoundingClientRect();
 		let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 		let y = (event.clientY-bb.top)*(canvas.height/bb.height);
+		x += 10;
+		y += 10;
 		ball.dx = Math.round((x - ball.x)/10) + player.dx;
 		ball.dy = Math.round((y - ball.y)/10) + player.dy;;
 		while (inside_x(ball, player) && inside_y(ball, player)){
