@@ -1,44 +1,45 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>title</title>
-<style>
+	<head>
+		<meta charset="UTF-8">
+		<title>title</title>
+		<style>
 
 body {
 	background: #369;
+	cursor: crosshair;
 }
 
- canvas {
-  cursor : crosshair;
-  border-width : 10px;
-  border-style : solid;
-  border-color : white;
-  background: #fff;
-  border-radius: 5px;
-  padding-left : 0 ;
-  padding-right : 0;
-  margin-left : auto;
-  margin-right : auto;
-  display : block;
+canvas {
+	cursor : url(crosshair.png) ,crosshair;
+	border-width : 10px;
+	border-style : solid;
+	border-color : white;
+	background: #fff;
+	border-radius: 5px;
+	padding-left : 0 ;
+	padding-right : 0;
+	margin-left : auto;
+	margin-right : auto;
+	display : block;
 }
 
 img {
-  display: none;
+	display: none;
 }
-</style>
-  </head>
-  <body>
-	<canvas id	= "game_space"></canvas>
-	<img    src 	= "caught_flying.png" alt="" id="caught_flying" />
-	<img    src 	= "caught_standing.png" alt="" id="caught_standing" />
-	<img 	src	= "robot_standing.png" alt="" id="robot_standing" />
-	<img 	src	= "robot_flying.png" alt="" id="right_flying" />
-	<script src = "canvas.js"> </script>
-	<script src = "platforms.js"> </script>
-	<script src = "player.js"> </script>
-	<script src = "ball.js"> </script>
-	<script src = "game.js"> </script>
-  </body>
+		</style>
+	</head>
+	<body>
+		<canvas id	= "game_space"></canvas>
+		<img    src 	= "caught_flying.png" alt="" id="caught_flying" />
+		<img    src 	= "caught_standing.png" alt="" id="caught_standing" />
+		<img 	src	= "robot_standing.png" alt="" id="robot_standing" />
+		<img 	src	= "robot_flying.png" alt="" id="right_flying" />
+		<script src = "canvas.js"> </script>
+		<script src = "platforms.js"> </script>
+		<script src = "player.js"> </script>
+		<script src = "ball.js"> </script>
+		<script src = "game.js"> </script>
+	</body>
 </html>
 

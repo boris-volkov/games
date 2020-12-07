@@ -7,6 +7,7 @@ let interval_id = setInterval( () => {
 	ball_vel();
 	ball_pos();
 	draw_ball();
+	draw_trail();
 	//info();
 }, 20);
 

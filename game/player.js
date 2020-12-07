@@ -62,7 +62,7 @@ function keyDown(e) {
 	switch (e.key){
 		case ' ':
 		case 'w':
-			if (player.on) {
+			if (player.on && player.jumped === 0) {
 				player.on = undefined;
 			}
 			if (player.jumped === 0){

@@ -38,6 +38,11 @@ function info() {
 	ctx.fillText('  y : ' + ball.y,  10, 180 );
 	ctx.fillText(' dx : ' + ball.dx, 10, 200  );
 	ctx.fillText(' dy : ' + ball.dy, 10, 220  );
+	ctx.fillText('ddx : ' + ball.ddx, 10, 240);
+	ctx.fillText('ddy : ' + ball.ddy, 10, 260);
+	ctx.fillText('on  : ' + ball.on,  10, 280);
+	ctx.fillText('cgt : ' + ball.caught, 10, 300);
+	ctx.fillText('-----', 				10, 140);
 	reset_background_fill();
 }
 
