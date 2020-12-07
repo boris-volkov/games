@@ -37,7 +37,7 @@ class Platform {
 //TODO make a platform yielding function 
 // to replace ones that go through floor
 
-let platforms = [
+let platforms1 = [
 	new Platform("5",100,40,0,100,4,0),
 	new Platform("4",200,40,0,200,6,0),
 	new Platform("3",300,40,0,300,2,0),
@@ -49,6 +49,13 @@ let platforms = [
 	new Platform("c",canvas.width,40,0,-40,0,0),
 	new Platform("r",40,canvas.height,canvas.width,0,0,0),
 	new Platform("l",40,canvas.height,-40,0,0,0)
+
+platforms2 = [
+	new Platform("",canvas.width,40,0,canvas.height-10,0,0),	
+];
+
+
+let platforms = platforms1;
 
 function move_platforms() {
 	platforms.forEach(platform => {

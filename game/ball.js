@@ -26,7 +26,7 @@ function follow_player(){
 
 follow_player();
 
-const TRAIL_LENGTH = 10;
+let TRAIL_LENGTH = 0;
 ball_trail = [];
 
 canvas.onpointerdown = (event) => {
@@ -41,7 +41,7 @@ canvas.onpointerdown = (event) => {
 			ball.y += ball.dy;
 		}
 		ball.caught = 0;
-		ball_trail = [];
+		//ball_trail = [];
 		image = robot_standing;
 	}
 };
@@ -54,7 +54,7 @@ function ball_vel() {
 
 	if (ball.caught)
 		return;
-	
+
 	on_platform(ball);
 	
 	ball.dx += ball.ddx;
@@ -108,30 +108,33 @@ function ball_pos(){
 	}
 }
 
+let MAX_TRAIL_RADIUS = ball.r;
+
 function draw_trail(){
-	if (ball_trail.length > TRAIL_LENGTH){
+	while (ball_trail.length > TRAIL_LENGTH){
 		ball_trail.shift();
 	}
 	ball_trail.push([ball.x, ball.y]);
 	for (let i = 0; i < ball_trail.length; i++){
-		let float_amount = (ball_trail.length - i) * 2;
-		ctx.globalAlpha = i/ball_trail.length/3;
-		draw_ball(ball_trail[i][0], ball_trail[i][1] - float_amount);
+		let float_amount = (ball_trail.length - i)*2;
+		ctx.globalAlpha = i/(ball_trail.length)/3;
+		draw_ball(ball_trail[i][0], ball_trail[i][1] - float_amount, 
+			(MAX_TRAIL_RADIUS) - ((MAX_TRAIL_RADIUS - ball.r)/ball_trail.length)*i);
 	}
 	ctx.globalAlpha = 1;
 }
 
-function draw_ball(x = ball.x, y = ball.y){
+function draw_ball(x = ball.x, y = ball.y, r = ball.r){
 	let mem = ctx.fillStyle;
-	ctx.strokeStyle = "#336699";
+	//ctx.strokeStyle = "#336699";
 	ctx.fillStyle = "#FFF";
 	ctx.beginPath();
-	ctx.arc(x, y, ball.r, 0, 2*PI, false);
+	ctx.arc(x, y, r + 1, 0, 2*PI, false);
 	ctx.fill();
-	ctx.stroke();
-	ctx.fillStyle = "#2266ff";
+	//ctx.stroke();
+	ctx.fillStyle = "#3388ff";
 	ctx.beginPath();
-	ctx.arc(x, y, ball.r - 3, 0, 2*PI, false);
+	ctx.arc(x, y, 2*r/3, 0, 2*PI, false);
 	ctx.fill();
 	ctx.fillStyle = mem;
 }

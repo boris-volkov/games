@@ -62,6 +62,7 @@ function keyDown(e) {
 	switch (e.key){
 		case ' ':
 		case 'w':
+		case 'ArrowUp':
 			if (player.on && player.jumped === 0) {
 				player.on = undefined;
 			}
@@ -71,15 +72,33 @@ function keyDown(e) {
 			}
 			break;
 		case 'a':
+		case 'ArrowLeft':
 			player.ddx = -1;
 			//image = left;
 			break;
 		case 'd':
+		case 'ArrowDown':
 			player.ddx = 1;
 			//image = right;
 			break;
 		case 'p':
 			clearInterval(interval_id);
+			break;
+		case '.':
+			platforms = (platforms === platforms1)? platforms2 : platforms1;
+			break;
+		case '=':
+			MAX_TRAIL_RADIUS += 1;
+			break;
+		case '-':
+			MAX_TRAIL_RADIUS = Math.max(0, MAX_TRAIL_RADIUS - 1);
+			break;
+		case ']':
+			TRAIL_LENGTH += 1;
+			break;
+		case '[':
+			TRAIL_LENGTH = Math.max(0, TRAIL_LENGTH - 1);
+			break;
 
 	}
 }

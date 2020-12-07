@@ -20,7 +20,8 @@ let animations =
 ]
 
 function reset_background_fill() {
-	ctx.fillStyle = "#89a";
+	//ctx.fillStyle = "#89a";
+	ctx.fillStyle = "#789";
 }
 
 reset_background_fill();
