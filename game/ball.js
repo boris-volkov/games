@@ -26,7 +26,9 @@ function follow_player(){
 
 follow_player();
 
-let TRAIL_LENGTH = 0;
+
+let MAX_TRAIL_RADIUS = ball.r * 8;
+let TRAIL_LENGTH = 8;
 const MAX_TRAIL_LENGTH = 500;
 ball_trail = [];
 
@@ -110,7 +112,6 @@ function ball_pos(){
 	}
 }
 
-let MAX_TRAIL_RADIUS = ball.r;
 
 function draw_trail(){
 	while (ball_trail.length > TRAIL_LENGTH){
