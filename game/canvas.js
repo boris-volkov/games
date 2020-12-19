@@ -1,4 +1,4 @@
-const canvas = document.getElementById('game_space');
+const canvas = document.querySelector('#game_space');
 canvas.width = 1200;
 canvas.height = 700;
 const ctx = canvas.getContext('2d');
@@ -8,10 +8,15 @@ const caught_standing 	= document.getElementById('caught_standing');
 const caught_flying 	= document.getElementById('caught_flying');
 ctx.font = "Bold " + 20  +"px Courier";
 
+// need this because javascript % is 
+// wierd with negative numbers
+Number.prototype.mod = function(n) {
+        return ((this%n)+n)%n;
+};
+
 window.oncontextmenu = function () {
   return false;
 }
-
 
 let animations = 
 [

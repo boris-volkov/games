@@ -26,9 +26,10 @@ function follow_player(){
 
 follow_player();
 
-let TRAIL_LENGTH = 0;
+let TRAIL_LENGTH = 8;
 const MAX_TRAIL_LENGTH = 500;
 ball_trail = [];
+let MAX_TRAIL_RADIUS = ball.r * 8;
 
 canvas.onpointerdown = (event) => {
 	if (ball.caught === 1){
@@ -110,7 +111,6 @@ function ball_pos(){
 	}
 }
 
-let MAX_TRAIL_RADIUS = ball.r;
 
 function draw_trail(){
 	while (ball_trail.length > TRAIL_LENGTH){
@@ -118,7 +118,8 @@ function draw_trail(){
 	}
 	ball_trail.push([ball.x, ball.y]);
 	for (let i = 0; i < ball_trail.length; i++){
-		let float_amount = (ball_trail.length - i)*2;
+		//let float_amount = Math.round((ball_trail.length - i)/2);
+		let float_amount = 0;
 		ctx.globalAlpha = i/(ball_trail.length)/3;
 		draw_ball(ball_trail[i][0], ball_trail[i][1] - float_amount, 
 			(MAX_TRAIL_RADIUS) - ((MAX_TRAIL_RADIUS - ball.r)/ball_trail.length)*i);

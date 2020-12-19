@@ -10,14 +10,6 @@ const player = {
 	on			: undefined	,
 	jumped   	: 0			,
 	friction 	: 0.5		,
-	max_dx		: 0			,
-	max_dy		: 0			,
-};
-
-// need this because javascript % is 
-// wierd with negative numbers
-Number.prototype.mod = function(n) {
-        return ((this%n)+n)%n;
 };
 
 let image = robot_standing;
@@ -34,8 +26,6 @@ function new_vel() {
 	} else {
 		player.dy += player.ddy;
 	}
-	player.max_dx = Math.max(player.max_dx, Math.abs(player.dx));
-	player.max_dy = Math.max(player.max_dy, player.dy);
 }
 
 function new_pos() { 	
@@ -55,17 +45,14 @@ function draw_player() {
 	ctx.drawImage(image, player.x, player.y, player.w, player.h);
 }
 
-
 // KEY LISTENERS
 function keyDown(e) {
 	switch (e.key){
 		case ' ':
 		case 'w':
 		case 'ArrowUp':
-			if (player.on && player.jumped === 0) {
-				player.on = undefined;
-			}
 			if (player.jumped === 0){
+				player.on = undefined;
 				player.dy = -15;
 				player.jumped = 1;
 			}

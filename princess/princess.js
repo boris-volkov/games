@@ -10,9 +10,9 @@ const red = '\x1b[91m';
 const green = '\x1b[92m';
 
 function princess(input){
-	var head = input.charAt(0);
-	var tail = input.charAt(input.length - 1);
-	var rest = input.substring(1);
+	let head = input.charAt(0);
+	let tail = input.charAt(input.length - 1);
+	let rest = input.substring(1);
 
 	if (head == "1" && tail == "2")
 		return input.substring(1,input.length - 1);
