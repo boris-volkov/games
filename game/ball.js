@@ -26,10 +26,11 @@ function follow_player(){
 
 follow_player();
 
+
+let MAX_TRAIL_RADIUS = ball.r * 8;
 let TRAIL_LENGTH = 8;
 const MAX_TRAIL_LENGTH = 500;
 ball_trail = [];
-let MAX_TRAIL_RADIUS = ball.r * 8;
 
 canvas.onpointerdown = (event) => {
 	if (ball.caught === 1){
