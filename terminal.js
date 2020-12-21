@@ -316,11 +316,11 @@ function grid_to_canvas(){
 				let character = text_map(i,j);
 				if (character != -1){ // need to draw char.
 					context.fillStyle = text_color;
-					if ("●◷◶→←―|↑↓".includes(character)) // orange special chars
+					if ("●◷◶→←―|↑↓_".includes(character)) // orange special chars
 						context.fillStyle = '#f60';
 					if (":$₽".includes(character))   // blue special chars
 						context.fillStyle = "#369";
-					if ("[](){}".includes(character))  // yellow special chars
+					if ("[](){}><+=-*/".includes(character))  // yellow special chars
 						context.fillStyle = "#990";
 					context.fillText(character, Math.round(x+hor_div/4), Math.round(y+ver_div/5));
 				}
@@ -608,7 +608,7 @@ function fit_canvas(){// resizing this way is costly and clobbers anything that 
 	context.lineCap = "round";
 	context.lineJoin = "round";
 	context.lineWidth = 3;
-	let font_size_pixels = Math.round(actual_height/num_rows*0.8);
+	let font_size_pixels = Math.round(actual_height/num_rows*0.9);
 	context.font = "Bold " + font_size_pixels+"px Courier";	
 	grid_to_canvas();
 }
