@@ -96,6 +96,9 @@ function keyDown(e) {
 		case '[':
 			TRAIL_LENGTH = Math.max(0, TRAIL_LENGTH - 1);
 			break;
+		case 'g':
+			show_sprite ^= true;
+			break;
 
 	}
 }

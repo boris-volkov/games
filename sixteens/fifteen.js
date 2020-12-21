@@ -9,6 +9,8 @@ let grid = 	[
 		];
 const colors = 	["#b13", "#136", "#69b", "#369"];
 
+let tile_width = 0;
+let tile_padding = 0;
 let empty_row = 3;
 let empty_col = 3;
 
@@ -37,7 +39,12 @@ function move(key){
 		scramble();
 }	
 
+function slide(from, to){
+	for (let i = 0; i < 10; i++){
+		context.fillStyle = empty;
 
+	}
+}
 
 Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
@@ -55,6 +62,14 @@ function scramble(){
 		if (i > 100)
 			clearInterval(id);
 	}
+}
+
+function draw_square(i,j) {
+	let x = j * fourth;
+	let y = i * fourth;
+	let number = grid[i][j];
+
+
 }
 
 function grid_to_canvas(){
@@ -98,6 +113,8 @@ function draw_canvas(){
 	context.font = font_height_pix + "px Courier New";
 	context.textAlign = "center";
 	grid_to_canvas();
+	tile_width = canvas.width/4;
+	tile_padding = tile_width/2;
 }
 
 //TODO event listeners for touch events!

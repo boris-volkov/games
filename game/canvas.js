@@ -1,7 +1,7 @@
 const canvas = document.querySelector('#game_space');
 canvas.width = 1200;
 canvas.height = 700;
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d'); // essential line
 const robot_standing 	= document.getElementById('robot_standing');
 const robot_flying 		= document.getElementById('robot_flying');
 const caught_standing 	= document.getElementById('caught_standing');
@@ -26,7 +26,7 @@ let animations =
 
 function reset_background_fill() {
 	//ctx.fillStyle = "#89a";
-	ctx.fillStyle = "#789";
+	ctx.fillStyle = "#457";
 }
 
 reset_background_fill();

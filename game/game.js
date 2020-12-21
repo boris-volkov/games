@@ -4,18 +4,22 @@ let interval_id = start_animation();
 function start_animation(){
 	let id = setInterval( () => {
 		clear();
-		move_platforms();
+		if (platforms === platforms1)
+			move_platforms();
 		new_vel();
 		new_pos();
 		ball_vel();
 		ball_pos();
 		draw_ball();
 		draw_trail();
-		draw_player();
+		if (show_sprite)
+			draw_player();
 		info();
 	}, 20);
 	return id;
 }
+
+let show_sprite = true;
 
 function inside_x(a ,b)	{ return (((a.x + a.w) > b.x) && (a.x < (b.x + b.w)));}
 function inside_y(a ,b)	{ return (((a.y + a.h) > b.y) && (a.y < (b.y + b.h)));}

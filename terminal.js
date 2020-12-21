@@ -429,14 +429,14 @@ const key_function_map = {
 };
 //---------------------------------------------------------------Commands and maps
 command_list = ["cat", "clear", "codes", "echo", 
-				"help", "ls", "programs", "reboot", "rgb",
+				"help", "ls", "programs", "refresh", "rgb",
 				"txtcolor",
 				"[esc]  terminal mode ←→ phase mode" ,
 				"[F1]   terminal mode ←→ text mode",		
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
-program_list = ["quest", "princess", "fifteen", "sixteen", "game"]
+program_list = ["quest", "princess", "fifteen", "sixteen", "game", "territory"]
 
 // put these in a function map
 function execute_command(buffer) {
@@ -459,6 +459,7 @@ function execute_command(buffer) {
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
 	else if (command == "fifteen")		fifteen();
+	else if (command == "territory")    territory();
 	else if (command == "reboot")		location.reload();
 	else if (command == "rmps1")			ps1 = "";
 	else if (command == "ls")			ls();
@@ -681,6 +682,7 @@ function princess()	{location.assign('./princess/rules.html');}
 function sixteen()	{location.assign('./sixteens/sixteens.html');}
 function fifteen()	{location.assign('./sixteens/fifteen.html');}
 function game() 	{location.assign('./game/game.html'); }
+function territory(){location.assign('./territory/page.html'); }
 
 var file_list = {
 	"about" : 

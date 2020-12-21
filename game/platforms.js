@@ -27,7 +27,7 @@ class Platform {
 			ctx.fillStyle = '#fff';
 			ctx.fillText(this.name, this.x + this.w/2 - 5, this.y + 25);
 		} else {
-			ctx.fillStyle = '#556';
+			ctx.fillStyle = '#468';
 			ctx.fillRect(this.x, this.y, this.w, this.h);
 		}
 		reset_background_fill();
