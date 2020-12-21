@@ -295,8 +295,8 @@ reset_colors();
 //--------------------------------------------------------------Drawing to canvas.
 var display = false;
 var text_hidden = false;
-var cursor_color = '#369';
-var text_color = '#47a';
+var cursor_color = '#47a';
+var text_color = '#69c';
 function grid_to_canvas(){
 	var ver_div = canvas.width/num_cols;
 	var hor_div = canvas.height/num_rows;
@@ -460,7 +460,7 @@ function execute_command(buffer) {
 	else if (command == "sixteen")		sixteen();
 	else if (command == "fifteen")		fifteen();
 	else if (command == "territory")    territory();
-	else if (command == "reboot")		location.reload();
+	else if (command == "refresh")		location.reload();
 	else if (command == "rmps1")			ps1 = "";
 	else if (command == "ls")			ls();
 	else echo ("● Invalid command ● Type help ●");
