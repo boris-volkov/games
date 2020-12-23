@@ -428,7 +428,7 @@ const key_function_map = {
 				}
 };
 //---------------------------------------------------------------Commands and maps
-command_list = ["cat", "clear", "codes", "echo", 
+command_list = ["about", "cat", "clear", "codes", "echo", 
 				"help", "ls", "programs", "refresh", "rgb",
 				"txtcolor",
 				"[esc]  terminal mode ←→ phase mode" ,
@@ -448,6 +448,7 @@ function execute_command(buffer) {
 	else if (command == "help") 			help("Commands Available", command_list);
 	else if (command == "programs")		help("Program Listing", program_list);
 	else if (command == "codes") 		rgb();
+	else if (command == "about")        cat("about");
 	else if (command == "unscramble") 	initialize_grid();
 	else if (command == "reset") 		reset_colors();
 	else if (command == "rgb") 			waves();
@@ -688,7 +689,7 @@ var file_list = {
 	"about" : 
 	[
 	 	"Welcome to the ●Mobius Terminal●",
-	 	"This is a small Unix-like command line,",
+	 	"This is a small Unix-like command line",
 	 	"with some special properties...",
 	 	"Some are readily available, some are hidden,",
 	 	"and some will emerge from experimentation.",	
