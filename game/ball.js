@@ -130,12 +130,10 @@ function draw_trail(){
 
 function draw_ball(x = ball.x, y = ball.y, r = ball.r){
 	let mem = ctx.fillStyle;
-	//ctx.strokeStyle = "#336699";
-	ctx.fillStyle = "#CDE";
+	ctx.fillStyle = "#ADE";
 	ctx.beginPath();
-	ctx.arc(x, y, r + 1, 0, 2*PI, false);
+	ctx.arc(x, y, r, 0, 2*PI, false);
 	ctx.fill();
-	//ctx.stroke();
 	ctx.fillStyle = "#336699";
 	ctx.beginPath();
 	ctx.arc(x, y, 2*r/3, 0, 2*PI, false);

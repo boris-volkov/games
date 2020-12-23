@@ -22,7 +22,7 @@ class Platform {
 
 	draw() {
 		if (this === player.on){
-		 	ctx.fillStyle = '#aab';
+		 	ctx.fillStyle = '#abc';
 			ctx.fillRect(this.x, this.y, this.w, this.h);
 			ctx.fillStyle = '#fff';
 			ctx.fillText(this.name, this.x + this.w/2 - 5, this.y + 25);

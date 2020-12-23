@@ -608,7 +608,7 @@ function fit_canvas(){// resizing this way is costly and clobbers anything that 
 	context.lineCap = "round";
 	context.lineJoin = "round";
 	context.lineWidth = 3;
-	let font_size_pixels = Math.round(actual_height/num_rows*0.9);
+	let font_size_pixels = Math.round(actual_height/num_rows*0.8);
 	context.font = "Bold " + font_size_pixels+"px Courier";	
 	grid_to_canvas();
 }

@@ -297,7 +297,7 @@ function grid_to_canvas(){
 
 document.addEventListener("keydown", (e) => {
 	if (locked === 1) return 0;
-	if (e.key === 'w' && square === square_blue){
+	if (e.key === 'w' && square === square_blue){ // and not returning to last square.
 		if (square.j > 1 && grid[square.i][square.j - 2] != 11){
 			grid[square.i][square.j - 0] = 1;
 			grid[square.i][square.j - 1] = 1;
