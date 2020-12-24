@@ -10,7 +10,6 @@ body {
 	background-color: #345;
 	font-size: 72px;
 	color:    white;
-	cursor: none;
 }
 
 div {
@@ -25,25 +24,28 @@ div {
 #outer {
 	margin: auto;
 	background-color: rgb(30,40,60);
-	overflow: auto;
-	display: table;
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
 	align-items: center;
+	max-width: 90vw;
+	max-height: 90vh;
 }
 
 #blue_score {
-	float:left;
 	color: #abf;
 	margin: 40px;
 	padding: 20px;
 	background-color: #369;
+	max-width: 20%;
 }
 
 #pink_score {
-	float:left;
 	color: #eae;
 	margin: 40px;
 	padding: 20px;
 	background-color: #636;
+	max-width 10%;
 }
 
 div.active {
@@ -53,9 +55,9 @@ div.active {
 }
 
 canvas {/*this is to center the canvas*/
-    float:left;
 	border-radius:1%;
 	margin: 30px;
+	max-height: 90vh;
 }
 
 		</style>
