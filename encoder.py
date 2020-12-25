@@ -172,7 +172,6 @@ if __name__ == "__main__":
             for word in js_reserved:
                 start = 0
                 while x := findWholeWord(word)(line, start):
-                    print('found', word, 'in', line)
                     line = line[:x.start()] + '<kw>' + word + '</kw>' + line[x.end():]
                     start = x.end() + len('<kw></kw>')
             for sym in special_symbols:
@@ -223,7 +222,6 @@ if __name__ == "__main__":
             for word in py_reserved:
                 start = 0
                 while x := findWholeWord(word)(line, start):
-                    print('found', word, 'in', line)
                     line = line[:x.start()] + '<kw>' + word + '</kw>' + line[x.end():]
                     start = x.end() + len('<kw></kw>')
             for sym in special_symbols:

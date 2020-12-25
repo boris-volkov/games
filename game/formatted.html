@@ -10,11 +10,8 @@
 
 
 <body>
-	<div class="image">
-		<a href="#"><img class="screenshot" src="screenshot.png"></a>
-	</div>
 			
-<div class="bookmark">./game/readme.txt</div><pre class=notes>
+<div class="image"><a href="#"><img class="screenshot" src="./game/screenshot.png"></a></div><div class="image"><a href="#"><img class="screenshot" src="./game/robot_flying.png"></a></div><div class="image"><a href="#"><img class="screenshot" src="./game/robot_standing.png"></a></div><div class="image"><a href="#"><img class="screenshot" src="./game/caught_standing.png"></a></div><div class="image"><a href="#"><img class="screenshot" src="./game/caught_flying.png"></a></div><div class="image"><a href="#"><img class="screenshot" src="./game/crosshair.png"></a></div><div class="bookmark">./game/readme.txt</div><pre class=notes>
 here is a 2d physics engine that I wrote. 
 the little robot can jet around, jump multiple times, and throw a ball.
 he is controlled by the arrow keys or wasd.
@@ -135,8 +132,8 @@ img {
 			<kw>return</kw><sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
-	// otherwise no platform was engaged
-	me.on = undefined<sc>;</sc>
+	<comment Class="js">// otherwise no platform was engaged
+</comment>	me.on = undefined<sc>;</sc>
 <sc>}</sc>
 
 </pre>
@@ -177,9 +174,9 @@ img {
 	<sc>}</sc>
 <sc>}</sc>
 
-//TODO make a platform yielding <kw>function</kw> 
-// to replace ones that go through floor
-
+<comment Class="js">//TODO make a platform yielding <kw>function</kw> 
+</comment><comment Class="js">// to replace ones that go through floor
+</comment>
 <kw>let</kw> platforms1 = <sc>[</sc>
 	<kw>new</kw> Platform<sc>(</sc><dbl_quote>"5"</dbl_quote>,100,40,0,100,4,0<sc>)</sc>,
 	<kw>new</kw> Platform<sc>(</sc><dbl_quote>"4"</dbl_quote>,200,40,0,200,6,0<sc>)</sc>,
@@ -216,16 +213,16 @@ platforms3 = <sc>[</sc>
 <kw>const</kw> canvas = document.querySelector<sc>(</sc><sgl_quote>'#game_space'</sgl_quote><sc>)</sc><sc>;</sc>
 canvas.width = 1200<sc>;</sc>
 canvas.height = 700<sc>;</sc>
-<kw>const</kw> ctx = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc> // essential line
-<kw>const</kw> robot_standing 	= document.getElementById<sc>(</sc><sgl_quote>'robot_standing'</sgl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> ctx = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc> <comment Class="js">// essential line
+</comment><kw>const</kw> robot_standing 	= document.getElementById<sc>(</sc><sgl_quote>'robot_standing'</sgl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> robot_flying 		= document.getElementById<sc>(</sc><sgl_quote>'robot_flying'</sgl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> caught_standing 	= document.getElementById<sc>(</sc><sgl_quote>'caught_standing'</sgl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> caught_flying 	= document.getElementById<sc>(</sc><sgl_quote>'caught_flying'</sgl_quote><sc>)</sc><sc>;</sc>
 ctx.font = <dbl_quote>"Bold "</dbl_quote> + 20  +<dbl_quote>"px Courier"</dbl_quote><sc>;</sc>
 
-// need <kw>this</kw> because javascript % is 
-// wierd <kw>with</kw> negative numbers
-Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
+<comment Class="js">// need <kw>this</kw> because javascript % is 
+</comment><comment Class="js">// wierd <kw>with</kw> negative numbers
+</comment>Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
         <kw>return</kw> <sc>(</sc><sc>(</sc><kw>this</kw>%n<sc>)</sc>+n<sc>)</sc>%n<sc>;</sc>
 <sc>}</sc><sc>;</sc>
 
@@ -240,8 +237,8 @@ window.oncontextmenu = <kw>function</kw> <sc>(</sc><sc>)</sc> <sc>{</sc>
 <sc>]</sc>
 
 <kw>function</kw> reset_background_fill<sc>(</sc><sc>)</sc> <sc>{</sc>
-	//ctx.fillStyle = <dbl_quote>"#89a"</dbl_quote><sc>;</sc>
-	ctx.fillStyle = <dbl_quote>"#457"</dbl_quote><sc>;</sc>
+	<comment Class="js">//ctx.fillStyle = "#89a"<sc>;</sc>
+</comment>	ctx.fillStyle = <dbl_quote>"#457"</dbl_quote><sc>;</sc>
 <sc>}</sc>
 
 reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -341,8 +338,8 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	
 	ball.dx += ball.ddx<sc>;</sc>
 	
-	<kw>if</kw> <sc>(</sc>ball.on<sc>)</sc><sc>{</sc> //friction
-		<kw>if</kw> <sc>(</sc>ball.dx &gt ball.on.dx<sc>)</sc>
+	<kw>if</kw> <sc>(</sc>ball.on<sc>)</sc><sc>{</sc> <comment Class="js">//friction
+</comment>		<kw>if</kw> <sc>(</sc>ball.dx &gt ball.on.dx<sc>)</sc>
 			ball.dx -= ball.friction<sc>;</sc>
 		<kw>if</kw> <sc>(</sc>ball.dx &lt ball.on.dx<sc>)</sc>
 			ball.dx += ball.friction<sc>;</sc>
@@ -397,8 +394,8 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<sc>}</sc>
 	ball_trail.push<sc>(</sc><sc>[</sc>ball.x, ball.y<sc>]</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt ball_trail.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
-		//<kw>let</kw> float_amount = Math.round<sc>(</sc><sc>(</sc>ball_trail.length - i<sc>)</sc>/2<sc>)</sc><sc>;</sc>
-		<kw>let</kw> float_amount = 0<sc>;</sc>
+		<comment Class="js">//<kw>let</kw> float_amount = Math.round<sc>(</sc><sc>(</sc>ball_trail.length - i<sc>)</sc>/2<sc>)</sc><sc>;</sc>
+</comment>		<kw>let</kw> float_amount = 0<sc>;</sc>
 		ctx.globalAlpha = i/<sc>(</sc>ball_trail.length<sc>)</sc>/3<sc>;</sc>
 		draw_ball<sc>(</sc>ball_trail<sc>[</sc>i<sc>]</sc><sc>[</sc>0<sc>]</sc>, ball_trail<sc>[</sc>i<sc>]</sc><sc>[</sc>1<sc>]</sc> - float_amount, 
 			<sc>(</sc>MAX_TRAIL_RADIUS<sc>)</sc> - <sc>(</sc><sc>(</sc>MAX_TRAIL_RADIUS - ball.r<sc>)</sc>/ball_trail.length<sc>)</sc>*i<sc>)</sc><sc>;</sc>
@@ -421,8 +418,8 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 
 
 <kw>function</kw> touching_wall<sc>(</sc><sc>)</sc><sc>{</sc>
-	//console.log<sc>(</sc><dbl_quote>"collision check"</dbl_quote><sc>)</sc><sc>;</sc>
-	<kw>if</kw> <sc>(</sc>ball.x + 2*ball.r &gt canvas.width<sc>)</sc><sc>{</sc>	
+	<comment Class="js">//console.log<sc>(</sc>"collision check"<sc>)</sc><sc>;</sc>
+</comment>	<kw>if</kw> <sc>(</sc>ball.x + 2*ball.r &gt canvas.width<sc>)</sc><sc>{</sc>	
 		ball.x = canvas.width - 2*ball.r<sc>;</sc>
 		ball.dx *= -0.8<sc>;</sc>
 	<sc>}</sc>
@@ -462,8 +459,8 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 <kw>function</kw> new_vel<sc>(</sc><sc>)</sc> <sc>{</sc>
 	on_platform<sc>(</sc>player<sc>)</sc><sc>;</sc>	
 	player.dx += player.ddx<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>player.on<sc>)</sc><sc>{</sc> //friction
-		<kw>if</kw> <sc>(</sc>player.dx &gt player.on.dx<sc>)</sc>
+	<kw>if</kw> <sc>(</sc>player.on<sc>)</sc><sc>{</sc> <comment Class="js">//friction
+</comment>		<kw>if</kw> <sc>(</sc>player.dx &gt player.on.dx<sc>)</sc>
 			player.dx -= player.friction<sc>;</sc>
 		<kw>if</kw> <sc>(</sc>player.dx &lt player.on.dx<sc>)</sc>
 			player.dx += player.friction<sc>;</sc>
@@ -490,8 +487,8 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	ctx.drawImage<sc>(</sc>image, player.x, player.y, player.w, player.h<sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-// KEY LISTENERS
-<kw>function</kw> keyDown<sc>(</sc>e<sc>)</sc> <sc>{</sc>
+<comment Class="js">// KEY LISTENERS
+</comment><kw>function</kw> keyDown<sc>(</sc>e<sc>)</sc> <sc>{</sc>
 	<kw>switch</kw> <sc>(</sc>e.key<sc>)</sc><sc>{</sc>
 		<kw>case</kw> <sgl_quote>' '</sgl_quote>:
 		<kw>case</kw> <sgl_quote>'w'</sgl_quote>:
@@ -566,9 +563,9 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<sc>}</sc>
 <sc>}</sc>
 
-						//string: what kind of event listener
-						//<kw>function</kw>: what to <kw>do</kw> when the event happens
-document.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>	, keyDown<sc>)</sc><sc>;</sc>
+						<comment Class="js">//string: what kind of event listener
+</comment>						<comment Class="js">//<kw>function</kw>: what to <kw>do</kw> when the event happens
+</comment>document.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>	, keyDown<sc>)</sc><sc>;</sc>
 document.addEventListener<sc>(</sc><sgl_quote>'keyup'</sgl_quote>	, keyUp<sc>)</sc><sc>;</sc>
 </pre>
 

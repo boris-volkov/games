@@ -17,7 +17,7 @@ var num_cols = parseInt( urlParams.get('cols'));
 if (isNaN(num_cols)) { num_cols = 48; }
 
 //-------------------------------------------------------stylus drawing listeners/handlers
-var drawing_mode = false;
+var drawing_mode = true;
 var pen_down = false;
 var bb; // bounding box, to adjust x,y coordinates within the terminal.
 
@@ -316,7 +316,7 @@ function grid_to_canvas(){
 				let character = text_map(i,j);
 				if (character != -1){ // need to draw char.
 					context.fillStyle = text_color;
-					if ("●◷◶→←―|↑↓_".includes(character)) // orange special chars
+					if ("●◷◵◴◶→←―|↑↓_".includes(character)) // orange special chars
 						context.fillStyle = '#f60';
 					if (":$₽".includes(character))   // blue special chars
 						context.fillStyle = "#369";
@@ -360,7 +360,13 @@ const key_function_map = {
 	'.': () => { display ^= true; }, 
 	'`': () => { alert(gradient.rgb_codes); },
 	'h': () => { text_hidden ^= true; },
-	'Escape': () => { terminal_mode ^= true; text_hidden = false; display = false},
+	'Escape': () => { 
+		if (!terminal_mode && !text_mode){ // means phase_mode 
+			terminal_mode = true; 
+			text_hidden = false; 
+			display = false;
+		}
+	},
 	'=' :  reset_colors,
 
 	'ArrowUp' : () => 	{if (keys_down['r']){ 
@@ -431,8 +437,10 @@ const key_function_map = {
 command_list = ["about", "cat", "clear", "codes", "echo", 
 				"help", "ls", "programs", "refresh", "rgb",
 				"txtcolor", "visual",
-				"[esc]  terminal mode ←→ phase mode" ,
-				"[F1]   terminal mode ←→ text mode",		
+				"____________________________________________",
+				"◶ SPECIAL MODES    (press [esc] to return) ◵",
+				"text",
+				"phase"
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
@@ -460,6 +468,8 @@ function execute_command(buffer) {
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
 	else if (command == "visual")		visual();
+	else if (command == "phase")		terminal_mode = false;
+	else if (command == "text")			enter_text_mode();
 	else if (command == "fifteen")		fifteen();
 	else if (command == "territory")    territory();
 	else if (command == "refresh")		location.reload();
@@ -491,37 +501,38 @@ function backup(grid) {//TODO decide whether this is multi-purpose or not
 	return 0;
 }
 
+function enter_text_mode(){
+	backup(text_matrix);
+	cursor_backup = [cursor_row, cursor_col]
+	clear();
+	ps1 = "";
+	text_mode = true;
+}
+
+function exit_text_mode(){
+	ps1 = "$";
+	text_mode = false;
+	text_matrix = b_grid;
+	cursor_row = cursor_backup[0];
+	cursor_col = cursor_backup[1];
+	term_memory = backup_history;
+	forward_memory = backup_future;
+}
+
 //TODO need separate handler for every mode this is getting bloated
 var buffer = [] /* IMPORTANT : input buffer  */
 window.addEventListener('keydown', (event) => {
 
-	if (event.key == 'F2'){
-		drawing_mode ^= true;
-		return;
+	if (text_mode && event.key == "Escape"){
+		exit_text_mode();
+		prompt();
+	}
+
+	if (event.key == 'Delete'){
+		delete_row();
 	}
 
 	if (terminal_mode == true){
-		if (event.key == 'Escape'){
-			terminal_mode ^= true;
-		}
-
-		if (event.key == "F1"){
-			if (text_mode){ // return to terminal mode
-				ps1 = "$";
-				text_mode = false;
-				text_matrix = b_grid;
-				cursor_row = cursor_backup[0];
-				cursor_col = cursor_backup[1];
-				term_memory = backup_history;
-				forward_memory = backup_future;
-			} else { // switch to text mode
-				backup(text_matrix);
-				cursor_backup = [cursor_row, cursor_col]
-				clear();
-				ps1 = "";
-				text_mode = true;
-			}
-		}
 
 		if (event.key == 'Enter'){
 			cursor_col = 0;
@@ -538,9 +549,6 @@ window.addEventListener('keydown', (event) => {
 			if (buffer.length && !text_mode)
 				buffer.pop();
 			back_space();
-		}
-		if (event.key == 'Delete'){
-			delete_row();
 		}
 		if (event.key == 'ArrowUp'){
 			cursor_up();
