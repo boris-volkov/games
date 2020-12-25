@@ -15,7 +15,11 @@ var num_rows = parseInt( urlParams.get('rows'));
 if (isNaN(num_rows)) { num_rows = 32; }
 var num_cols = parseInt( urlParams.get('cols'));
 if (isNaN(num_cols)) { num_cols = 48; }
-
+// next stuff prevents touch scrolling on mobile/ipad
+function preventDefault(e){
+    e.preventDefault();
+}
+document.body.addEventListener('touchmove', preventDefault, { passive: false });
 //-------------------------------------------------------stylus drawing listeners/handlers
 var drawing_mode = true;
 var pen_down = false;
