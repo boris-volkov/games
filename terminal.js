@@ -472,8 +472,8 @@ function execute_command(buffer) {
 
 function quest()	{location.assign('./quest/quest.html');}
 function princess()	{location.assign('./princess/rules.html');}
-function sixteen()	{location.assign('./puzzles/sixteens.html');}
-function fifteen()	{location.assign('./puzzles/fifteen.html');}
+function sixteen()	{location.assign('./puzzles/sixteen/sixteens.html');}
+function fifteen()	{location.assign('./puzzles/fifteen/fifteen.html');}
 function game() 	{location.assign('./game/game.html'); }
 function territory(){location.assign('./territory/page.html'); }
 function visual()   {location.assign('./visual.html'); }

@@ -60,6 +60,7 @@ c_reserved = [
     '_Static_assert',       '_Thread_local',
 ]
 
+image_extensions = ['.jpg', '.png', '.JPG', '.PNG']
 
 def findWholeWord(w):
     return re.compile(r'\b({0})\b'.format(w)).search
@@ -74,9 +75,12 @@ if __name__ == "__main__":
     css_readers = []
     txt_readers = []
     py_readers = []
+    pictures = []
 
     for (root, subs, files) in os.walk("./" + sys.argv[1]):
         for name in files:
+            if any(name.endswith(x) for x in image_extensions):
+                pictures.append(root+name)
             if name.endswith('.js'):
                 with open(root+name) as temp:
                     js_readers.append([root+name] + temp.readlines())
@@ -101,6 +105,9 @@ if __name__ == "__main__":
     while "WRITE_HERE" not in template[i]:
         _of.write(template[i])
         i += 1
+
+    for pic in pictures:
+        _of.write('<div class="image"><a href="#"><img class="screenshot" src="' + pic + '"></a></div>')
 
     for txt in txt_readers:
         _of.write('<div class="bookmark">' + txt[0]  +  '</div>')
@@ -143,21 +150,64 @@ if __name__ == "__main__":
         _of.write("</pre>\n")
 
     for js in js_readers:
+        dbl_quote = 0
+        sgl_quote = 0
+        block_comment = 0
         _of.write('<div class="bookmark">' + js[0]  +  '</div>')
         _of.write("<pre class=js>\n")
-        for line in js[1:]:
+        for line_num, line in enumerate(js[1:]):
+            line = line.replace("<", "&lt")
+            line = line.replace(">", "&gt")
+
+            if '/*' in line: 
+                line = line.replace('/*', '<comment class="js">/*')
+                block_comment = 1
+            if '*/' in line:
+                line = line.replace('*/', '*/</comment>')
+                block_comment = 0
+            if block_comment == 1:
+                _of.write(line)
+                continue
+
             for word in js_reserved:
-                if findWholeWord(word)(line):
-                    line = line.replace(word, "<kw>" + word + "</kw>")
+                start = 0
+                while x := findWholeWord(word)(line, start):
+                    print('found', word, 'in', line)
+                    line = line[:x.start()] + '<kw>' + word + '</kw>' + line[x.end():]
+                    start = x.end() + len('<kw></kw>')
             for sym in special_symbols:
                 if sym in line:
                     line = line.replace(sym, "<sc>" + sym + "</sc>")
-            if "//" in line:
-                line = line.replace('//', '<comment class="js">//', 1)
-                line = line[:-1] + "</comment>\n"
-            line = line.replace('/*', '<comment class="js">/*')
-            line = line.replace('*/', '*/</comment>')
-                
+
+            j = 0
+            temp = list(line)
+            
+            while j < len(temp):
+                if temp[j] == '/' and temp[j+1] == '/' and dbl_quote == 0 and sgl_quote ==0:
+                    temp[j] = '<comment Class="js">/'
+                    temp.append('</comment>')
+                    break
+                if temp[j] == '"' and sgl_quote == 0:
+                    if dbl_quote == 0:
+                        temp.insert(j, '<dbl_quote>')
+                        dbl_quote = 1
+                    else:
+                        temp.insert(j + 1, '</dbl_quote>')
+                        dbl_quote = 0
+                    j += 2
+                    continue
+                elif temp[j] == "'":
+                    if sgl_quote == 0 and dbl_quote == 0:
+                        temp.insert(j, '<sgl_quote>')
+                        sgl_quote = 1
+                    else:
+                        temp.insert(j + 1, '</sgl_quote>')
+                        sgl_quote = 0
+                    j += 2
+                    continue
+                j += 1
+            line = ''.join(temp)
+
             _of.write(line)
         _of.write("</pre>\n")
 

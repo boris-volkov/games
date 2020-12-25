@@ -3,7 +3,6 @@
 	font-family : Courier;
 	font-weight : 600;
 	box-sizing : border-box; /* to correct sizes */
-	cursor: default;
 }
 
 body {
@@ -36,6 +35,7 @@ div {
 
 a {
 	text-decoration: none;
+	cursor: default;
 }
 
 .top_menu {
@@ -254,7 +254,7 @@ comment.css {
 }
 
 comment.js {
-	color: #532;
+	color: #f95;
 }
 
 comment.html {
@@ -265,16 +265,29 @@ comment.py {
 	color: #987;
 }
 
-dbl_quote {
+comment, dbl_quote, sgl_quote {
+	font-weight : 100;
+}
+
+pre.py dbl_quote {
 	color: #1b5;
 }
 
-sgl_quote {
+pre.py sgl_quote {
 	color: #1a5;
 }
 
-sgl_quote sc, sgl_quote kw, dbl_quote sc, dbl_quote kw{
-	color: inherit!important;
+pre.js dbl_quote {
+	color: #bca;
+}
+
+pre.js sgl_quote {
+	color: #bca;
+}
+
+comment sc, comment kw, sgl_quote sc, sgl_quote kw, dbl_quote sc, dbl_quote kw{
+	color : inherit!important;
+	font-weight : inherit!important;
 }
 
 
