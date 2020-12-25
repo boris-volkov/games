@@ -1,0 +1,15 @@
+Here is an example of a page layout using css and html.
+
+The way the code is written now assumes that you have 
+the following three files in your directory:
+	page.html  		<- containing the html text below
+	style.css  		<- containing the css text below(er)
+	picture.jpg		<- being some picture
+
+These names are not required, but whatever name you choose
+has to match what you write in the html.
+
+This layout is just here for you to practice getting a page working. 
+Choose your own topic, play around with the numbers, change the colors,
+change the borders/padding/margins to how you like it. Make it your own!
+There is still much to be done to make this page look great...

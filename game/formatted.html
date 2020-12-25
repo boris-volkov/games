@@ -1,0 +1,576 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>html demos</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+	<div class="image">
+		<img class="screenshot" src="screenshot.png">		
+	</div>
+			
+<div class="bookmark">./game/readme.txt</div><pre class=notes>
+here is a 2d physics engine that I wrote. 
+the little robot can jet around, jump multiple times, and throw a ball.
+he is controlled by the arrow keys or wasd.
+I don't have ipad controls for his motion yet, but you can throw the ball by tapping the screen, or clicking the mouse or stylus. 
+
+my goal was to get the jumping and movements to feel really satisfying. 
+I also put a lot of time into the trail looking nice.
+
+here are the full keyboard controls:
+reccomended to use keyboard and mouse!
+
+controls:
+wasd/arrows: move
+mouse: throw ball
+[ : shorter trail
+] : longer trail
+- : thinner trail
+= : wider trail
+. : display physics
+h : toggle platforms/floor
+g : toggle sprite visibility
+
+
+It was a difficult challenge to get everything feeling smooth.
+There is still room to grow here in terms of a feeling of solidity.
+
+Mario survived, while so many of his contemporaries were forgotten, primarilly because the JUMP felt so clean. A program should always strive to feel satisfying to use. 
+</pre>
+<div class="bookmark">./game/game.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="UTF-8"&gt</kw>
+		<kw>&lttitle&gt</kw>title<kw>&lt/title&gt</kw>
+		<kw>&ltstyle&gt</kw>
+
+body {
+	background: #333540;
+	cursor: crosshair;
+}
+
+canvas {	
+	cursor : url(crosshair.png),crosshair;
+	border-width : 10px;
+	border-style : solid;
+	border-color : #778;
+	background: #fff;
+	border-radius: 5px;
+	padding-left : 0 ;
+	padding-right : 0;
+	margin-left : auto;
+	margin-right : auto;
+	display : block;
+	max-width: 90vw;
+	max-height: 90vh;
+}
+
+img {
+	display: none;
+}
+		<kw>&lt/style&gt</kw>
+	<kw>&lt/head&gt</kw>
+	<kw>&ltbody&gt</kw>
+		<kw>&ltcanvas id	= "game_space"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&ltimg    src 	= "caught_flying.png" alt="" id="caught_flying" /&gt</kw>
+		<kw>&ltimg    src 	= "caught_standing.png" alt="" id="caught_standing" /&gt</kw>
+		<kw>&ltimg 	src	= "robot_standing.png" alt="" id="robot_standing" /&gt</kw>
+		<kw>&ltimg 	src	= "robot_flying.png" alt="" id="right_flying" /&gt</kw>
+		<kw>&ltscript src = "canvas.js"&gt</kw> <kw>&lt/script&gt</kw>
+		<kw>&ltscript src = "platforms.js"&gt</kw> <kw>&lt/script&gt</kw>
+		<kw>&ltscript src = "player.js"&gt</kw> <kw>&lt/script&gt</kw>
+		<kw>&ltscript src = "ball.js"&gt</kw> <kw>&lt/script&gt</kw>
+		<kw>&ltscript src = "game.js"&gt</kw> <kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+
+</pre>
+<div class="bookmark">./game/game.js</div><pre class=js>
+
+<kw>let</kw> interval_id = start_animation<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> start_animation<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> id = setInterval<sc>(</sc> <sc>(</sc><sc>)</sc> => <sc>{</sc>
+		clear<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>platforms === platforms1<sc>)</sc>
+			move_platforms<sc>(</sc><sc>)</sc><sc>;</sc>
+		new_vel<sc>(</sc><sc>)</sc><sc>;</sc>
+		new_pos<sc>(</sc><sc>)</sc><sc>;</sc>
+		ball_vel<sc>(</sc><sc>)</sc><sc>;</sc>
+		ball_pos<sc>(</sc><sc>)</sc><sc>;</sc>
+		draw_ball<sc>(</sc><sc>)</sc><sc>;</sc>
+		draw_trail<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>show_sprite<sc>)</sc>
+			draw_player<sc>(</sc><sc>)</sc><sc>;</sc>
+		info<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>, 20<sc>)</sc><sc>;</sc>
+	<kw>return</kw> id<sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> show_sprite = true<sc>;</sc>
+
+<kw>function</kw> inside_x<sc>(</sc>a ,b<sc>)</sc>	<sc>{</sc> <kw>return</kw> <sc>(</sc><sc>(</sc><sc>(</sc>a.x + a.w<sc>)</sc> > b.x<sc>)</sc> && <sc>(</sc>a.x < <sc>(</sc>b.x + b.w<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> inside_y<sc>(</sc>a ,b<sc>)</sc>	<sc>{</sc> <kw>return</kw> <sc>(</sc><sc>(</sc><sc>(</sc>a.y + a.h<sc>)</sc> > b.y<sc>)</sc> && <sc>(</sc>a.y < <sc>(</sc>b.y + b.h<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+
+<kw>function</kw> on     <sc>(</sc>a, b<sc>)</sc>	<sc>{</sc> <kw>return</kw> <sc>(</sc>  Math.abs<sc>(</sc>a.y + a.h - b.y<sc>)</sc> <= <sc>(</sc>a.dy - b.dy<sc>)</sc><sc>)</sc> <sc>}</sc>
+<kw>function</kw> beside <sc>(</sc>a, b<sc>)</sc> 	<sc>{</sc> <kw>return</kw> <sc>(</sc>  Math.abs<sc>(</sc>a.x + a.w - b.x<sc>)</sc> <= <sc>(</sc>a.dx - b.dx<sc>)</sc><sc>)</sc> <sc>}</sc>
+
+<kw>function</kw> on_platform<sc>(</sc>me<sc>)</sc><sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i < plat<kw>for</kw>ms.length<sc>;</sc> i++<sc>)</sc>
+	<sc>{</sc>
+		<kw>if</kw> 	<sc>(</sc> me.dy >= 0 &&
+		   	<sc>(</sc>on<sc>(</sc>me, platforms<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>)</sc> &&
+			<sc>(</sc>inside_x<sc>(</sc>me, platforms<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>)</sc><sc>)</sc>
+		<sc>{</sc>
+			<kw>if</kw> <sc>(</sc>platforms<sc>[</sc>i<sc>]</sc> === me.on<sc>)</sc>
+				<kw>return</kw><sc>;</sc>
+			me.on = platforms<sc>[</sc>i<sc>]</sc><sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	<comment class="js">// otherwise no platform was engaged</comment>
+	me.on = undefined<sc>;</sc>
+<sc>}</sc>
+
+</pre>
+<div class="bookmark">./game/platforms.js</div><pre class=js>
+<kw>class</kw> Platform <sc>{</sc>
+	constructor<sc>(</sc>name, w, h, x, y, dx, dy<sc>)</sc><sc>{</sc>
+		<kw>this</kw>.name = name<sc>;</sc>
+		<kw>this</kw>.w = w<sc>;</sc>
+		<kw>this</kw>.h = h<sc>;</sc>
+		<kw>this</kw>.x = x<sc>;</sc>
+		<kw>this</kw>.y = y<sc>;</sc>
+		<kw>this</kw>.dx = dx<sc>;</sc>
+		<kw>this</kw>.dy = dy<sc>;</sc>
+	<sc>}</sc>
+
+	move<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc><kw>this</kw>.x + <kw>this</kw>.w > canvas.width || <kw>this</kw>.x < 0<sc>)</sc>
+			<kw>this</kw>.dx *= -1<sc>;</sc>
+
+		<kw>this</kw>.x += <kw>this</kw>.dx<sc>;</sc>
+		<kw>this</kw>.y += <kw>this</kw>.dy<sc>;</sc>
+
+		<kw>this</kw>.x = Math.round<sc>(</sc><kw>this</kw>.x<sc>)</sc><sc>;</sc>
+		<kw>this</kw>.y = Math.round<sc>(</sc><kw>this</kw>.y<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	draw<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc><kw>this</kw> === player.on<sc>)</sc><sc>{</sc>
+		 	ctx.fillStyle = '#abc'<sc>;</sc>
+			ctx.fillRect<sc>(</sc><kw>this</kw>.x, <kw>this</kw>.y, <kw>this</kw>.w, <kw>this</kw>.h<sc>)</sc><sc>;</sc>
+			ctx.fillStyle = '#fff'<sc>;</sc>
+			ctx.fillText<sc>(</sc><kw>this</kw>.name, <kw>this</kw>.x + <kw>this</kw>.w/2 - 5, <kw>this</kw>.y + 25<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc>
+			ctx.fillStyle = '#468'<sc>;</sc>
+			ctx.fillRect<sc>(</sc><kw>this</kw>.x, <kw>this</kw>.y, <kw>this</kw>.w, <kw>this</kw>.h<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<comment class="js">//TODO make a platform yielding <kw>function</kw> </comment>
+<comment class="js">// to replace ones that go through floor</comment>
+
+<kw>let</kw> platforms1 = <sc>[</sc>
+	<kw>new</kw> Platform<sc>(</sc>"5",100,40,0,100,4,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"4",200,40,0,200,6,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"3",300,40,0,300,2,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"2",300,40,0,400,1,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"1",600,40,0,500,3,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"",canvas.width,40,0,canvas.height-10,0,0<sc>)</sc>,
+<sc>]</sc>
+
+	<kw>new</kw> Platform<sc>(</sc>"c",canvas.width,40,0,-40,0,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"r",40,canvas.height,canvas.width,0,0,0<sc>)</sc>,
+	<kw>new</kw> Platform<sc>(</sc>"l",40,canvas.height,-40,0,0,0<sc>)</sc>
+
+platforms2 = <sc>[</sc>
+	<kw>new</kw> Platform<sc>(</sc>"",canvas.width,40,0,canvas.height-10,0,0<sc>)</sc>
+<sc>]</sc>
+
+platforms3 = <sc>[</sc>
+<sc>]</sc><sc>;</sc>
+
+
+<kw>let</kw> platforms = platforms1<sc>;</sc>
+
+<kw>function</kw> move_platforms<sc>(</sc><sc>)</sc> <sc>{</sc>
+	platforms.forEach<sc>(</sc>platform => <sc>{</sc>
+		platform.move<sc>(</sc><sc>)</sc>
+		platform.draw<sc>(</sc><sc>)</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+	reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+</pre>
+<div class="bookmark">./game/canvas.js</div><pre class=js>
+<kw>const</kw> canvas = document.querySelector<sc>(</sc>'#game_space'<sc>)</sc><sc>;</sc>
+canvas.width = 1200<sc>;</sc>
+canvas.height = 700<sc>;</sc>
+<kw>const</kw> ctx = canvas.getContext<sc>(</sc>'2d'<sc>)</sc><sc>;</sc> <comment class="js">// essential line</comment>
+<kw>const</kw> robot_standing 	= document.getElementById<sc>(</sc>'robot_standing'<sc>)</sc><sc>;</sc>
+<kw>const</kw> robot_flying 		= document.getElementById<sc>(</sc>'robot_flying'<sc>)</sc><sc>;</sc>
+<kw>const</kw> caught_standing 	= document.getElementById<sc>(</sc>'caught_standing'<sc>)</sc><sc>;</sc>
+<kw>const</kw> caught_flying 	= document.getElementById<sc>(</sc>'caught_flying'<sc>)</sc><sc>;</sc>
+ctx.font = "Bold " + 20  +"px Courier"<sc>;</sc>
+
+<comment class="js">// need <kw>this</kw> because javascript % is </comment>
+<comment class="js">// wierd <kw>with</kw> negative numbers</comment>
+Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
+        <kw>return</kw> <sc>(</sc><sc>(</sc><kw>this</kw>%n<sc>)</sc>+n<sc>)</sc>%n<sc>;</sc>
+<sc>}</sc><sc>;</sc>
+
+window.oncontextmenu = <kw>function</kw> <sc>(</sc><sc>)</sc> <sc>{</sc>
+  <kw>return</kw> <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> animations = 
+<sc>[</sc>
+	<sc>[</sc>caught_flying, caught_standing <sc>]</sc>,
+	<sc>[</sc>robot_flying, robot_standing <sc>]</sc>
+<sc>]</sc>
+
+<kw>function</kw> reset_background_fill<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<comment class="js">//ctx.fillStyle = "#89a"<sc>;</sc></comment>
+	ctx.fillStyle = "#457"<sc>;</sc>
+<sc>}</sc>
+
+reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<kw>let</kw> show_info = 0<sc>;</sc>
+
+<kw>function</kw> info<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>show_info<sc>)</sc><sc>{</sc>
+		ctx.fillStyle = '#000'<sc>;</sc>
+		ctx.fillText<sc>(</sc>'====BOT=====',         10, 20  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'   x : ' + player.x,   10, 40  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'   y : ' + player.y,   10, 60  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'  dx : ' + player.dx,  10, 80  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'  dy : ' + player.dy,  10, 100 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>' ddx : ' + player.ddx, 10, 120 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>' ddy : ' + player.ddy, 10, 140 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'=---BALL---=', 		 10, 160 <sc>)</sc><sc>;</sc> 
+		ctx.fillText<sc>(</sc>'   x : ' + ball.x,  	 10, 180 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'   y : ' + ball.y,  	 10, 200 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'  dx : ' + ball.dx, 	 10, 220 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'  dy : ' + ball.dy, 	 10, 240 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>' ddx : ' + ball.ddx, 	 10, 260 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>' ddy : ' + ball.ddy, 	 10, 280 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc>'============',         10, 300 <sc>)</sc><sc>;</sc>
+		reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
+	ctx.fillRect<sc>(</sc>0, 0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+</pre>
+<div class="bookmark">./game/ball.js</div><pre class=js>
+<kw>const</kw> PI = 3.1415926535<sc>;</sc>
+
+<kw>const</kw> ball = <sc>{</sc>
+	r: 8,
+	w: 8,
+	h: 8,
+	x: player.x,
+	y: player.y,
+	dx: player.dx,
+	dy: player.dy,
+	ddx: player.ddx,
+	ddy: player.ddy,
+	caught : 1,
+	on: undefined,
+	friction: 0.1,
+	max_vel: Infinity,
+<sc>}</sc>
+
+
+<kw>function</kw> follow_player<sc>(</sc><sc>)</sc><sc>{</sc>
+	ball.x = player.x + 21<sc>;</sc>
+	ball.y = player.y - 6<sc>;</sc>
+	ball.dx = player.dx<sc>;</sc>
+	ball.dy = player.dy<sc>;</sc>
+<sc>}</sc>
+
+follow_player<sc>(</sc><sc>)</sc><sc>;</sc>
+
+
+<kw>let</kw> MAX_TRAIL_RADIUS = ball.r * 8<sc>;</sc>
+<kw>let</kw> TRAIL_LENGTH = 8<sc>;</sc>
+<kw>const</kw> MAX_TRAIL_LENGTH = 500<sc>;</sc>
+ball_trail = <sc>[</sc><sc>]</sc><sc>;</sc>
+
+canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> => <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>ball.caught === 1<sc>)</sc><sc>{</sc>
+		bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+		<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+		x += 10<sc>;</sc>
+		y += 10<sc>;</sc>
+		ball.dx = Math.round<sc>(</sc><sc>(</sc>x - ball.x<sc>)</sc>/10<sc>)</sc> + player.dx<sc>;</sc>
+		ball.dy = Math.round<sc>(</sc><sc>(</sc>y - ball.y<sc>)</sc>/10<sc>)</sc> + player.dy<sc>;</sc><sc>;</sc>
+		<kw>while</kw> <sc>(</sc>inside_x<sc>(</sc>ball, player<sc>)</sc> && inside_y<sc>(</sc>ball, player<sc>)</sc><sc>)</sc><sc>{</sc>
+			ball.x += ball.dx<sc>;</sc>
+			ball.y += ball.dy<sc>;</sc>
+		<sc>}</sc>
+		ball.caught = 0<sc>;</sc>
+		image = robot_standing<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc><sc>;</sc>
+
+<kw>function</kw> ball_vel<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>inside_x<sc>(</sc>ball, player<sc>)</sc> && inside_y<sc>(</sc>ball, player<sc>)</sc><sc>)</sc><sc>{</sc>
+		ball.caught = 1<sc>;</sc>
+		image = caught_standing<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>ball.caught<sc>)</sc>
+		<kw>return</kw><sc>;</sc>
+
+	on_platform<sc>(</sc>ball<sc>)</sc><sc>;</sc>
+	
+	ball.dx += ball.ddx<sc>;</sc>
+	
+	<kw>if</kw> <sc>(</sc>ball.on<sc>)</sc><sc>{</sc> <comment class="js">//friction</comment>
+		<kw>if</kw> <sc>(</sc>ball.dx > ball.on.dx<sc>)</sc>
+			ball.dx -= ball.friction<sc>;</sc>
+		<kw>if</kw> <sc>(</sc>ball.dx < ball.on.dx<sc>)</sc>
+			ball.dx += ball.friction<sc>;</sc>
+		<kw>if</kw> <sc>(</sc>Math.abs<sc>(</sc>ball.dy<sc>)</sc> < 5<sc>)</sc><sc>{</sc>
+			ball.dy = 0<sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc> 
+			ball.dy *= -0.8<sc>;</sc>
+		<sc>}</sc>
+			
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		ball.dy += ball.ddy<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> correct_vel<sc>(</sc><sc>)</sc><sc>{</sc>
+
+	<kw>if</kw> <sc>(</sc>ball.dx > ball.max_vel<sc>)</sc><sc>{</sc>
+		ball.dx = ball.max_vel<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>ball.dx < -ball.max_vel<sc>)</sc><sc>{</sc>
+		ball.dx = -ball.max_vel<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>ball.dy > ball.max_vel<sc>)</sc><sc>{</sc>
+		ball.dy = ball.max_vel<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>ball.dy < -ball.max_vel<sc>)</sc><sc>{</sc>
+		ball.dy = -ball.max_vel<sc>;</sc>
+	<sc>}</sc>
+	ball.dx = Math.round<sc>(</sc>ball.dx<sc>)</sc><sc>;</sc>
+	ball.dy = Math.round<sc>(</sc>ball.dy<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> ball_pos<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>ball.on<sc>)</sc> <sc>{</sc>
+		ball.y = ball.on.y - ball.r<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>ball.caught<sc>)</sc><sc>{</sc>
+		follow_player<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		touching_wall<sc>(</sc><sc>)</sc><sc>;</sc>
+		correct_vel<sc>(</sc><sc>)</sc><sc>;</sc>
+		ball.x += ball.dx<sc>;</sc>
+		ball.y += ball.dy<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> draw_trail<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>while</kw> <sc>(</sc>ball_trail.length > TRAIL_LENGTH<sc>)</sc><sc>{</sc>
+		ball_trail.shift<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	ball_trail.push<sc>(</sc><sc>[</sc>ball.x, ball.y<sc>]</sc><sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i < ball_trail.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<comment class="js">//<kw>let</kw> float_amount = Math.round<sc>(</sc><sc>(</sc>ball_trail.length - i<sc>)</sc>/2<sc>)</sc><sc>;</sc></comment>
+		<kw>let</kw> float_amount = 0<sc>;</sc>
+		ctx.globalAlpha = i/<sc>(</sc>ball_trail.length<sc>)</sc>/3<sc>;</sc>
+		draw_ball<sc>(</sc>ball_trail<sc>[</sc>i<sc>]</sc><sc>[</sc>0<sc>]</sc>, ball_trail<sc>[</sc>i<sc>]</sc><sc>[</sc>1<sc>]</sc> - float_amount, 
+			<sc>(</sc>MAX_TRAIL_RADIUS<sc>)</sc> - <sc>(</sc><sc>(</sc>MAX_TRAIL_RADIUS - ball.r<sc>)</sc>/ball_trail.length<sc>)</sc>*i<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	ctx.globalAlpha = 1<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> draw_ball<sc>(</sc>x = ball.x, y = ball.y, r = ball.r<sc>)</sc><sc>{</sc>
+	<kw>let</kw> mem = ctx.fillStyle<sc>;</sc>
+	ctx.fillStyle = "#ADE"<sc>;</sc>
+	ctx.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.arc<sc>(</sc>x, y, r, 0, 2*PI, <kw>false</kw><sc>)</sc><sc>;</sc>
+	ctx.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = "#336699"<sc>;</sc>
+	ctx.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.arc<sc>(</sc>x, y, 2*r/3, 0, 2*PI, <kw>false</kw><sc>)</sc><sc>;</sc>
+	ctx.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = mem<sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> touching_wall<sc>(</sc><sc>)</sc><sc>{</sc>
+	<comment class="js">//console.log<sc>(</sc>"collision check"<sc>)</sc><sc>;</sc></comment>
+	<kw>if</kw> <sc>(</sc>ball.x + 2*ball.r > canvas.width<sc>)</sc><sc>{</sc>	
+		ball.x = canvas.width - 2*ball.r<sc>;</sc>
+		ball.dx *= -0.8<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw>	<sc>(</sc>ball.x < 0<sc>)</sc><sc>{</sc>
+		ball.x = 0 <sc>;</sc>
+		ball.dx *= -0.8
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>ball.y + 2*ball.r > canvas.height<sc>)</sc><sc>{</sc>
+		ball.y = canvas.height - 2*ball.r<sc>;</sc>
+		ball.dy *= -0.8<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>ball.y < 0<sc>)</sc><sc>{</sc>
+		ball.y = 0<sc>;</sc>
+		ball.dy *= -0.8<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+</pre>
+<div class="bookmark">./game/player.js</div><pre class=js>
+<kw>const</kw> player = <sc>{</sc>
+	w 			: 40  		, 
+	h 			: 40 		,
+	x 			: 1000 		, 
+	y 			: 100		, 
+	dx 			: 0   		, 
+	dy 			: 0	 		,
+	ddx 		: 0   		, 
+	ddy 		: 1  		,
+	on			: undefined	,
+	jumped   	: 0			,
+	friction 	: 0.5		,
+<sc>}</sc><sc>;</sc>
+
+<kw>let</kw> image = robot_standing<sc>;</sc>
+
+<kw>function</kw> new_vel<sc>(</sc><sc>)</sc> <sc>{</sc>
+	on_platform<sc>(</sc>player<sc>)</sc><sc>;</sc>	
+	player.dx += player.ddx<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>player.on<sc>)</sc><sc>{</sc> <comment class="js">//friction</comment>
+		<kw>if</kw> <sc>(</sc>player.dx > player.on.dx<sc>)</sc>
+			player.dx -= player.friction<sc>;</sc>
+		<kw>if</kw> <sc>(</sc>player.dx < player.on.dx<sc>)</sc>
+			player.dx += player.friction<sc>;</sc>
+		player.dy = player.on.dy<sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		player.dy += player.ddy<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> new_pos<sc>(</sc><sc>)</sc> <sc>{</sc> 	
+	<kw>if</kw> <sc>(</sc>player.on<sc>)</sc><sc>{</sc>
+		player.y = player.on.y - player.h<sc>;</sc>
+	<sc>}</sc>
+	
+	player.x += Math.round<sc>(</sc>player.dx<sc>)</sc><sc>;</sc>
+	player.y += Math.round<sc>(</sc>player.dy<sc>)</sc><sc>;</sc>
+
+	player.x = player.x.mod<sc>(</sc>canvas.width<sc>)</sc><sc>;</sc>
+	player.y = player.y.mod<sc>(</sc>canvas.height<sc>)</sc><sc>;</sc>
+
+<sc>}</sc>
+
+<kw>function</kw> draw_player<sc>(</sc><sc>)</sc> <sc>{</sc>
+	ctx.drawImage<sc>(</sc>image, player.x, player.y, player.w, player.h<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<comment class="js">// KEY LISTENERS</comment>
+<kw>function</kw> keyDown<sc>(</sc>e<sc>)</sc> <sc>{</sc>
+	<kw>switch</kw> <sc>(</sc>e.key<sc>)</sc><sc>{</sc>
+		<kw>case</kw> ' ':
+		<kw>case</kw> 'w':
+		<kw>case</kw> 'ArrowUp':
+			<kw>if</kw> <sc>(</sc>player.jumped === 0<sc>)</sc><sc>{</sc>
+				player.on = undefined<sc>;</sc>
+				player.dy = -15<sc>;</sc>
+				player.jumped = 1<sc>;</sc>
+			<sc>}</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'a':
+		<kw>case</kw> 'ArrowLeft':
+			player.ddx = -1<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'd':
+		<kw>case</kw> 'ArrowRight':
+			player.ddx = 1<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'p':
+			clearInterval<sc>(</sc>interval_id<sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'h':
+			<kw>switch</kw> <sc>(</sc>platforms<sc>)</sc><sc>{</sc>
+				<kw>case</kw> platforms1:
+					platforms = platforms2<sc>;</sc>
+					<kw>break</kw><sc>;</sc>
+				<kw>case</kw> platforms2:
+					platforms = platforms3<sc>;</sc>
+					<kw>break</kw><sc>;</sc>
+				<kw>case</kw> platforms3:
+					platforms = platforms1<sc>;</sc>
+					<kw>break</kw><sc>;</sc>
+			<sc>}</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> '.':
+			show_info ^= true<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> '=':
+			MAX_TRAIL_RADIUS += 1<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> '-':
+			MAX_TRAIL_RADIUS = Math.max<sc>(</sc>0, MAX_TRAIL_RADIUS - 1<sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> '<sc>]</sc>':
+			TRAIL_LENGTH = Math.min<sc>(</sc>MAX_TRAIL_LENGTH, TRAIL_LENGTH + 1<sc>)</sc><sc>;</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> '<sc>[</sc>':
+			TRAIL_LENGTH = Math.max<sc>(</sc>0, TRAIL_LENGTH - 1<sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'g':
+			show_sprite ^= true<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> keyUp<sc>(</sc>e<sc>)</sc> <sc>{</sc>
+	<kw>switch</kw> <sc>(</sc>e.key<sc>)</sc><sc>{</sc>
+		<kw>case</kw> ' ':
+		<kw>case</kw> 'w':
+		<kw>case</kw> 'ArrowUp':
+			player.jumped = 0<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'a':
+		<kw>case</kw> 'ArrowLeft':
+			player.ddx = 0<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> 'd':
+		<kw>case</kw>'ArrowRight':
+			player.ddx = 0<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+						<comment class="js">//string: what kind of event listener</comment>
+						<comment class="js">//<kw>function</kw>: what to <kw>do</kw> when the event happens</comment>
+document.addEventListener<sc>(</sc>'keydown'	, keyDown<sc>)</sc><sc>;</sc>
+document.addEventListener<sc>(</sc>'keyup'	, keyUp<sc>)</sc><sc>;</sc>
+</pre>
+
+</body>
+</html>

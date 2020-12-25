@@ -44,9 +44,11 @@ Explore puzzles in math, programming, and operating systems.
   - sample visual designs for a terminal game
   
 ## General TODO:
+
+- every page should have its own template
+
 - port over these games:
   - http://stocks.borisvolk.repl.run/
   - http://quest.borisvolk.repl.run/
   - http://logquiz.borisvolk.repl.run/
   - http://factorquiz.borisvolk.repl.run/
-- store a score-board somewhere

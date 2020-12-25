@@ -1,0 +1,41 @@
+/* css comments come between these slash/star things 				*/
+/* leave yourself notes about anything you think you might forget!  */
+/* look up css properties at https://www.w3schools.com/csSref/      */
+
+body {                     	/* properties of the entire body */
+	background-color: rgb(40,95,70);
+}
+
+img {					    /* properties of any img on the page */
+	width : 600px;
+	height : 600px;
+	margin : 20px;			
+	object-fit : cover; 	/* to crop into image */
+	border-radius : 50%; 	/* to round the edges */
+	float : left;			/* so text can go around it */
+	border-style : solid;
+}
+
+div { 						/* properties that all divs will have */
+	color : #fff;
+	border-style : solid;
+	margin : 20px;
+	font : Courier;
+	font-weight : 300;
+}
+
+div.outer { 				/* selects only divs with class="outer" */
+	margin : auto;
+	background-color : rgb(20,30,60);
+	overflow : auto; 		/* needed when all internal elements are float */
+	display : flex;  		/* to vertically center internal divs */
+	align-items : center; 	/* vertical centering */
+}
+
+div.inner {					/* selects only divs with class'"inner" */
+	padding : 20px;
+	background-color : rgb(40,70,200);
+	font-size : 24px;
+	float : left;
+}
+

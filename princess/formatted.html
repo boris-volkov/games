@@ -1,0 +1,462 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>html demos</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+	<div class="image">
+		<img class="screenshot" src="screenshot.png">		
+	</div>
+			
+<div class="bookmark">./princess/princess.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+<kw>&lthtml&gt</kw>
+  <kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+  <kw>&ltmeta http-equiv="X-UA-Compatible" content="IE=edge"&gt</kw>
+  <kw>&ltmeta name="viewport" content="width=device-width, initial-scale=1"&gt</kw>
+  
+  
+  <kw>&ltlink rel="stylesheet" href="../xterm/css/xterm.css" /&gt</kw>
+  <kw>&ltscript src="../xterm/lib/xterm.js"&gt</kw><kw>&lt/script&gt</kw>
+
+  <kw>&lttitle&gt</kw>The Princess Test<kw>&lt/title&gt</kw>
+<kw>&ltstyle&gt</kw>
+body { background-color: #006699; }
+<kw>&lt/style&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+  <kw>&ltbody&gt</kw>
+   <kw>&ltmain&gt</kw>
+      <kw>&ltdiv id="terminal" style="border-style: inset;"&gt</kw><kw>&lt/div&gt</kw>
+      <kw>&ltscript src="princess.js"&gt</kw><kw>&lt/script&gt</kw>
+     <kw>&lt/div&gt</kw>
+    <kw>&lt/main&gt</kw>
+  <kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./princess/rules.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+<kw>&lthtml&gt</kw>
+  <kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+  <kw>&ltmeta http-equiv="X-UA-Compatible" content="IE=edge"&gt</kw>
+  <kw>&ltmeta name="viewport" content="width=device-width, initial-scale=1"&gt</kw>
+  
+  
+  <kw>&ltlink rel="stylesheet" href="../xterm/css/xterm.css" /&gt</kw>
+  <kw>&ltscript src="../xterm/lib/xterm.js"&gt</kw><kw>&lt/script&gt</kw>
+
+  <kw>&lttitle&gt</kw>The Princess Test<kw>&lt/title&gt</kw>
+<kw>&ltstyle&gt</kw>
+body { background-color: #006699; }
+<kw>&lt/style&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+  <kw>&ltbody&gt</kw>
+   <kw>&ltmain&gt</kw>
+      <kw>&ltdiv id="terminal" style="border-style: inset;"&gt</kw><kw>&lt/div&gt</kw>
+      <kw>&ltscript src="rules.js"&gt</kw><kw>&lt/script&gt</kw>
+     <kw>&lt/div&gt</kw>
+    <kw>&lt/main&gt</kw>
+  <kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./princess/princess.js</div><pre class=js>
+<comment class="js">//prompt<sc>(</sc>"got here"<sc>)</sc><sc>;</sc> // <kw>this</kw> is just a debugging thing, put <kw>this</kw> somewhere as a breakpoint</comment>
+
+
+<kw>const</kw> desired_rows = 15<sc>;</sc>
+
+<kw>const</kw> white = '\x1b<sc>[</sc>97m'<sc>;</sc>
+<kw>const</kw> yellow = '\x1b<sc>[</sc>93m'<sc>;</sc>
+<kw>const</kw> blue = '\x1b<sc>[</sc>94m'<sc>;</sc>
+<kw>const</kw> red = '\x1b<sc>[</sc>91m'<sc>;</sc>
+<kw>const</kw> green = '\x1b<sc>[</sc>92m'<sc>;</sc>
+
+<kw>function</kw> princess<sc>(</sc>input<sc>)</sc><sc>{</sc>
+	<kw>let</kw> head = input.charAt<sc>(</sc>0<sc>)</sc><sc>;</sc>
+	<kw>let</kw> tail = input.charAt<sc>(</sc>input.length - 1<sc>)</sc><sc>;</sc>
+	<kw>let</kw> rest = input.substring<sc>(</sc>1<sc>)</sc><sc>;</sc>
+
+	<kw>if</kw> <sc>(</sc>head == "1" && tail == "2"<sc>)</sc>
+		<kw>return</kw> input.substring<sc>(</sc>1,input.length - 1<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "3"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc> + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "4"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc>.split<sc>(</sc>""<sc>)</sc>.reverse<sc>(</sc><sc>)</sc>.join<sc>(</sc>""<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "5"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc>.substring<sc>(</sc>1<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "6"<sc>)</sc>
+		<kw>return</kw> "1" + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "7"<sc>)</sc>
+		<kw>return</kw> "2" + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw>
+		<kw>return</kw> ""<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> test1<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>input<sc>)</sc> == input<sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> test2<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>input<sc>)</sc> == input + input<sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> test3<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>input<sc>)</sc> == input.split<sc>(</sc>""<sc>)</sc>.reverse<sc>(</sc><sc>)</sc>.join<sc>(</sc>""<sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> test4<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>input<sc>)</sc> == input.substring<sc>(</sc>0,input.length-1<sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> test5<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>princess<sc>(</sc>input<sc>)</sc><sc>)</sc> == input<sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> test6<sc>(</sc>input<sc>)</sc><sc>{</sc><kw>return</kw> <sc>(</sc>princess<sc>(</sc>princess<sc>(</sc>input<sc>)</sc><sc>)</sc> ==  input.split<sc>(</sc>""<sc>)</sc>.reverse<sc>(</sc><sc>)</sc>.join<sc>(</sc>""<sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+
+
+<kw>const</kw> reminder ="\n\rRule I                        "+green+"1"+white+"a"+green+"2"+white+" → a\n\r"+
+	"Rule II        <kw>if</kw> a → b, then "+green+"3"+white+"a → bb\n\r"+
+	"Rule III       <kw>if</kw> a → b, then "+green+"4"+white+"a → b↩\n\r"+
+	"Rule IV        <kw>if</kw> a → b, then "+green+"5"+white+"a → ◌b\n\r"+
+	"Rule V         <kw>if</kw> a → b, then "+green+"6"+white+"a → 1b\n\r"+
+	"Rule VI        <kw>if</kw> a → b, then "+green+"7"+white+"a → 2b\n\n\r"
+
+
+<comment class="js">//TODO make these more engaging</comment>
+<kw>var</kw> prompts = 
+	<sc>[</sc>
+		yellow + "The first test: Echo\n\r"+
+		"Get the princess to echo your number.\n\r"+ blue + 
+		"	x → x\n\n\r" + white,
+
+		yellow + "The second test:\n\r"+ blue + 
+		"	x → xx\n\n\r" + white,
+
+		yellow + "the third test:\n\r"+ blue + 
+		"	x → x↩\n\n\r" + white,
+
+		yellow + "the fourth test:\n\r"+ blue + 
+		"	x → x◌ <sc>(</sc>final digit removed<sc>)</sc>\n\n\r",
+
+		yellow + "the fifth test:\n\r"+ blue + 
+		"	x → y → x\n\n\r",
+
+		yellow + "the sixth test:\n\r"+ blue + 
+		"	x → y → x↩'.\n\n\r"
+	<sc>]</sc>
+
+<kw>var</kw> tests = <sc>[</sc>test1, test2, test3, test4, test5, test6<sc>]</sc><sc>;</sc>
+        <kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc>
+                        <sc>{</sc>
+                                theme: <sc>{</sc>
+                                        background: "#882255",
+                                <sc>}</sc>,
+                                rows: desired_rows,
+                                cols: 60,
+                                cursorBlink: true,
+                                fontSize: Math.floor<sc>(</sc>innerHeight/<sc>(</sc>desired_rows*5/4<sc>)</sc><sc>)</sc>,
+                                fontWeight: 900
+                        <sc>}</sc><sc>)</sc><sc>;</sc>
+
+	term.open<sc>(</sc>document.getElementById<sc>(</sc>'terminal'<sc>)</sc><sc>)</sc><sc>;</sc>
+	<kw>const</kw> princess_prompt = '\r\nSend her a number...  '<sc>;</sc>
+
+	<kw>function</kw> runFakeTerminal<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>var</kw> i = 0<sc>;</sc>
+
+		term.write<sc>(</sc>'\x1b<sc>[</sc>97m'<sc>)</sc><sc>;</sc>
+		term.writeln<sc>(</sc>prompts<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+		prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+
+		<kw>var</kw> buffer = ""<sc>;</sc>
+
+		term.onKey<sc>(</sc>e => <sc>{</sc>
+			<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+			
+			<kw>if</kw> <sc>(</sc><sc>[</sc>37,39,38,40<sc>]</sc>.includes<sc>(</sc>e.domEvent.keyCode<sc>)</sc><sc>)</sc> <kw>return</kw><sc>;</sc> <comment class="js">// disable arrow keys <kw>for</kw> now they're buggy </comment>
+
+			<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc>
+				<kw>if</kw> <sc>(</sc>buffer == ""<sc>)</sc> <kw>return</kw><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>buffer == "?"<sc>)</sc><sc>{</sc>
+					term.write<sc>(</sc>reminder<sc>)</sc><sc>;</sc>
+					prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+					buffer = ""<sc>;</sc>
+					<kw>return</kw>
+				<sc>}</sc>
+				term.write<sc>(</sc>"\r\n\x1b<sc>[</sc>94m" +  "The princess returns: " + princess<sc>(</sc>buffer<sc>)</sc> + "\x1b<sc>[</sc>97m"<sc>)</sc><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>tests<sc>[</sc>i<sc>]</sc><sc>(</sc>buffer<sc>)</sc><sc>)</sc><sc>{</sc>
+					i++<sc>;</sc>
+					term.write<sc>(</sc>"\x1b<sc>[</sc>91m\r\nYou passed Test " + i + "!\x1b<sc>[</sc>97m\r\n\n"<sc>)</sc><sc>;</sc>
+					term.write<sc>(</sc>prompts<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+				<sc>}</sc>
+				buffer = ""<sc>;</sc>
+				prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+			<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8<sc>)</sc> <sc>{</sc>
+				<comment class="js">// Do not <kw>delete</kw> the prompt</comment>
+				<kw>if</kw> <sc>(</sc>term._core.buffer.x > princess_prompt.length - 2<sc>)</sc> <sc>{</sc>
+					buffer = buffer.substring<sc>(</sc>0, buffer.length - 1<sc>)</sc><sc>;</sc>
+					term.write<sc>(</sc>'\b \b'<sc>)</sc><sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>printable<sc>)</sc> <sc>{</sc>
+				buffer = buffer + e.key<sc>;</sc>
+				term.write<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	        window.addEventListener<sc>(</sc>"resize", resize_term<sc>)</sc><sc>;</sc>
+                <kw>function</kw> resize_term<sc>(</sc><sc>)</sc><sc>{</sc>
+                        <kw>let</kw> font_height = Math.floor<sc>(</sc>innerHeight/<sc>(</sc>desired_rows*5/4<sc>)</sc><sc>)</sc><sc>;</sc>
+                        term.setOption<sc>(</sc>"fontSize", font_height<sc>)</sc><sc>;</sc>
+                <sc>}</sc>
+
+
+	<kw>function</kw> prompt<sc>(</sc>term<sc>)</sc> <sc>{</sc>
+		term.write<sc>(</sc>princess_prompt<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	runFakeTerminal<sc>(</sc><sc>)</sc><sc>;</sc>
+</pre>
+<div class="bookmark">./princess/rules.js</div><pre class=js>
+<comment class="js">/**
+ * Test user on rules one at a time. 
+ * Assert a set of pre-determined output values
+ * Make sure uesr know how to use all of the rules
+ */</comment>
+
+<kw>const</kw> desired_rows = 24
+
+<kw>function</kw> princess<sc>(</sc>input<sc>)</sc><sc>{</sc>
+	<kw>var</kw> head = input.charAt<sc>(</sc>0<sc>)</sc><sc>;</sc>
+	<kw>var</kw> tail = input.charAt<sc>(</sc>input.length - 1<sc>)</sc><sc>;</sc>
+	<kw>var</kw> rest = input.substring<sc>(</sc>1<sc>)</sc><sc>;</sc>
+
+	<kw>if</kw> <sc>(</sc>head == "1" && tail == "2"<sc>)</sc>
+		<kw>return</kw> input.substring<sc>(</sc>1,input.length - 1<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "3"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc> + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "4"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc>.split<sc>(</sc>""<sc>)</sc>.reverse<sc>(</sc><sc>)</sc>.join<sc>(</sc>""<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "5"<sc>)</sc>
+		<kw>return</kw> princess<sc>(</sc>rest<sc>)</sc>.substring<sc>(</sc>1<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "6"<sc>)</sc>
+		<kw>return</kw> "1" + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>head == "7"<sc>)</sc>
+		<kw>return</kw> "2" + princess<sc>(</sc>rest<sc>)</sc><sc>;</sc>
+	<kw>else</kw>
+		<kw>return</kw> ""<sc>;</sc>
+<sc>}</sc>
+
+<kw>const</kw> white = '\x1b<sc>[</sc>97m'<sc>;</sc>
+<kw>const</kw> yellow = '\x1b<sc>[</sc>93m'<sc>;</sc>
+<kw>const</kw> blue = '\x1b<sc>[</sc>94m'<sc>;</sc>
+<kw>const</kw> red = '\x1b<sc>[</sc>91m'<sc>;</sc>
+<kw>const</kw> green = '\x1b<sc>[</sc>92m'<sc>;</sc>
+
+<kw>const</kw> INTRODUCTION = yellow + "There is a princess who lives far away,\n\r" + 
+	"She has a way <kw>with</kw> numbers, by the way.\n\r" + 
+	"She has <kw>this</kw> game she plays, a number game:\n\r"+
+	"You send her a number, she'll <kw>do</kw> the same.\n\r"+
+	"Her number will be <kw>in</kw> response to yours,\n\r"+
+	"And yes, She'll teach you how it works, of course.\n\r"+
+	"She will reward the one that meets her test,\n\r"+
+	"Just learn six rules and figure out the rest.\n\r"+
+	"The princess is waiting...\n\r"+ 
+	"First she will teach you the rules.\n\n\r"+
+	"<sc>(</sc>Already know the rules? press ESC<sc>)</sc>\n\n\r"+
+	green + "Tell the princess you are ready:"
+
+<kw>const</kw> rules = 
+	<sc>[</sc>
+		yellow + "Rule 0: notation\n\r"+ white + 
+		"▸ A single letter can be used to represent\n\r"+
+		"	either a single-digit, or a multi-digit number.\n\r"+
+		"	So x can be 2 or it can be 1234\n\r"+
+		"▸ No letter has any special meaning,\n\r"+
+		"	they are all just variables <sc>(</sc>a,b,x<sc>)</sc>\n\r"+
+		"▸ When you see variables next to each other,\n\r"+
+		"	it means concatenation, not multiplication\n\r"+
+		"	so <kw>if</kw> a = 543 and b = 987 ab means 543987\n\r"+
+		"	and 3a means 3543\n\r"+
+		"▸ a → b means: when you send the princess a,\n\r"+
+		"	       she will respond <kw>with</kw> b.\n\n\r"+
+		yellow + "Rule I: getting a response\n\r"+ white + 	
+		"		<sc>(</sc>"+green+"1"+white+"a"+green+"2"+white+" → a<sc>)</sc>\n\r" + 
+		"Examples: 	"+green+"1"+white+"654"+green+"2"+white+" → 654\n\r"+
+		"		"+green+"1"+white+"192"+green+"2"+white+" → 192\n\r"+
+		"Play <kw>with</kw> the rule. Does it make sense?\n\r"+
+		"What number would you send to get 1643 back\n\r"+
+		"<kw>in</kw> the notation: F<kw>in</kw>d an x such that: x → 1643\n\n\r",
+
+		yellow + "RULE II: doubling\n\r"+ 
+		"<sc>(</sc><kw>if</kw> a → b then 3a → bb<sc>)</sc>\n\r"+ white +
+		"Examples:      Since 116432 → 1643\n\r"+
+		"	       then "+green+"3"+white+"116432 → 16431643\n\r"+
+		"		Since 1432 → 43\n\r"+
+		"		then "+green+"3"+white+"1432 → 4343\n\r"+
+		"                and "+green+"33"+white+"1432 → 43434343\n\r"+
+		"Using rule II:\n\r"+
+		"What number would you send to get 123123 back?\n\r"+
+		"                   x → 123123\n\n\n\r",
+
+		yellow + "RULE III: reversal\n\r"+ 
+		"<sc>(</sc><kw>if</kw> a → b, then 4a → b↩ <sc>(</sc>b <kw>with</kw> its digits reversed<sc>)</sc><sc>)</sc>\n\r"+ white +
+		"Example:      since 19872 → 987\n\r"+
+		"	      then "+green+"4"+white+"19872 → 789\n\r"+
+		"Use rule III to make her send back 123\n\r",
+
+		yellow + "Rule IV: ereasure\n\r"+
+		"<sc>(</sc><kw>if</kw> a → b, then 5a→ ◌b <sc>(</sc>b <kw>with</kw> the first digit removed<sc>)</sc><sc>)</sc>\n\r"+ white +
+		"Example:     since  127432 → 2743\n\r"+
+		"	     then  "+green+"5"+white+"127432 → 743\n\r"+
+		"Use rule IV to make her send back 375\n\r",
+
+		yellow + "Rule V: addition<sc>(</sc>1<sc>)</sc> <sc>(</sc><kw>if</kw> a → b then 6a → 1b<sc>)</sc>\n\r"+ white + 
+		"Example:      since 15552 → 555\n\r"+
+		"              then "+green+"6"+white+"15552 → 1555\n\r"+
+		"Use rule V to <kw>return</kw> 1919\n\r",
+
+		yellow + "Rule VI: addition<sc>(</sc>2<sc>)</sc> <sc>(</sc><kw>if</kw> a → b then 7a → 2b<sc>)</sc>\n\r"+ white +
+		"Example:      since 13432 → 343\n\r"+
+		"              then "+green+"7"+white+"13432 → 2343\n\r"+
+		"Use rule VI to <kw>return</kw> 222\n\r",
+
+		yellow + "Rule ∞: rules can be used <kw>in</kw> any comb<kw>in</kw>ation\n\r"+ white +
+		"Example:      since   14342 →  434\n\r"+
+		"               and   "+green+"6"+white+"14342 → 1434       <sc>(</sc>addition<sc>(</sc>1<sc>)</sc><sc>)</sc>\n\r"+
+		"              then  "+green+"36"+white+"14342 → 14341434   <sc>(</sc>doubling<sc>)</sc>\n\r"+
+		"Use rules IV<sc>(</sc>ereasure<sc>)</sc> and II<sc>(</sc>doubling<sc>)</sc> to get the \n\r"+
+		"princess to send you the number 47747\n\r",
+
+		red + "And those are all the rules.\n\n\r" + white + 
+		"Do not forget them:\n\n\n\r"+
+		"Rule I                        "+green+"1"+white+"a"+green+"2"+white+" → a\n\r"+
+		"Rule II        <kw>if</kw> a → b, then "+green+"3"+white+"a → bb\n\r"+
+		"Rule III       <kw>if</kw> a → b, then "+green+"4"+white+"a → b↩\n\r"+
+		"Rule IV        <kw>if</kw> a → b, then "+green+"5"+white+"a → ◌b\n\r"+
+		"Rule V         <kw>if</kw> a → b, then "+green+"6"+white+"a → 1b\n\r"+
+		"Rule VI        <kw>if</kw> a → b, then "+green+"7"+white+"a → 2b\n\n\r"+
+		"Now you are ready <kw>for</kw> the tests ↴\n\r"+
+		"Send the princess a ? <kw>if</kw> you need a reminder...\n\r"+
+		"Press ENTER to go to the tests"
+	<sc>]</sc>
+
+<comment class="js">// <kw>this</kw> is how we make sure they understand the rules</comment>
+<kw>const</kw> asserts = 
+	<sc>[</sc>    <comment class="js">// <sc>(</sc>required number, test assert equal<sc>)</sc>   </comment>
+		<sc>[</sc>"1","1643"<sc>]</sc>,
+		<sc>[</sc>"3","123123"<sc>]</sc>,
+		<sc>[</sc>"4", "123"<sc>]</sc>,
+		<sc>[</sc>"5", "375"<sc>]</sc>,
+		<sc>[</sc>"6", "1919"<sc>]</sc>,
+		<sc>[</sc>"7", "222"<sc>]</sc>,
+		<sc>[</sc>"53", "47747"<sc>]</sc>
+	<sc>]</sc>
+
+<comment class="js">/**
+ * pass it the buffer, and where to look <kw>in</kw> the asserts aray
+ */</comment>
+<kw>function</kw> test<sc>(</sc>input, i<sc>)</sc><sc>{</sc>
+	<kw>return</kw> <sc>(</sc><sc>(</sc>input.startsWith<sc>(</sc>asserts<sc>[</sc>i<sc>]</sc><sc>[</sc>0<sc>]</sc><sc>)</sc><sc>)</sc> && <sc>(</sc>princess<sc>(</sc>input<sc>)</sc> == asserts<sc>[</sc>i<sc>]</sc><sc>[</sc>1<sc>]</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc>
+	<sc>{</sc>
+		theme: <sc>{</sc>
+			background: "#006699",
+		<sc>}</sc>,
+		rows: desired_rows,
+		cols: 60,
+		cursorBlink: true,
+		fontSize: Math.floor<sc>(</sc>innerHeight/<sc>(</sc>desired_rows*5/4<sc>)</sc><sc>)</sc>,
+		fontWeight: 700,
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+term.open<sc>(</sc>document.getElementById<sc>(</sc>'terminal'<sc>)</sc><sc>)</sc><sc>;</sc>
+
+<kw>const</kw> term_prompt = '\r\nTry a number: '<sc>;</sc>
+
+<kw>function</kw> runFakeTerminal<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>term._initialized<sc>)</sc> <sc>{</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+
+	term._initialized = true<sc>;</sc>
+
+	term.write<sc>(</sc>'\x1b<sc>[</sc>97m'<sc>)</sc><sc>;</sc> <comment class="js">// sets text color</comment>
+	term.write<sc>(</sc>INTRODUCTION<sc>)</sc><sc>;</sc>
+
+	<kw>var</kw> i = 0<sc>;</sc> 		<comment class="js">// index to iterate through the rules</comment>
+	started = <kw>false</kw><sc>;</sc>
+
+	<kw>var</kw> buffer = ""<sc>;</sc> <comment class="js">// initialize an empty buffer. I think <kw>this</kw> can be accessed </comment>
+	<comment class="js">// through term._core.buffer instead of building manually</comment>
+
+	term.onKey<sc>(</sc>e => <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 27<sc>)</sc><sc>{</sc>
+			term.dispose<sc>(</sc><sc>)</sc><sc>;</sc>
+			location.replace<sc>(</sc>"princess.html"<sc>)</sc><sc>;</sc> <comment class="js">//<kw>this</kw> might be the fix: send to another html page <kw>with</kw> another terminal</comment>
+		<sc>}</sc>
+
+		<kw>if</kw> <sc>(</sc><sc>[</sc>37,39,38,40<sc>]</sc>.includes<sc>(</sc>e.domEvent.keyCode<sc>)</sc><sc>)</sc> <kw>return</kw><sc>;</sc> <comment class="js">// disable arrow keys <kw>for</kw> now, they're buggy </comment>
+
+		<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+
+		<kw>if</kw> <sc>(</sc>started == <kw>false</kw><sc>)</sc> <sc>{</sc> <comment class="js">// started means they read the intro and are going through the rules now</comment>
+			term.reset<sc>(</sc><sc>)</sc><sc>;</sc>
+			buffer = ""<sc>;</sc>
+			term.writeln<sc>(</sc>rules<sc>[</sc>0<sc>]</sc><sc>)</sc><sc>;</sc>
+			prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+			started = true<sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+
+		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> 
+		<sc>{</sc>
+			<kw>if</kw> <sc>(</sc>buffer == ""<sc>)</sc> <kw>return</kw><sc>;</sc> <comment class="js">// don't <kw>let</kw> them send an empty string</comment>
+
+			<kw>if</kw> <sc>(</sc>i == rules.length-1<sc>)</sc><sc>{</sc>
+				term.dispose<sc>(</sc><sc>)</sc><sc>;</sc> <comment class="js">//done learning rules.</comment>
+				location.replace<sc>(</sc>"princess.html"<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+
+			term.writeln<sc>(</sc>"\n\rthe princess would <kw>return</kw>: " + princess<sc>(</sc>buffer<sc>)</sc><sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>test<sc>(</sc>buffer, i<sc>)</sc><sc>)</sc><sc>{</sc>
+				i++<sc>;</sc>
+				term.writeln<sc>(</sc>green + "\n\n\n    Correct\n\n\n\n\r"<sc>)</sc><sc>;</sc>
+				term.writeln<sc>(</sc>rules<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>i == rules.length - 1<sc>)</sc> <kw>return</kw><sc>;</sc> <comment class="js">// so we don't prompt after the rules print out</comment>
+				<comment class="js">// is it stupid to check <kw>this</kw> twice? probably.		</comment>
+			<sc>}</sc>
+
+			buffer = ""<sc>;</sc>
+			prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8<sc>)</sc> <sc>{</sc> <comment class="js">// backspace</comment>
+			<comment class="js">// Do not <kw>delete</kw> the prompt</comment>
+			<kw>if</kw> <sc>(</sc>term._core.buffer.x > term_prompt.length - 2<sc>)</sc> <sc>{</sc>
+				buffer = buffer.substring<sc>(</sc>0, buffer.length - 1<sc>)</sc><sc>;</sc>
+				term.write<sc>(</sc>'\b \b'<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>printable<sc>)</sc> <sc>{</sc>
+			buffer = buffer + e.key<sc>;</sc>
+			term.write<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	window.addEventListener<sc>(</sc>"resize", resize_term<sc>)</sc><sc>;</sc>
+	<kw>function</kw> resize_term<sc>(</sc><sc>)</sc><sc>{</sc>
+		<kw>let</kw> font_height = Math.floor<sc>(</sc>innerHeight/<sc>(</sc>desired_rows*5/4<sc>)</sc><sc>)</sc><sc>;</sc>
+		term.setOption<sc>(</sc>"fontSize", font_height<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+<sc>}</sc>
+
+<kw>function</kw> prompt<sc>(</sc>term<sc>)</sc> <sc>{</sc>
+	term.write<sc>(</sc>term_prompt<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+runFakeTerminal<sc>(</sc><sc>)</sc><sc>;</sc>
+</pre>
+
+</body>
+</html>

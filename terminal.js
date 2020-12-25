@@ -430,7 +430,7 @@ const key_function_map = {
 //---------------------------------------------------------------Commands and maps
 command_list = ["about", "cat", "clear", "codes", "echo", 
 				"help", "ls", "programs", "refresh", "rgb",
-				"txtcolor",
+				"txtcolor", "visual",
 				"[esc]  terminal mode ←→ phase mode" ,
 				"[F1]   terminal mode ←→ text mode",		
 				];
@@ -459,6 +459,7 @@ function execute_command(buffer) {
 	else if (command == "game" )     	game();
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
+	else if (command == "visual")		visual();
 	else if (command == "fifteen")		fifteen();
 	else if (command == "territory")    territory();
 	else if (command == "refresh")		location.reload();
@@ -467,6 +468,15 @@ function execute_command(buffer) {
 	else echo ("● Invalid command ● Type help ●");
 }
 
+//----------------------------------------------------------------------------------Out-links
+
+function quest()	{location.assign('./quest/quest.html');}
+function princess()	{location.assign('./princess/rules.html');}
+function sixteen()	{location.assign('./puzzles/sixteens.html');}
+function fifteen()	{location.assign('./puzzles/fifteen.html');}
+function game() 	{location.assign('./game/game.html'); }
+function territory(){location.assign('./territory/page.html'); }
+function visual()   {location.assign('./visual.html'); }
 
 var cursor_backup;
 var b_grid; //backup grid
@@ -676,14 +686,6 @@ function transpose() {
 	if (num_rows == num_cols)
 		grid =  grid[0].map((col, i) => grid.map(row => row[i]));
 }
-//----------------------------------------------------------------------------------Out-links
-
-function quest()	{location.assign('./quest/quest.html');}
-function princess()	{location.assign('./princess/rules.html');}
-function sixteen()	{location.assign('./sixteens/sixteens.html');}
-function fifteen()	{location.assign('./sixteens/fifteen.html');}
-function game() 	{location.assign('./game/game.html'); }
-function territory(){location.assign('./territory/page.html'); }
 
 var file_list = {
 	"about" : 

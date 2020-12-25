@@ -1,0 +1,92 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>html demos</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+	<div class="image">
+		<img class="screenshot" src="screenshot.png">		
+	</div>
+			
+<div class="bookmark">./proj/learning.txt</div><pre class=notes>
+I teach math, and I wanted to make a arithmetic drilling program for my students.
+
+I asked the internet how I could make that work... 
+
+I had to watch a 5 hour intro-to-python video on youtube (at 1.5 speed)
+and learned Python math, lists, input, and timekeeping, iteration, all the basics. 
+This is the stuff  you can only really learn from a book or video
+
+I got my program working, but then I asked myself how I could make it better...
+
+I took the program out of the IDE which was slow to start up and had all these distracing menus and put it in the terminal where it would start up in less than a second. 
+
+I asked the internet how I could make that work...
+
+for that I had to learn the linux command line, and to give up the IDE for good! (I still don't miss it)
+
+then I asked myself how I could make it better...
+
+I wanted there to be some colors in the game, and maybe a sparkle emoji that printed when the player got a problem right. 
+
+I asked the internet how I could make that happen...
+
+for that I had to learn ansi escape codes for the colors, and unicode for the emojis
+
+how to make it better?..
+
+align the problems in a top-down way instead of side-by-side
+
+asked the internet...:
+
+for that I had to learn string formatting
+
+I wanted to clear the screen after the player got the question right, so there would only be one question on screen at any time, 
+
+for that I had to learn how to make system calls. 
+
+Then I wanted to make it so that it wasn't the same questions over and over again, but if the player answered quickly, they would start getting harder questions. 
+
+for this I had to learn how to work with random number generators, and had to have a bunch of players test the program to see if the questions were scaling in difficulty in a satisfying way. 
+
+I wanted there to be all four operations, so that students got the complete experience, so I needed them all to scale in difficulty at the same rate. This is not so obvious how to do, since division needs to scale up its numbers slower than addition does for the problems to feel equally difficult, for example. The way to do this seemed to be keeping statistics on how long it took to do each problem and then looking at averages, seeing that if people were spending way more time on subtraction, for example, that I would have to scale down those problems in difficulty. 
+
+for this I needed to learn how to get Python to read and write to data sheets. I learned the graphing functions of python so that I could see the scatter plots.
+
+This took a long time, and I had to get a lot of people to interact with my program, so that I could see if any aspects of it were annoying or difficult to use or buggy. 
+
+Once it was working, it started to get sort of competitive at the tutoring center. It had grown into a five minute challenge that you got a score for at the end. It was starting to feel like an arcade game, and an arcade game needs a top 10 board. 
+
+This meant that I needed to learn how to do record-keeping.
+
+Then I wanted the game to have sounds, so I had to learn the linux audio interface.
+
+but then the code I was writing was single threaded, which meant that only one thing could happen at a time, and the sound playing was freezing up the program for about a tenth of a second, which if you play games, is actually a decent amount of lag, if you're trying to do something fast like a speed math challenge. 
+
+So then I had to learn threading to make the sound play in a separate thread of the program while the game went on. 
+
+Then I still kept asking how I could make it better, and the problem now was that this game was solely on my computer. If anyone wanted to play it, they would have to take my laptop, take my little mechanical number pad, and try a five-minute round to try to get onto the score-board. 
+
+I wanted the game to be accessible online, and for this I needed to branch out to javascript, in order to run it on an html page. And I won't lie, javascript is really confusing at first compared to python, and I made the mistake of trying to build my program on top of someone else's (xterm.js), but more about that in the terminal section.
+
+The stage that it's at right now, is that it's sitting online, available for anyone to play, and it has one loyal player (that I know of), and that's actually enough for me. 
+
+I've done a bunch of other projects in the meantime, but this one has been going through the middle of all of them like the trunk of a tree supporting the branches. It was that single project, which arose from a simple goal: wanting to do math flashcards faster, and continually asking how can I make it better?
+
+If your project is compelling to you, and you really want to make it great, you can learn an entire programming language this way. Otherwise learning this stuff is a chore.
+
+I hope you can find a project that you care about too, and if you already have one, then I hope you never stop asking how you can make it better. That will be your key to great knowledge!
+
+
+Enjoy your life,
+-Boris
+</pre>
+
+</body>
+</html>

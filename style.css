@@ -1,0 +1,292 @@
+* {
+	color: coral;
+	font-family : Courier;
+	font-weight : 600;
+	box-sizing : border-box; /* to correct sizes */
+	cursor: default;
+}
+
+body {
+	background-color : #333942;
+}
+
+pre {
+	line-height : 1.5em;
+	letter-spacing : 2px;
+	white-space: pre-wrap;  /* to wrap text */
+	word-break: break-all;	/* so words don't get broken in wrap */
+	cursor: text;
+}
+
+div, pre {  				/* centering, margins, rounding */
+	margin: auto;
+	padding: 10px;
+	padding-left: 40px;
+	width: 90vw;   			/* 90% of viewport width */
+	border-radius: 16px;
+	border-top-left-radius: 40px;
+	tab-size: 4;			/* otherwise its 8 spaces*/
+	-moz-tab-size: 4;
+}
+
+div {
+	padding: 30px;
+}
+
+
+a {
+	text-decoration: none;
+}
+
+.top_menu {
+	background-color: #445;
+	position : sticky; 		/* stick to top of screen */
+	top : 0;
+	width : 95vw;
+	border-radius:10px;
+	padding: 0;
+	margin: auto;
+	display: flex;
+	flex-wrap: wrap-reverse;
+	align-content : stretch;
+	border-bottom-left-radius: 30px;
+	border-bottom-right-radius: 30px;
+}
+
+.top_menu a {
+	text-align : center;
+	background-color: #445;
+	flex : 1;
+	color: coral;
+	text-decoration: none;
+	padding: 15px 20px;
+}
+
+.top_menu a.first {
+	border-bottom-left-radius: 30px;
+}
+
+.top_menu a.last {
+	border-bottom-right-radius: 30px;
+}
+
+.top_menu a:hover {
+	background: #358;
+}
+
+
+img.screenshot {
+	width: 60vw;
+	object-fit: contain;
+	margin-left:auto;
+	margin-right:auto;
+	display: block;			/* to be able to center it */
+}
+div.bookmark { 				/* the little tab above all the boxes */
+	text-align: center;
+	padding: 5px;
+	width: 36vw;
+	background-color : #345;
+	margin-bottom : 0;
+	border-radius: 0;
+	margin-top: 70px;
+	border-top-right-radius : 30px;
+	border-top-left-radius : 30px;
+}
+
+div.image {
+	background-color: #011;
+}
+
+.link_box {
+	background: #345;
+	margin: 0 auto 30px; 	/* top sides bottom */
+}
+
+.link_box a {
+	display:block;			/* to take up full row */
+	background: #456;
+	padding: 10px;
+	padding-left: 30px;
+	margin: 5px;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	word-wrap: wrap;
+	word-break: break-all;
+}
+
+.link_box a:hover {
+	background: #358;
+}
+
+.image_box {
+	background: #345;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.image_box a {
+	background: #456;
+	max-width: 30%;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	padding: 20px;
+	margin: 10px;
+	display: flex;
+	flex-direction : column;
+	align-content : center;
+	justify-content: center;
+}
+
+.image_box a p {
+	background: inherit;
+	text-align: center;
+	word-wrap: wrap;
+	word-break: break-all;
+}
+
+.image_box a:hover {
+	background: #358;
+}
+
+.image_box img {
+	max-width: 90%;
+	object-fit: cover;
+	padding:0px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 2px coral solid;
+}
+
+pre.notes {
+	background-color: #357;
+	color: white;
+	word-break: keep-all;
+}
+
+
+
+
+pre.html {
+	background-color: #375;
+	color: #000;
+}
+
+.html kw {
+	color: yellow;
+}
+
+.html sc {
+	color: yellow;
+}
+
+
+
+
+
+pre.css {
+	background-color: #366;
+	color: #eee;	
+}
+
+.css sc {
+	color : #3ff;
+}
+
+
+
+pre.py {
+	background-color: rgb(15,65,75);
+	color: #ddf;
+}
+
+.py sc {
+	color: #bb2;
+}
+
+.py kw {
+	color: coral;
+}
+
+
+
+pre.js {
+	background-color: rgb(140,110,110);
+	color: #321;
+}
+
+.js sc {
+	color: #246;
+}
+
+.js kw {
+	color: #dba;
+}
+
+
+
+sc, kw { /* special characters and key words */
+	background-color:inherit;
+	font-weight: bold;
+}
+
+
+
+comment {
+	background-color: inherit;
+}
+
+
+css {
+	background-color: inherit;
+	color: white;
+}
+
+
+string {
+	background-color: inherit;
+	color: pink;
+}
+
+comment.css {
+	color: #f64;
+}
+
+comment.js {
+	color: #532;
+}
+
+comment.html {
+	color: #242;
+}
+
+comment.py {
+	color: #987;
+}
+
+dbl_quote {
+	color: #1b5;
+}
+
+sgl_quote {
+	color: #1a5;
+}
+
+sgl_quote sc, sgl_quote kw, dbl_quote sc, dbl_quote kw{
+	color: inherit!important;
+}
+
+
+
+comment sc, comment kw { /* comment overrides special symbols */
+	color: inherit!important;
+}
+
+wedge { /*for correct spacing when linking within page */
+	height: 80px;
+	padding-top 10px;
+	visibility:hidden;
+}
+
+
