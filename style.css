@@ -39,8 +39,45 @@ a {
 	cursor: default;
 }
 
+.terminal_button {
+	margin-top : 50px!important;
+	display: flex;
+	flex-direction : column;
+	margin: auto;
+	height: 5vw;
+	width: 5vw;
+	padding: 0;
+	text-align:center;
+	border-radius : 50%;
+	border-bottom-right-radius:0;
+	border-bottom-left-radius:0;
+	background-color: #445;
+}
+
+.terminal_button a {
+	background-color: coral;
+	padding: 0;
+	display: block;
+	margin: auto;
+	height :3vw;
+	width : 3vw;
+	border-radius: 50%;
+}
+
+.terminal_button a:hover {
+	background-color: #358;
+}
+
+.terminal_button .inner_button {
+	display: inline;
+	vertical-align : middle;
+	padding: 0;
+	margin: 0;
+}
+
 .top_menu {
 	background-color: #445;
+	opacity : 0.9;
 	position : sticky; 		/* stick to top of screen */
 	top : 0;
 	width : 95vw;
@@ -76,8 +113,9 @@ a {
 }
 
 
-img.screenshot {
+.screenshot {
 	width: 60vw;
+	height: 40vw;
 	object-fit: contain;
 	margin-left:auto;
 	margin-right:auto;
@@ -166,8 +204,9 @@ pre.notes {
 	word-break: keep-all;
 }
 
-
-
+.notes sc {
+	color : coral;
+}
 
 pre.html {
 	background-color: #375;

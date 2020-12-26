@@ -1,0 +1,197 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Ѭ</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+			
+ 
+        <div class="image">
+            <a href="#">
+                <iframe class="screenshot" src="main.html"></iframe>
+            </a>
+        </div>
+            <div class="bookmark">./fifteen/readme.txt</div><pre class=notes>
+This is the classic 15 piece sliding puzzle. 
+use the <sc>[</sc>arrow keys<sc>]</sc> or <sc>[</sc>WASD<sc>]</sc> to slide the 
+adjacent square into the empty slot. 
+
+Scramble it and try to put it back together
+again.
+
+the <sc>[</sc>`<sc>]</sc> key does an automatic 100 move scramble.
+  
+</pre>
+<div class="bookmark">./fifteen/main.html</div><pre class=html>
+<kw>&lt!DOCTYPE HTML&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="UTF-8"&gt</kw>   
+		<kw>&ltlink rel="stylesheet" src="style.css"/&gt</kw>	
+		
+		<kw>&ltscript src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+			integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" 
+			crossorigin="anonymous"&gt</kw>
+		<kw>&lt/script&gt</kw>
+
+	<kw>&lt/head&gt</kw>
+	
+	<kw>&ltbody&gt</kw>
+		<kw>&ltcanvas id = "puzzle_space"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&ltscript src= "fifteen.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./fifteen/style.css</div><pre class=css>
+<css></css>
+<sc>body {</sc> 	
+<css>	background-color: #006699; </css>
+<css>	cursor: crosshair;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	border:5px solid white;</css>
+<css>	padding-left: 0;</css>
+<css>	padding-right: 0;</css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
+<css>	display: block;</css>
+<css>	cursor: crosshair;</css>
+<sc>}</sc>
+<css></css>
+</pre>
+<div class="bookmark">./fifteen/fifteen.js</div><pre class=js>
+<comment Class="js">// Get the canvas element using the DOM
+</comment><kw>let</kw> canvas = document.getElementById<sc>(</sc><sgl_quote>'puzzle_space'</sgl_quote><sc>)</sc><sc>;</sc>
+<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+<kw>let</kw> grid = 	<sc>[</sc>
+			<sc>[</sc>1 ,2 ,3 ,4 <sc>]</sc>,
+			<sc>[</sc>5 ,6 ,7 ,8 <sc>]</sc>,
+			<sc>[</sc>9 ,10,11,12<sc>]</sc>,
+			<sc>[</sc>13,14,15,0<sc>]</sc>
+		<sc>]</sc><sc>;</sc>
+<kw>const</kw> colors = 	<sc>[</sc><dbl_quote>"#b13"</dbl_quote>, <dbl_quote>"#136"</dbl_quote>, <dbl_quote>"#69b"</dbl_quote>, <dbl_quote>"#369"</dbl_quote><sc>]</sc><sc>;</sc>
+
+<kw>let</kw> tile_width = 0<sc>;</sc>
+<kw>let</kw> tile_padding = 0<sc>;</sc>
+<kw>let</kw> empty_row = 3<sc>;</sc>
+<kw>let</kw> empty_col = 3<sc>;</sc>
+
+<kw>function</kw> move<sc>(</sc>key<sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>key === <sgl_quote>'ArrowDown'</sgl_quote> || key === <sgl_quote>'s'</sgl_quote><sc>)</sc>
+		<kw>if</kw> <sc>(</sc>empty_row &gt 0<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = grid<sc>[</sc>empty_row-1<sc>]</sc><sc>[</sc>empty_col<sc>]</sc><sc>;</sc>
+			grid<sc>[</sc>--empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>key === <sgl_quote>'ArrowUp'</sgl_quote> || key === <sgl_quote>'w'</sgl_quote><sc>)</sc>
+		<kw>if</kw> <sc>(</sc>empty_row &lt 3<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = grid<sc>[</sc>empty_row+1<sc>]</sc><sc>[</sc>empty_col<sc>]</sc><sc>;</sc>
+			grid<sc>[</sc>++empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>key === <sgl_quote>'ArrowLeft'</sgl_quote> || key === <sgl_quote>'a'</sgl_quote><sc>)</sc>
+		<kw>if</kw> <sc>(</sc>empty_col &lt 3<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col+1<sc>]</sc><sc>;</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>++empty_col<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>key === <sgl_quote>'ArrowRight'</sgl_quote> || key === <sgl_quote>'d'</sgl_quote><sc>)</sc>
+		<kw>if</kw> <sc>(</sc>empty_col &gt 0<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col<sc>]</sc> = grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>empty_col-1<sc>]</sc><sc>;</sc>
+			grid<sc>[</sc>empty_row<sc>]</sc><sc>[</sc>--empty_col<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>key === <sgl_quote>'`'</sgl_quote><sc>)</sc>
+		scramble<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>	
+
+<kw>function</kw> slide<sc>(</sc>from, to<sc>)</sc><sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt 10<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		context.fillStyle = empty<sc>;</sc>
+
+	<sc>}</sc>
+<sc>}</sc>
+
+Array.prototype.sample = <kw>function</kw><sc>(</sc><sc>)</sc><sc>{</sc>
+  <kw>return</kw> <kw>this</kw><sc>[</sc>Math.floor<sc>(</sc>Math.random<sc>(</sc><sc>)</sc>*<kw>this</kw>.length<sc>)</sc><sc>]</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> scramble<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> keys = <sc>[</sc><sgl_quote>'ArrowUp'</sgl_quote>, <sgl_quote>'ArrowDown'</sgl_quote>, <sgl_quote>'ArrowRight'</sgl_quote>, <sgl_quote>'ArrowLeft'</sgl_quote><sc>]</sc><sc>;</sc>
+	<kw>let</kw> i = 0<sc>;</sc>
+	<kw>let</kw> id = setInterval<sc>(</sc>automove, 30<sc>)</sc><sc>;</sc>
+
+	<kw>function</kw> automove<sc>(</sc><sc>)</sc><sc>{</sc>
+		move<sc>(</sc>keys.sample<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+		i += 1
+		<kw>if</kw> <sc>(</sc>i &gt 100<sc>)</sc>
+			clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> draw_square<sc>(</sc>i,j<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> x = j * fourth<sc>;</sc>
+	<kw>let</kw> y = i * fourth<sc>;</sc>
+	<kw>let</kw> number = grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+
+
+<sc>}</sc>
+
+<kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> width = canvas.width<sc>;</sc>
+	<kw>let</kw> fourth = width/4<sc>;</sc>
+	<kw>let</kw> eighth = fourth/2<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt 4<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt 4<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			<kw>let</kw> x = j * fourth<sc>;</sc>
+			<kw>let</kw> y = i * fourth<sc>;</sc>
+			<kw>let</kw> number = grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+			<kw>let</kw> color = colors<sc>[</sc>Math.floor<sc>(</sc><sc>(</sc>number-1<sc>)</sc> / 4<sc>)</sc><sc>]</sc> || <sgl_quote>'#eee'</sgl_quote><sc>;</sc>
+			context.fillStyle = color<sc>;</sc>
+			context.fillRect<sc>(</sc>x, y, fourth, fourth<sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>number !== 0<sc>)</sc><sc>{</sc>
+				<kw>let</kw> text = number.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+				context.fillStyle = <dbl_quote>"#fff"</dbl_quote><sc>;</sc>
+				context.fillText<sc>(</sc>text ,x + eighth, y + eighth<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>	
+<comment Class="js">//---------------------------------------key event listener
+</comment>
+window.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	move<sc>(</sc>event.key<sc>)</sc><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>, <kw>false</kw><sc>)</sc><sc>;</sc> <comment Class="js">//TODO what does <kw>this</kw> <kw>false</kw> mean?
+</comment>
+
+<comment Class="js">//--------------------------------------resize event listener
+</comment>window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, draw_canvas<sc>)</sc><sc>;</sc>
+<kw>function</kw> draw_canvas<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>let</kw> square_side = Math.min<sc>(</sc>window.innerWidth, window.innerHeight<sc>)</sc> - 30<sc>;</sc>
+	square_side -= square_side%8<sc>;</sc> 
+	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, square_side.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
+	canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>,square_side.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+	<kw>let</kw> font_height_pix = Math.floor<sc>(</sc>canvas.width/12<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.font = font_height_pix + <dbl_quote>"px Courier New"</dbl_quote><sc>;</sc>
+	context.textAlign = <dbl_quote>"center"</dbl_quote><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+	tile_width = canvas.width/4<sc>;</sc>
+	tile_padding = tile_width/2<sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">//TODO event listeners <kw>for</kw> touch events!
+</comment>
+draw_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+
+</pre>
+
+</body>
+</html>

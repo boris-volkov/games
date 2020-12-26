@@ -106,13 +106,24 @@ if __name__ == "__main__":
         _of.write(template[i])
         i += 1
 
-    for pic in pictures:
-        _of.write('<div class="image"><a href="#"><img class="screenshot" src="' + pic + '"></a></div>')
+    if pictures: 
+        _of.write('<div class="image"> <a href="#"> <img class="screenshot" src="' + pictures[0] + '"></img> </a> </div>')
+    else:
+        _of.write(''' 
+        <div class="image">
+            <a href="#">
+                <iframe class="screenshot" src="main.html"></iframe>
+            </a>
+        </div>
+            ''')
 
     for txt in txt_readers:
         _of.write('<div class="bookmark">' + txt[0]  +  '</div>')
         _of.write("<pre class=notes>\n")
         for line in txt[1:]:
+            for sym in special_symbols:
+                if sym in line:
+                    line = line.replace(sym, "<sc>" + sym + "</sc>")
             _of.write(line)
         _of.write("</pre>\n")
 
