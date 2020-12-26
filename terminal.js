@@ -484,11 +484,11 @@ function execute_command(buffer) {
 
 //----------------------------------------------------------------------------------Out-links
 
-function quest()	{location.assign('./quest/quest.html');}
-function princess()	{location.assign('./princess/rules.html');}
+function quest()	{location.assign('./quest/main.html');}
+function princess()	{location.assign('./princess/main.html');}
 function sixteen()	{location.assign('./puzzles/sixteen/sixteens.html');}
-function fifteen()	{location.assign('./puzzles/fifteen/fifteen.html');}
-function game() 	{location.assign('./game/game.html'); }
+function fifteen()	{location.assign('./fifteen/main.html');}
+function game() 	{location.assign('./game/main.html'); }
 function territory(){location.assign('./territory/page.html'); }
 function visual()   {location.assign('./visual.html'); }
 
