@@ -472,7 +472,7 @@ function execute_command(buffer) {
 	else if (command == "princess") 	princess();
 	else if (command == "sixteen")		sixteen();
 	else if (command == "visual")		visual();
-	else if (command == "phase")		terminal_mode = false;
+	else if (command == "phase")		{terminal_mode = false;display=true;text_hidden=true;}
 	else if (command == "text")			enter_text_mode();
 	else if (command == "fifteen")		fifteen();
 	else if (command == "territory")    territory();
@@ -707,14 +707,14 @@ var file_list = {
 	 	"with some special properties...",
 	 	"Some are readily available, some are hidden,",
 	 	"and some will emerge from experimentation.",	
-	 	"[esc] toggles a special :phase mode:",
-		":cat: the phase_mode file to learn more",
+	 	":phase: toggles a special 'phase mode'",
+		":cat: the phase_mode file to learn more.",
 		"You might find something interesting."
 	],
 
 	"phase_mode" : 
 	[
-		"The [escape] key toggles PHASE MODE.",
+		"The phase command toggles PHASE MODE.",
 		"In phase mode, you can SLIDE the grid.",
 		"[IJKL] keys translate it along a Torus",
 		"[WASD] keys translate it along a",
@@ -729,7 +729,7 @@ var file_list = {
 		"magnitude, frequency, center, and phase.",
 		"By default, all color centers are set to 0,",
 		"this is why the screen is black",
-		"pressing [.] displays this information.",
+		"pressing [.] toggles this information.",
 		"To adjust a particular property level:,",
 		"hold keys for the FIRST LETTERS",
 		"of the property you want to change,",
@@ -741,7 +741,7 @@ var file_list = {
 		"Altering all the waves produces gradients.",
 		"Some can be quite beautiful, and they become",
 		"even more interesting when scrambled",
-		"Experiment with it and see. Press [esc]",
-		"[=] resets colors, [h] hides text."
+		"Experiment with it and see.",
+		"[=] resets colors, [h] toggles text."
 	]
 };

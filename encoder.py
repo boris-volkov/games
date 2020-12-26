@@ -79,8 +79,8 @@ if __name__ == "__main__":
 
     for (root, subs, files) in os.walk("./" + sys.argv[1]):
         for name in files:
-            if any(name.endswith(x) for x in image_extensions):
-                pictures.append(root+name)
+            if 'screenshot' in name:
+                pictures.append(name)
             if name.endswith('.js'):
                 with open(root+name) as temp:
                     js_readers.append([root+name] + temp.readlines())
