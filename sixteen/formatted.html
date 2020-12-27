@@ -11,31 +11,35 @@
 
 <body>
 			
-<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./sixteen/main.html</div><pre class=html>
+<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./sixteen/readme.txt</div><pre class=notes>
+This is a variant on the fifteen sliding puzzle, but all sixteen squares are presnet. You might ask where is there to slide anything, and that's correct. If we treat the space as a rectangle, there is nowhere for the pieces to go, but if we treat it like the left side is joined to the right side, and top to bottom, like a torus, <sc>[</sc>https://en.wikipedia.org/wiki/Torus<sc>]</sc>, then we can slide the pieces around which is done with the 
+
+		<sc>[</sc> <sc>]</sc><sc>[</sc>i<sc>]</sc><sc>[</sc> <sc>]</sc>
+		<sc>[</sc>j<sc>]</sc><sc>[</sc>k<sc>]</sc><sc>[</sc>l<sc>]</sc>
+
+keyset. This kind of motion is still not enough to scramble the pices however, and you can see that if you do only these moves, you can always just slide it back to the original position easily. 
+
+To be able to actually scramble it, we need to not only join the sides right-left, top-bottom, but to join them with a "flip" like on a mobius strip <sc>[</sc>https://en.wikipedia.org/w/index.php?title=Mobius_strip<sc>]</sc>. So, for example, if we slide the board left in this manner, the left row will portal over to the right side, but come out upside down. If we press up, the top row cycles around and displaces the bottom row from below, also with a flip, coming up backwards. It will be easier to just play around with it and see. The mobius strip type shifts can be done with the 
+
+
+		<sc>[</sc> <sc>]</sc><sc>[</sc>w<sc>]</sc><sc>[</sc> <sc>]</sc>
+		<sc>[</sc>a<sc>]</sc><sc>[</sc>s<sc>]</sc><sc>[</sc>d<sc>]</sc>
+
+keyset. 
+
+Those are the only controls. Scramble it and then try to put it back together. It's actually really hard and I haven't been able to do it yet myself from a deep scramble. 
+
+TODO: 
+-I would like to add touch controls for mobile/ipad
+</pre>
+<div class="bookmark">./sixteen/main.html</div><pre class=html>
 <kw>&lt!DOCTYPE HTML&gt</kw>
 
 <kw>&lthtml&gt</kw>
 	<kw>&lthead&gt</kw>
 		<kw>&ltmeta charset="UTF-8"&gt</kw>   
-		<kw>&ltstyle&gt</kw>
-			body { 	
-				background-color: #006699; 
-				cursor: crosshair;
-			}
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw>
 
-			canvas {
-				border:5px solid white;
-				padding-left: 0;
-				padding-right: 0;
-				margin-left: auto;
-				margin-right: auto;
-				display: block;
-				cursor: none;
-			}
-
-		<kw>&lt/style&gt</kw>
-	
-		
 		<kw>&ltscript src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
 			integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" 
 			crossorigin="anonymous"&gt</kw>
@@ -48,6 +52,22 @@
 		<kw>&ltscript src="sixteens.js"&gt</kw><kw>&lt/script&gt</kw>
 	<kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./sixteen/style.css</div><pre class=css>
+<sc>body {</sc> 	
+<css>	background-color: #006699; </css>
+<css>	cursor: crosshair;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	border:5px solid white;</css>
+<css>	padding-left: 0;</css>
+<css>	padding-right: 0;</css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
+<css>	display: block;</css>
+<css>	cursor: none;</css>
+<sc>}</sc>
 </pre>
 <div class="bookmark">./sixteen/sixteens.js</div><pre class=js>
 $<sc>(</sc><kw>function</kw>  <sc>(</sc><sc>)</sc>

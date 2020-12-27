@@ -1,1 +1,1 @@
-stock trading simulator. basic.
+under construction.
