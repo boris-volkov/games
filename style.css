@@ -120,6 +120,7 @@ a {
 	margin-left:auto;
 	margin-right:auto;
 	display: block;			/* to be able to center it */
+	cursor: pointer;
 }
 div.bookmark { 				/* the little tab above all the boxes */
 	text-align: center;
