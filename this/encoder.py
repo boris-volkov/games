@@ -242,12 +242,18 @@ if __name__ == "__main__":
         for py in py_readers:
             dbl_quote = 0
             sgl_quote = 0
+            block_quote = False
             _of.write('<div class="bookmark">' + py[0] + '</div>')
             _of.write("<pre class=py>\n")
 
             for line in py[1:]:
                 line = line.replace("<", "&lt")
                 line = line.replace(">", "&gt")
+                if "'''" in line:
+                    block_quote ^= True
+                if block_quote:
+                    _of.write(line)
+                    continue
                 for word in py_reserved:
                     start = 0
                     while x := findWholeWord(word)(line, start):

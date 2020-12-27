@@ -1,0 +1,493 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Ѭ</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+			
+<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./quest/readme.txt</div><pre class=notes>
+This program is one of the closest to my heart. 
+
+I wanted to give mental math the feeling of a speed arcade game like tetris or beat mania or ddr.
+All it does is cycle through the four arithmetic operations giving you a new problem every time you answer the last one. This goes on for five minutes. When the time runs out you have as much time as you like to answer the last question, but you don't get a point for it. Answering faster yields more points, but also raises the difficulty of the questions. That's about it. Just five minutes of mental math. "ready? set, go!"
+
+It actually got pretty competitive at a math tutoring center that I worked at for most of my twenties. 
+
+There was a whole little saga of a group of rivals battling for the top score on the leaderboard. 
+It played out like a drama:
+a couple of the most quick-minded teachers battled for the top slot for the first few weeks or so. <sc>(</sc>I wasn't really in this group myself, being at around 7th place in the end<sc>)</sc>. One teacher named W pushed ahead in the end and reached a score of over 300 points. This score was unbeaten for almost half a year. It seemed impossible to beat. I certainly couldn't beat it, and I'm no slouch at math!
+
+But the meantime, a young adversary was rising. He drilled the game at least two or three times every time he came in for a lesson, and over the weeks, we saw his score growing... 150, 160, 170, 180, ... His mind was getting faster, and so were his hands. It was very impressive to watch, and when he finally beat W's score, it was a major upheaval. He won a lavish prize that was offered him months before when it seemed that his victory would be impossible. He reached the top slot he had been training months for and then...
+
+A new challenger arrived. 
+
+We hired on a new instructor who, I kid you not, was a Japanese Abacus Champion. Watching him play was perplexing. You could see him sliding his fingers across the empty table in front of him, manipulating an imaginary abacus. Even though he had to take his hands off of the keyboard to do this, he beat the new first place score not by a few points, but by around one hundred. This moment was tense. 
+
+But the young competitor never lost his resolve. He still plays, and gets scores well over even those of the abasus champion. It's a real testament to the powers of dedication and practice. And also, I think, the desire to excell.
+
+Students asked me if I was mad that people were better than me at my own game, but that never even crossed my mind. Quite the opposite, I was happy that I could make a platform for other people to excel at. Of course it was also useful as a practice tool even for those students who did not treat it as a competitive platform. Everyone could use some practice at their arithmetic, after all.
+
+The program below is actually not the original <sc>(</sc>which is written in python and lives on my laptop<sc>)</sc>, but a javascript port so that it would work in browser. I actually really want to rewrite this already. I wrote it when I was first learning javascript, and made the big mistake of trying to use someone else's terminal library <sc>(</sc>xterm.js<sc>)</sc> instead of just writing my own. This seemed like it would be easiser, but in reality it meant many hours of digging through someone else's code. It was an educational experience, since the code was good, but I eventually ended up writing my own terminal the "organic" way. It's functional though, and is a nice way to drill your arithmetic skills, even if you don't care about your "score".
+</pre>
+<div class="bookmark">./quest/main.html</div><pre class=html>
+<kw>&lt!DOCTYPE HTML&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+
+		<kw>&ltlink rel="stylesheet" href="../xterm/css/xterm.css" /&gt</kw> 
+		<kw>&ltscript src="../xterm/lib/xterm.js"&gt</kw><kw>&lt/script&gt</kw> 
+
+		<kw>&ltmeta charset="UTF-8"&gt</kw>   
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw>
+		
+	<kw>&lt/head&gt</kw>
+	
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv&gt</kw>
+			<kw>&ltcanvas id = "progress_bar"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&lt/div&gt</kw>
+		<kw>&ltdiv id="terminal"&gt</kw><kw>&lt/div&gt</kw>
+
+		<kw>&ltscript src="game.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+  
+  
+</pre>
+<div class="bookmark">./quest/style.css</div><pre class=css>
+<sc>body {</sc> 	
+<css>	background-color: #336699; </css>
+<css>	scrollbar-width: none;</css>
+<css>	overflow: hidden;</css>
+<sc>}</sc>
+<sc>div {</sc>
+<css>	scrollbar-width: none;</css>
+<css>	cursor: crosshair;</css>
+<css>	overflow: hidden;</css>
+<sc>}</sc>
+<sc>canvas {</sc>
+<css>	padding-left: 0;</css>
+<css>	padding-right: 0;</css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
+<css>	display: block;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+</pre>
+<div class="bookmark">./quest/game.js</div><pre class=js>
+	<comment Class="js">//------------------------------------------------------Global Flags
+</comment>	<comment Class="js">//TODO these can probably be collapsed into one
+</comment>	<kw>var</kw> ready = <kw>false</kw><sc>;</sc>
+	<kw>var</kw> between_games = <kw>false</kw><sc>;</sc>
+
+	<comment Class="js">//------------------------------------Initialization of progress bar	
+</comment>	<kw>var</kw> canvas = document.getElementById<sc>(</sc><sgl_quote>'progress_bar'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+
+	<kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
+	<kw>var</kw> mins = urlParams.get<sc>(</sc><sgl_quote>'mins'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>var</kw> debug = urlParams.get<sc>(</sc><sgl_quote>'debug'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>parseInt<sc>(</sc>mins<sc>)</sc><sc>)</sc><sc>)</sc> mins = 5<sc>;</sc>
+	<kw>else</kw> mins = parseInt<sc>(</sc>mins<sc>)</sc><sc>;</sc>
+	<kw>var</kw> TIME_LIMIT = 1000 * 60 * mins<sc>;</sc>
+
+	<comment Class="js">//-------------------------------------------------------Progress Bar Stuff
+</comment>	<kw>var</kw> START_TIME = -1<sc>;</sc> <comment Class="js">// temporarily negative before game starts	
+</comment>
+	<kw>function</kw> computeDecimalFull<sc>(</sc>time<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>START_TIME &lt 0<sc>)</sc> <kw>return</kw> 0<sc>;</sc>
+		<kw>return</kw> Math.min<sc>(</sc>1, <sc>(</sc>time - START_TIME<sc>)</sc>/TIME_LIMIT<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>let</kw> color1 = <sgl_quote>'#4499EE'</sgl_quote><sc>;</sc>
+	<kw>let</kw> color2 = <sgl_quote>'#255585'</sgl_quote><sc>;</sc>
+	<kw>function</kw> progress_bar<sc>(</sc><sc>)</sc><sc>{</sc>
+		<kw>const</kw> decimalFull = computeDecimalFull<sc>(</sc>Date.now<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		<kw>const</kw> widthFull = decimalFull*canvas.width<sc>;</sc>
+		context.fillStyle = color1<sc>;</sc>
+		context.fillRect<sc>(</sc>0,0, widthFull, canvas.height<sc>)</sc><sc>;</sc>
+		context.fillStyle = color2<sc>;</sc>
+		context.fillRect<sc>(</sc>widthFull, 0, canvas.width-widthFull, canvas.height<sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>debug == <sgl_quote>'1'</sgl_quote><sc>)</sc><sc>{</sc>
+			context.fillStyle = <sgl_quote>'#000'</sgl_quote><sc>;</sc>
+			context.fillText<sc>(</sc>level.toString<sc>(</sc><sc>)</sc>,10,10<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>isTimeOut<sc>(</sc><sc>)</sc><sc>)</sc><sc>{</sc>
+			ready = <kw>false</kw><sc>;</sc>
+			between_games = true<sc>;</sc>
+			clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
+			term.writeln<sc>(</sc><dbl_quote>"\n\n\rlevel: "</dbl_quote> + level.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+			term.writeln<sc>(</sc><dbl_quote>"\x1b<sc>[</sc>95m&ltenter&gt again?"</dbl_quote><sc>)</sc><sc>;</sc>
+			term.writeln<sc>(</sc><dbl_quote>"  or &ltescape&gt?\x1b<sc>[</sc>97m"</dbl_quote><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>function</kw> isTimeOut<sc>(</sc><sc>)</sc> <sc>{</sc> <kw>return</kw> START_TIME + TIME_LIMIT &lt Date.now<sc>(</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+
+	window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, draw_canvas<sc>)</sc><sc>;</sc>
+	<kw>const</kw> PROGRESS_BAR_SCALE = 1.1<sc>;</sc>
+	<kw>function</kw> draw_canvas<sc>(</sc><sc>)</sc><sc>{</sc> <comment Class="js">//rename to resize?
+</comment>		<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+		canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, window.innerWidth-30<sc>)</sc><sc>;</sc> 
+		<comment Class="js">//canvas.setAttribute<sc>(</sc>'height', window.innerHeight*PROGRESS_BAR_SCALE<sc>)</sc><sc>;</sc>//TODO
+</comment>		canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>, 100<sc>)</sc><sc>;</sc>
+		canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+		progress_bar<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>const</kw> NUM_COLS = 16<sc>;</sc>
+	<kw>const</kw> NUM_ROWS = 4<sc>;</sc>
+	<kw>const</kw> digits = <dbl_quote>"0123456789"</dbl_quote><sc>;</sc>
+	<kw>var</kw> level = 1<sc>;</sc>
+	<kw>var</kw> quest_start<sc>;</sc>
+	
+	<kw>var</kw> quest = <sc>{</sc><sc>}</sc><sc>;</sc> <comment Class="js">// "object oriented programming"
+</comment>
+	<comment Class="js">// random normally distributed variable: sd=1 mean=0
+</comment>	<kw>function</kw> randn_bm<sc>(</sc><sc>)</sc> <sc>{</sc>
+	    <kw>var</kw> u = 0, v = 0<sc>;</sc>
+	    <kw>while</kw><sc>(</sc>u === 0<sc>)</sc> u = Math.random<sc>(</sc><sc>)</sc><sc>;</sc> <comment Class="js">//Converting <sc>[</sc>0,1<sc>)</sc> to <sc>(</sc>0,1<sc>)</sc>
+</comment>	    <kw>while</kw><sc>(</sc>v === 0<sc>)</sc> v = Math.random<sc>(</sc><sc>)</sc><sc>;</sc>
+	    <kw>return</kw> Math.sqrt<sc>(</sc>-2*Math.log<sc>(</sc>u<sc>)</sc><sc>)</sc> * Math.cos<sc>(</sc>2*Math.PI*v<sc>)</sc><sc>;</sc>
+	<sc>}</sc>	
+
+	<comment Class="js">//TODO color code the op chars?
+</comment>	<kw>function</kw> generate_add<sc>(</sc>level<sc>)</sc><sc>{</sc>
+		quest.a 	= Math.abs<sc>(</sc>Math.round<sc>(</sc>level + level/2*randn_bm<sc>(</sc><sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		quest.b 	= Math.abs<sc>(</sc>Math.round<sc>(</sc>level + level/2*randn_bm<sc>(</sc><sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		quest.ans 	= quest.a + quest.b<sc>;</sc>
+		quest.op 			= <sgl_quote>'+'</sgl_quote><sc>;</sc>
+		generate_prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>function</kw> generate_mul<sc>(</sc>level<sc>)</sc><sc>{</sc>
+		quest.a 	= Math.abs<sc>(</sc>Math.round<sc>(</sc>level*<sc>(</sc>2/3<sc>)</sc> + 10*randn_bm<sc>(</sc><sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		quest.b 	= 1 + Math.ceil<sc>(</sc>Math.random<sc>(</sc><sc>)</sc>*12<sc>)</sc><sc>;</sc>
+		quest.ans 	= quest.a * quest.b<sc>;</sc>
+		quest.op			= <sgl_quote>'x'</sgl_quote><sc>;</sc>
+		generate_prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>function</kw> generate_sub<sc>(</sc>level<sc>)</sc><sc>{</sc>
+		quest.b 	= Math.abs<sc>(</sc>Math.round<sc>(</sc>level + 10*randn_bm<sc>(</sc><sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		quest.ans 	= Math.round<sc>(</sc>2*level*Math.random<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		quest.a 	= quest.ans + quest.b<sc>;</sc> 
+		quest.op 			= <sgl_quote>'―'</sgl_quote><sc>;</sc>
+		generate_prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>function</kw> generate_div<sc>(</sc>level<sc>)</sc><sc>{</sc>
+		quest.a = level*11<sc>;</sc>
+		<kw>while</kw> <sc>(</sc>quest.a &gt level*10<sc>)</sc><sc>{</sc>
+			quest.ans 	= Math.abs<sc>(</sc>Math.round<sc>(</sc>level/3 + 10*randn_bm<sc>(</sc><sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
+			quest.b 	= 2 + Math.ceil<sc>(</sc>level*Math.random<sc>(</sc><sc>)</sc>/3<sc>)</sc><sc>;</sc>
+			quest.a 	= quest.b * quest.ans<sc>;</sc>
+		<sc>}</sc>
+		quest.op 			= <sgl_quote>'÷'</sgl_quote><sc>;</sc>
+		generate_prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>var</kw> op_counter = 0<sc>;</sc>
+	<comment Class="js">//TODO make the op_cycle dependent on URL parameters
+</comment>	<kw>const</kw> op_cycle = <sc>[</sc>generate_add, generate_mul, generate_sub, generate_div<sc>]</sc><sc>;</sc>
+	
+	<kw>function</kw> generate_prompt<sc>(</sc><sc>)</sc><sc>{</sc>
+		quest.widest = Math.max<sc>(</sc>	quest.a.toString<sc>(</sc><sc>)</sc>.length, 
+						quest.b.toString<sc>(</sc><sc>)</sc>.length,
+						quest.ans.toString<sc>(</sc><sc>)</sc>.length<sc>)</sc><sc>;</sc>
+		quest.bar 			= <sgl_quote>'―'</sgl_quote>.repeat<sc>(</sc>quest.widest + 2<sc>)</sc><sc>;</sc>
+		quest.top_cushion 	= <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>quest.widest - quest.a.toString<sc>(</sc><sc>)</sc>.length + 2<sc>)</sc><sc>;</sc>
+		quest.bot_cushion 	= <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>quest.widest - quest.b.toString<sc>(</sc><sc>)</sc>.length + 1<sc>)</sc><sc>;</sc>
+		quest.ans_cushion	= <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>quest.widest - quest.ans.toString<sc>(</sc><sc>)</sc>.length + 2<sc>)</sc><sc>;</sc>
+		quest.margin 		= <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>Math.floor<sc>(</sc><sc>(</sc>NUM_COLS - quest.widest<sc>)</sc>/2<sc>)</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	
+	<kw>function</kw> PROMPT<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>return</kw> 	quest.margin 				+ quest.top_cushion + quest.a + <dbl_quote>"\n\r"</dbl_quote> + 
+				quest.margin + quest.op 	+ quest.bot_cushion + quest.b + <dbl_quote>"\n\r"</dbl_quote> +
+				quest.margin + quest.bar	+ <dbl_quote>"\n\r"</dbl_quote>+ 
+				quest.margin 				+ quest.ans_cushion<sc>;</sc> 	
+	<sc>}</sc>
+	
+	<kw>function</kw> score<sc>(</sc>time_taken<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>time_taken &lt 1000 + level*10<sc>)</sc>
+			<kw>return</kw> 5
+		<kw>if</kw> <sc>(</sc>time_taken &lt 2000 + level*10<sc>)</sc>
+			<kw>return</kw> 3
+		<kw>if</kw> <sc>(</sc>time_taken &lt 3000 + level*10<sc>)</sc>
+			<kw>return</kw> 2
+		<kw>return</kw> 1
+	<sc>}</sc>
+
+	<kw>function</kw> prompt<sc>(</sc>term<sc>)</sc> <sc>{</sc> term.write<sc>(</sc><sgl_quote>'\n\r'</sgl_quote> + PROMPT<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> <sc>}</sc>	
+
+	<kw>function</kw> check<sc>(</sc>ans<sc>)</sc> <sc>{</sc>
+
+		<kw>if</kw> <sc>(</sc>parseInt<sc>(</sc>ans<sc>)</sc> == quest.ans<sc>)</sc><sc>{</sc>
+			time_taken = Date.now<sc>(</sc><sc>)</sc> - quest_start<sc>;</sc>
+			level += score<sc>(</sc>time_taken<sc>)</sc><sc>;</sc>	
+			op_cycle<sc>[</sc><sc>(</sc>op_counter++<sc>)</sc>%op_cycle.length<sc>]</sc><sc>(</sc>level<sc>)</sc><sc>;</sc>
+			quest_start = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<comment Class="js">//--------------------------------------------------------------Terminal settings
+</comment>	<comment Class="js">/*TODO I think I want to make my own terminal emulator and use
+	 * it instead of the term.js thing. It's much bulkier than what
+	 * I need, both memory-wise and in the number of features. 
+	 * I need to use something lighter, that basically only does put_char()
+	 * and get_line(). I will have a much easier time scaling it since
+	 * html canvas 
+	 */</comment>
+
+	<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc> <comment Class="js">// takes object as perameter <sc>(</sc>see docs<sc>)</sc>
+</comment>		<sc>{</sc> 
+			theme: <sc>{</sc>
+				background: <dbl_quote>"#336699"</dbl_quote>,
+			<sc>}</sc>,
+			rows: NUM_ROWS,
+			cols: 40,
+			cursorBlink: <kw>false</kw>,
+			<comment Class="js">// <kw>this</kw> upcoming font size is a total guess, it seems to fit on a 
+</comment>			<comment Class="js">// standard screen width but does not handle resizes well. 
+</comment>			<comment Class="js">// another thing that making an emulator from scratch would free me from
+</comment>			fontSize: Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
+			fontWeight: 900
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO: might be accessible directly from term...
+</comment>	
+	<kw>function</kw> reset<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>return</kw> 0<sc>;</sc>
+	<sc>}</sc>
+
+	<comment Class="js">//--------------------------------------------Open terminal and initiate listeners	
+</comment>	
+	term.open<sc>(</sc>document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	<comment Class="js">//term.write<sc>(</sc>'\x1b<sc>[</sc>95m'<sc>)</sc> // font color
+</comment>	term.onKey<sc>(</sc>e =&gt <sc>{</sc> <comment Class="js">// <kw>this</kw> listener can be linked to anything, even the canvas terminal
+</comment>		<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
+			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+		
+		<comment Class="js">// ENTER pressed
+</comment>		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc>
+			<kw>if</kw> <sc>(</sc>!ready<sc>)</sc> <sc>{</sc> <comment Class="js">// put <kw>this</kw> <kw>in</kw> reset<sc>(</sc><sc>)</sc> subroutine
+</comment>				ready = true<sc>;</sc>
+				level = 1<sc>;</sc>
+				op_cycle<sc>[</sc><sc>(</sc>op_counter++<sc>)</sc>%op_cycle.length<sc>]</sc><sc>(</sc>level<sc>)</sc><sc>;</sc>
+				START_TIME = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+				quest_start = START_TIME<sc>;</sc> <comment Class="js">// First question
+</comment>				id = setInterval<sc>(</sc>draw_canvas, 50<sc>)</sc><sc>;</sc> 
+			<sc>}</sc>
+
+			<kw>if</kw> <sc>(</sc>between_games<sc>)</sc><sc>{</sc>
+				between_games = <kw>false</kw><sc>;</sc>
+			<sc>}</sc>
+
+			<comment Class="js">// <kw>if</kw> the answer is wrong, don't send it?
+</comment>			check<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+			buffer = <sc>[</sc><sc>]</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>!isTimeOut<sc>(</sc><sc>)</sc><sc>)</sc> prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+		
+		<comment Class="js">// BACKSPACE
+</comment>		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8 && 
+		term._core.buffer.x &gt <sc>(</sc>quest.ans_cushion.length + 
+							   quest.margin.length<sc>)</sc><sc>)</sc><sc>{</sc>
+				buffer.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+				term.write<sc>(</sc><sgl_quote>'\b \b'</sgl_quote><sc>)</sc><sc>;</sc>
+			
+		<comment Class="js">// LEGIT INPUT
+</comment>		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>	digits.includes<sc>(</sc>e.key<sc>)</sc> && 
+					<sc>(</sc>buffer.length &lt quest.ans.toString<sc>(</sc><sc>)</sc>.length<sc>)</sc><sc>)</sc><sc>{</sc>
+			buffer.push<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+			term.write<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+
+		<comment Class="js">// FULL SCREEN
+</comment>		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc><dbl_quote>"Ff"</dbl_quote>.includes<sc>(</sc>e.key<sc>)</sc><sc>)</sc><sc>{</sc>
+			openFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+			term.scrollToBottom<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	<comment Class="js">//----------------------------------------------------------------------------------
+</comment>	<comment Class="js">//TODO control both width and height. keep it at a 2:3 ratio or something
+</comment>	onresize = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc> 
+		<comment Class="js">// make it minimum <kw>with</kw> a width-based measurement
+</comment>		term.setOption<sc>(</sc><dbl_quote>"fontSize"</dbl_quote>, Math.floor<sc>(</sc>innerHeight*4/<sc>(</sc>NUM_ROWS*6<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		term.clear<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>ready<sc>)</sc> prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	window.onload = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
+		term.focus<sc>(</sc><sc>)</sc><sc>;</sc>
+		term.write<sc>(</sc><dbl_quote>"Calculator Quest"</dbl_quote><sc>)</sc><sc>;</sc>
+		term.write<sc>(</sc><dbl_quote>"\n\r\x1b<sc>[</sc>95m&ltf&gt : fullscreen \n\r&ltenter&gt : begin\x1b<sc>[</sc>97m"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>;</sc>
+	
+	<kw>var</kw> elem = document.documentElement<sc>;</sc>
+	<comment Class="js">/* View <kw>in</kw> fullscreen */</comment>
+	<kw>function</kw> openFullscreen<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>elem.requestFullscreen<sc>)</sc> <sc>{</sc>
+			elem.requestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.mozRequestFullScreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Firefox */</comment>
+			elem.mozRequestFullScreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.webkitRequestFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Chrome, Safari and Opera */</comment>
+			elem.webkitRequestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.msRequestFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* IE/Edge */</comment>
+			elem.msRequestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+
+</pre>
+<div class="bookmark">./quest/.terminal.js</div><pre class=js>
+
+	<kw>var</kw> elem = document.documentElement<sc>;</sc>
+
+	<comment Class="js">/* View <kw>in</kw> fullscreen */</comment>
+	<kw>function</kw> openFullscreen<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>elem.requestFullscreen<sc>)</sc> <sc>{</sc>
+			elem.requestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.mozRequestFullScreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Firefox */</comment>
+			elem.mozRequestFullScreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.webkitRequestFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Chrome, Safari and Opera */</comment>
+			elem.webkitRequestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>elem.msRequestFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* IE/Edge */</comment>
+			elem.msRequestFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<comment Class="js">/* Close fullscreen */</comment>
+	<kw>function</kw> closeFullscreen<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>document.exitFullscreen<sc>)</sc> <sc>{</sc>
+			document.exitFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>document.mozCancelFullScreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Firefox */</comment>
+			document.mozCancelFullScreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>document.webkitExitFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* Chrome, Safari and Opera */</comment>
+			document.webkitExitFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>document.msExitFullscreen<sc>)</sc> <sc>{</sc> <comment Class="js">/* IE/Edge */</comment>
+			document.msExitFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>const</kw> NUM_COLS = 16<sc>;</sc>
+	<kw>const</kw> NUM_ROWS = 4<sc>;</sc>
+	<kw>const</kw> digits = <dbl_quote>"0123456789"</dbl_quote><sc>;</sc>
+	<kw>var</kw> level = 5<sc>;</sc>
+	<kw>var</kw> question_start<sc>;</sc>
+	
+	<kw>var</kw> question = <sc>{</sc><sc>}</sc><sc>;</sc>
+	<kw>function</kw> generate_add<sc>(</sc>level<sc>)</sc><sc>{</sc>
+		question.a = Math.round<sc>(</sc>2*level*Math.random<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		question.b = Math.round<sc>(</sc>2*level*Math.random<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		question.ans = question.a + question.b<sc>;</sc>
+		question.widest = Math.max<sc>(</sc>	question.a.toString<sc>(</sc><sc>)</sc>.length, 
+						question.b.toString<sc>(</sc><sc>)</sc>.length,
+						question.ans.toString<sc>(</sc><sc>)</sc>.length<sc>)</sc><sc>;</sc>
+		question.op = <sgl_quote>'+'</sgl_quote><sc>;</sc>
+		question.bar = <sgl_quote>'―'</sgl_quote>.repeat<sc>(</sc>question.widest + 1<sc>)</sc><sc>;</sc>
+		question.top_cushion = <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>question.widest - question.a.toString<sc>(</sc><sc>)</sc>.length + 1<sc>)</sc><sc>;</sc>
+		question.bot_cushion = <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>question.widest - question.b.toString<sc>(</sc><sc>)</sc>.length<sc>)</sc><sc>;</sc>
+		question.ans_cushion = <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>question.widest - question.ans.toString<sc>(</sc><sc>)</sc>.length + 1<sc>)</sc><sc>;</sc>
+		question.margin = <sgl_quote>' '</sgl_quote>.repeat<sc>(</sc>Math.floor<sc>(</sc><sc>(</sc>NUM_COLS - question.widest<sc>)</sc>/2<sc>)</sc><sc>)</sc><sc>;</sc>
+
+	<sc>}</sc>
+
+	generate_add<sc>(</sc>level<sc>)</sc><sc>;</sc> <comment Class="js">// first question
+</comment>	question_start = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+	
+	<kw>function</kw> PROMPT<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>return</kw> 	question.margin + 		question.top_cushion + question.a.toString<sc>(</sc><sc>)</sc> +<dbl_quote>"\n\r"</dbl_quote>+ 
+			question.margin + question.op + 	question.bot_cushion + question.b.toString<sc>(</sc><sc>)</sc> + <dbl_quote>"\n\r"</dbl_quote>+
+			question.margin + question.bar +  <dbl_quote>"\n\r"</dbl_quote>+ 
+			question.margin + 		question.ans_cushion<sc>;</sc> 	
+			
+	<sc>}</sc>
+	
+	<kw>function</kw> score<sc>(</sc>time_taken<sc>)</sc> <sc>{</sc>
+		<kw>return</kw> 1<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>function</kw> prompt<sc>(</sc>term<sc>)</sc> <sc>{</sc> term.write<sc>(</sc><sgl_quote>'\n\r'</sgl_quote> + PROMPT<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> <sc>}</sc>	
+
+	<kw>function</kw> check<sc>(</sc>ans<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>parseInt<sc>(</sc>ans<sc>)</sc> == question.ans<sc>)</sc><sc>{</sc>
+			time_taken = Date.now<sc>(</sc><sc>)</sc> - question_start<sc>;</sc>
+			level += score<sc>(</sc>time_taken<sc>)</sc><sc>;</sc>	
+			generate_add<sc>(</sc>level<sc>)</sc>
+			<kw>if</kw> <sc>(</sc>isTimeOut<sc>(</sc><sc>)</sc><sc>)</sc>
+				term.write<sc>(</sc><dbl_quote>"out of time"</dbl_quote><sc>)</sc><sc>;</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<comment Class="js">//--------------------------------------------------------------Terminal settings
+</comment>
+	<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc> <comment Class="js">// takes object as perameter <sc>(</sc>see docs<sc>)</sc>
+</comment>		<sc>{</sc> 
+			theme: <sc>{</sc>
+				background: <dbl_quote>"#336699"</dbl_quote>,
+			<sc>}</sc>,
+			rows: NUM_ROWS,
+			cols: 40,
+			cursorBlink: <kw>false</kw>,
+			fontSize: Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
+			fontWeight: 900
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO: might be accessible directly from term...
+</comment>	
+	<comment Class="js">//--------------------------------------------Open terminal and initiate listeners	
+</comment>
+	term.open<sc>(</sc>document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	term.write<sc>(</sc><sgl_quote>'\x1b<sc>[</sc>97m'</sgl_quote><sc>)</sc> <comment Class="js">// font color
+</comment>	term.onKey<sc>(</sc>e =&gt <sc>{</sc>
+		<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
+			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+
+		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc> <comment Class="js">// ENTER pressed
+</comment>			<kw>if</kw> <sc>(</sc>!ready<sc>)</sc> <sc>{</sc>ready = true<sc>;</sc>
+				START_TIME = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+				setInterval<sc>(</sc>draw_canvas, 100<sc>)</sc><sc>;</sc> <sc>}</sc>
+			check<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+			buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// reset buffer
+</comment>			prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8<sc>)</sc> <sc>{</sc> <comment Class="js">// Backspace pressed
+</comment>			<kw>if</kw> <sc>(</sc>term._core.buffer.x &gt= <sc>(</sc>question.ans_cushion.length + question.margin.length<sc>)</sc><sc>)</sc><sc>{</sc>
+				buffer.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+				term.write<sc>(</sc><sgl_quote>'\b \b'</sgl_quote><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>digits.includes<sc>(</sc>e.key<sc>)</sc> && buffer.length &lt question.ans.toString<sc>(</sc><sc>)</sc>.length<sc>)</sc> <sc>{</sc> <comment Class="js">// standard character
+</comment>			buffer.push<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+			term.write<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc><dbl_quote>"Ff"</dbl_quote>.includes<sc>(</sc>e.key<sc>)</sc><sc>)</sc><sc>{</sc>
+			openFullscreen<sc>(</sc><sc>)</sc><sc>;</sc>
+			term.scrollToBottom<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	<comment Class="js">//TODO control both width and height. keep it at a 2:3 ratio or something
+</comment>	onresize = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc> term.setOption<sc>(</sc><dbl_quote>"fontSize"</dbl_quote>,
+				Math.floor<sc>(</sc>innerHeight*4/<sc>(</sc>NUM_ROWS*6<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		term.clear<sc>(</sc><sc>)</sc><sc>;</sc>
+		prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<comment Class="js">//----------------------------------------------------------------------------------
+</comment>
+
+	window.onload = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
+		term.focus<sc>(</sc><sc>)</sc><sc>;</sc>
+		term.write<sc>(</sc><dbl_quote>"Press ⓕ \n\r then ENTER"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>;</sc>
+</pre>
+
+</body>
+</html>

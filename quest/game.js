@@ -35,6 +35,14 @@
 			context.fillStyle = '#000';
 			context.fillText(level.toString(),10,10);
 		}
+		if (isTimeOut()){
+			ready = false;
+			between_games = true;
+			clearInterval(id);
+			term.writeln("\n\n\rlevel: " + level.toString());
+			term.writeln("\x1b[95m<enter> again?");
+			term.writeln("  or <escape>?\x1b[97m");
+		}
 	}
 
 	function isTimeOut() { return START_TIME + TIME_LIMIT < Date.now();}
@@ -136,19 +144,12 @@
 	function prompt(term) { term.write('\n\r' + PROMPT()); }	
 
 	function check(ans) {
+
 		if (parseInt(ans) == quest.ans){
 			time_taken = Date.now() - quest_start;
 			level += score(time_taken);	
 			op_cycle[(op_counter++)%op_cycle.length](level);
 			quest_start = Date.now();
-			if (isTimeOut()){
-				ready = false;
-				between_games = true;
-				clearInterval(id);
-				term.writeln("\n\n\rlevel: " + level.toString());
-				term.writeln("\x1b[95m<enter> again?");
-				term.writeln("  or <escape>?\x1b[97m");
-			}
 		}
 	}
 

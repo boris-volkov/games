@@ -486,10 +486,10 @@ function execute_command(buffer) {
 
 function quest()	{location.assign('./quest/main.html');}
 function princess()	{location.assign('./princess/main.html');}
-function sixteen()	{location.assign('./puzzles/sixteen/sixteens.html');}
+function sixteen()	{location.assign('./sixteen/main.html');}
 function fifteen()	{location.assign('./fifteen/main.html');}
 function game() 	{location.assign('./game/main.html'); }
-function territory(){location.assign('./territory/page.html'); }
+function territory(){location.assign('./territory/main.html'); }
 function visual()   {location.assign('./visual.html'); }
 
 var cursor_backup;

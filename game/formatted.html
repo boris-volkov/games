@@ -11,13 +11,7 @@
 
 <body>
 			
- 
-        <div class="image">
-            <a href="#">
-                <iframe class="screenshot" src="main.html"></iframe>
-            </a>
-        </div>
-            <div class="bookmark">./game/readme.txt</div><pre class=notes>
+<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./game/readme.txt</div><pre class=notes>
 here is a 2d physics engine that I wrote. 
 the little robot can jet around, jump multiple times, and throw a ball.
 he is controlled by the arrow keys or wasd.
@@ -46,38 +40,13 @@ There is still room to grow here in terms of a feeling of solidity.
 
 Mario survived, while so many of his contemporaries were forgotten, primarilly because the JUMP felt so clean. A program should always strive to feel satisfying to use. 
 </pre>
-<div class="bookmark">./game/game.html</div><pre class=html>
+<div class="bookmark">./game/main.html</div><pre class=html>
 <kw>&lt!DOCTYPE html&gt</kw>
 <kw>&lthtml&gt</kw>
 	<kw>&lthead&gt</kw>
 		<kw>&ltmeta charset="UTF-8"&gt</kw>
-		<kw>&lttitle&gt</kw>title<kw>&lt/title&gt</kw>
-		<kw>&ltstyle&gt</kw>
-
-body {
-	background: #333540;
-	cursor: crosshair;
-}
-
-canvas {	
-	cursor : url(crosshair.png),crosshair;
-	border-width : 10px;
-	border-style : solid;
-	border-color : #778;
-	background: #fff;
-	border-radius: 5px;
-	padding-left : 0 ;
-	padding-right : 0;
-	margin-left : auto;
-	margin-right : auto;
-	display : block;
-	max-width: 90vw;
-	max-height: 90vh;
-}
-
-img {
-	display: none;
-}
+		<kw>&lttitle&gt</kw>2d_engine<kw>&lt/title&gt</kw>
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw>
 		<kw>&lt/style&gt</kw>
 	<kw>&lt/head&gt</kw>
 	<kw>&ltbody&gt</kw>
@@ -94,6 +63,32 @@ img {
 	<kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 
+</pre>
+<div class="bookmark">./game/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	background: #333540;</css>
+<css>	cursor: crosshair;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>	
+<css>	cursor : url(crosshair.png),crosshair;</css>
+<css>	border-width : 10px;</css>
+<css>	border-style : solid;</css>
+<css>	border-color : #778;</css>
+<css>	background: #fff;</css>
+<css>	border-radius: 5px;</css>
+<css>	padding-left : 0 ;</css>
+<css>	padding-right : 0;</css>
+<css>	margin-left : auto;</css>
+<css>	margin-right : auto;</css>
+<css>	display : block;</css>
+<css>	max-width: 90vw;</css>
+<css>	max-height: 90vh;</css>
+<sc>}</sc>
+<css></css>
+<sc>img {</sc>
+<css>	display: none;</css>
+<sc>}</sc>
 </pre>
 <div class="bookmark">./game/game.js</div><pre class=js>
 
