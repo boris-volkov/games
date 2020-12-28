@@ -1,10 +1,14 @@
 body {
-	background: #112;
+	background: #607080;
 	display:flex; /* MOST CRUCIAL LINE HERE!!! */
 	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
 	font: Courier;
+}
+
+div.holder {
+	background-color: #567;
 }
 
 div {
@@ -17,7 +21,4 @@ div {
 	border-style: inset;
 }
 
-div.holder {
-	background-color: #123;
-}
 
