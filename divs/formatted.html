@@ -1,0 +1,106 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Ѭ</title>
+<link href="../style.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+			
+<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./divs/readme.txt</div><pre class=notes>
+Try to understand how the html leads to the picture you see on the screen. It is all just empty divs nested in each other, and we can achieve a multitude of layout patterns. Study this example closely, and modify it to make your own picture!
+
+This is only structure, without "content". All of the divs are empty, yet it is their organization relative to each other that creates a content of itself. content grows out of emptiness through the nesting structure.
+
+<a href="./extras_/div_trees.html"> all the 6 trees </a>
+</pre>
+<div class="bookmark">./divs/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+	<kw>&ltmeta charset="utf-8"/&gt</kw>
+	<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+	<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+<kw>&ltbody&gt</kw>
+	<kw>&ltdiv class="blue"&gt</kw>
+		<kw>&ltdiv class="red"&gt</kw>
+			<kw>&ltdiv class="yellow"&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="green"&gt</kw>
+				<kw>&ltdiv class="blue"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="blue"&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="green"&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="blue"&gt</kw>
+			<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+		<kw>&ltdiv class="green"&gt</kw>
+			<kw>&ltdiv class = "blue"&gt</kw>
+				<kw>&ltdiv class="yellow"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="yellow"&gt</kw>	
+					<kw>&ltdiv class="green"&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="green"&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="blue"&gt</kw>
+					<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="red"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="red"&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+	<kw>&lt/div&gt</kw>
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./divs/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	background: black;</css>
+<css>	display:flex; <comment class="css">/* MOST CRUCIAL LINE HERE!!! */</comment></css>
+<css>	justify-content: center;</css>
+<css>	align-items: center;</css>
+<css>	flex-wrap: wrap;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	display: flex;  <comment class="css">/* divs need to declare it too */</comment></css>
+<css>	margin: 1vw;  	<comment class="css">/* padding and margin are what */</comment></css>
+<css>	padding: 1vw;	<comment class="css">/* give empty divs a "size" */</comment></css>
+<css>	border-style: inset;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.blue {</sc>
+<css>	background-color: #369;</css>
+<css>	flex-direction:row;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.green {</sc>
+<css>	background-color: #3a6;</css>
+<css>	flex-direction:row;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.yellow {</sc>
+<css>	background-color: #da3;</css>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.red {</sc>
+<css>	background-color: #955;</css>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+</pre>
+
+</body>
+</html>

@@ -33,6 +33,9 @@ div {
 	padding: 30px;
 }
 
+div.image {
+	background-color : #011;
+}
 
 a {
 	text-decoration: none;
@@ -122,6 +125,7 @@ a {
 	display: block;			/* to be able to center it */
 	cursor: pointer;
 }
+
 div.bookmark { 				/* the little tab above all the boxes */
 	text-align: center;
 	padding: 5px;
@@ -132,10 +136,6 @@ div.bookmark { 				/* the little tab above all the boxes */
 	margin-top: 70px;
 	border-top-right-radius : 30px;
 	border-top-left-radius : 30px;
-}
-
-div.image {
-	background-color: #011;
 }
 
 .link_box {

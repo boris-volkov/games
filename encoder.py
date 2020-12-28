@@ -96,6 +96,8 @@ if __name__ == "__main__":
 
 
         for (root, subs, files) in os.walk("./" + directory):
+            if root[-1] =='_':
+                continue
             for name in files:
                 if 'screenshot' in name:
                     pictures.append(name)

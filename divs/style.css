@@ -1,0 +1,34 @@
+body {
+	background: black;
+	display:flex; /* MOST CRUCIAL LINE HERE!!! */
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+div {
+	display: flex;  /* divs need to declare it too */
+	margin: 1vw;  	/* padding and margin are what */
+	padding: 1vw;	/* give empty divs a "size" */
+	border-style: inset;
+}
+
+div.blue {
+	background-color: #369;
+	flex-direction:row;
+}
+
+div.green {
+	background-color: #3a6;
+	flex-direction:row;
+}
+
+div.yellow {
+	background-color: #da3;
+	flex-direction: column;
+}
+
+div.red {
+	background-color: #955;
+	flex-direction: column;
+}

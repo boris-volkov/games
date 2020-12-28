@@ -1,0 +1,23 @@
+body {
+	background: #112;
+	display:flex; /* MOST CRUCIAL LINE HERE!!! */
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	font: Courier;
+}
+
+div {
+	display: flex;  /* divs need to declare it too */
+	margin: 1vw;  	/* padding and margin are what */
+	padding: 1vw;	/* give empty divs a "size" */
+	border-style: none;
+	color: #789;
+	flex-direction: column;
+	border-style: inset;
+}
+
+div.holder {
+	background-color: #123;
+}
+
