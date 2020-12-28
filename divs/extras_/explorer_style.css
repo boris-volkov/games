@@ -9,6 +9,7 @@ body {
 
 div.holder {
 	background-color: #567;
+	border-color: #678!important;
 }
 
 div {
@@ -16,9 +17,17 @@ div {
 	margin: 1vw;  	/* padding and margin are what */
 	padding: 1vw;	/* give empty divs a "size" */
 	border-style: none;
-	color: #789;
+	color: #678;
 	flex-direction: column;
 	border-style: inset;
+	border-width: 4px;
 }
 
+div:hover {
+	color: #89a;
+	border-top-color: #556;
+	border-left-color: #356;
+	border-bottom-color: #79a;
+	border-right-color: #89a;
+}
 
