@@ -5,6 +5,10 @@ body {
 	align-items: center;
 	flex-wrap: wrap;
 	font: Courier;
+	-webkit-user-select: none; /* Safari */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
 }
 
 div.holder {
@@ -19,13 +23,17 @@ div {
 	border-style: none;
 	color: #678;
 	flex-direction: column;
-	border-style: inset;
+	border-style: solid;
+	border-top-color: #556;
+	border-left-color: #456;
+	border-bottom-color: #789;
+	border-right-color: #789;
 	border-width: 4px;
 }
 
-div:hover {
+div:active {
 	color: #89a;
-	border-top-color: #556;
+	border-top-color: #345;
 	border-left-color: #356;
 	border-bottom-color: #79a;
 	border-right-color: #89a;
