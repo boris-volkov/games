@@ -20,7 +20,7 @@ import sys, os.path, re
 
 import time
 
-special_symbols = list('[](){};')
+special_symbols = list('[](){}:;!')
 
 js_reserved = [
     "await",    "break",    "case",
@@ -133,9 +133,6 @@ if __name__ == "__main__":
             _of.write('<div class="bookmark">' + txt[0]  +  '</div>')
             _of.write("<pre class=notes>\n")
             for line in txt[1:]:
-                for sym in special_symbols:
-                    if sym in line:
-                        line = line.replace(sym, "<sc>" + sym + "</sc>")
                 _of.write(line)
             _of.write("</pre>\n")
 

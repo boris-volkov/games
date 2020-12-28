@@ -11,9 +11,393 @@
 
 <body>
 			
-<div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./this/readme.txt</div><pre class=notes>
+<div class="image"> <a href="../visual.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./this/readme.txt</div><pre class=notes>
 here is the code for the page you are currently on.
 the python script at the bottom is used to make other code look neat on this page. 
+</pre>
+<div class="bookmark">./this/terminal.html</div><pre class=html>
+<kw>&lt!DOCTYPE HTML&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="UTF-8"&gt</kw>   
+		<kw>&lttitle&gt</kw>Mobius Terminal<kw>&lt/title&gt</kw>
+		<kw>&ltstyle&gt</kw>
+			
+			body { 	
+				background-color: #000; 
+				cursor: crosshair;
+				overflow: hidden;
+			}
+
+			canvas {
+				border-style: solid;
+				border-color:	#369;
+				border-width: 2px;
+				display: block;
+				margin: auto;
+				padding-left: 0;
+				padding-right: 0;
+				cursor: none;
+			}
+
+		<kw>&lt/style&gt</kw>
+
+	<kw>&lt/head&gt</kw>
+	<kw>&ltbody&gt</kw>
+		<kw>&ltcanvas id = "terminal"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&ltscript src="terminal.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./this/style.css</div><pre class=css>
+<sc>* {</sc>
+<css>	color: coral;</css>
+<css>	font-family : Courier;</css>
+<css>	font-weight : 600;</css>
+<css>	box-sizing : border-box; <comment class="css">/* to correct sizes */</comment></css>
+<css>	scrollbar-width : none;</css>
+<sc>}</sc>
+<css></css>
+<sc>body {</sc>
+<css>	background-color : #333942;</css>
+<css>	background: linear-gradient(180deg, rgb(21,27,36), rgb(51,57,66))</css>
+<sc>}</sc>
+<css></css>
+<sc>pre {</sc>
+<css>	line-height : 1.5em;</css>
+<css>	letter-spacing : 2px;</css>
+<css>	white-space: pre-wrap;  <comment class="css">/* to wrap text */</comment></css>
+<css>	word-break: break-all;	<comment class="css">/* so words don't get broken in wrap */</comment></css>
+<css>	cursor: text;</css>
+<sc>}</sc>
+<css></css>
+<sc>div, pre {</sc>  				<comment class="css">/* centering, margins, rounding */</comment>
+<css>	margin: auto;</css>
+<css>	padding: 10px;</css>
+<css>	padding-left: 40px;</css>
+<css>	width: 90vw;   			<comment class="css">/* 90% of viewport width */</comment></css>
+<css>	border-radius: 16px;</css>
+<css>	border-top-left-radius: 40px;</css>
+<css>	tab-size: 4;			<comment class="css">/* otherwise its 8 spaces*/</comment></css>
+<css>	-moz-tab-size: 4;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	padding: 30px;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.image {</sc>
+<css>	background-color : #011;</css>
+<sc>}</sc>
+<css></css>
+<sc>a {</sc>
+<css>	text-decoration: none;</css>
+<css>	cursor: default;</css>
+<sc>}</sc>
+<css></css>
+<sc>.terminal_button {</sc>
+<css>	margin-top : 50px!important;</css>
+<css>	display: flex;</css>
+<css>	flex-direction : column;</css>
+<css>	margin: auto;</css>
+<css>	height: 5vw;</css>
+<css>	width: 5vw;</css>
+<css>	padding: 0;</css>
+<css>	text-align:center;</css>
+<css>	border-radius : 50%;</css>
+<css>	border-bottom-right-radius:0;</css>
+<css>	border-bottom-left-radius:0;</css>
+<css>	background-color: #445;</css>
+<sc>}</sc>
+<css></css>
+<sc>.terminal_button a {</sc>
+<css>	background-color: coral;</css>
+<css>	padding: 0;</css>
+<css>	display: block;</css>
+<css>	margin: auto;</css>
+<css>	height :3vw;</css>
+<css>	width : 3vw;</css>
+<css>	border-radius: 50%;</css>
+<sc>}</sc>
+<css></css>
+<sc>.terminal_button a:hover {</sc>
+<css>	background-color: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.terminal_button .inner_button {</sc>
+<css>	display: inline;</css>
+<css>	vertical-align : middle;</css>
+<css>	padding: 0;</css>
+<css>	margin: 0;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top_menu {</sc>
+<css>	background-color: #445;</css>
+<css>	opacity : 0.9;</css>
+<css>	position : sticky; 		<comment class="css">/* stick to top of screen */</comment></css>
+<css>	top : 0;</css>
+<css>	width : 95vw;</css>
+<css>	border-radius:10px;</css>
+<css>	padding: 0;</css>
+<css>	margin: auto;</css>
+<css>	display: flex;</css>
+<css>	flex-wrap: wrap-reverse;</css>
+<css>	align-content : stretch;</css>
+<css>	border-bottom-left-radius: 30px;</css>
+<css>	border-bottom-right-radius: 30px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top_menu a {</sc>
+<css>	text-align : center;</css>
+<css>	background-color: #445;</css>
+<css>	flex : 1;</css>
+<css>	color: coral;</css>
+<css>	text-decoration: none;</css>
+<css>	padding: 15px 20px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top_menu a.first {</sc>
+<css>	border-bottom-left-radius: 30px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top_menu a.last {</sc>
+<css>	border-bottom-right-radius: 30px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top_menu a:hover {</sc>
+<css>	background: #358;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>.screenshot {</sc>
+<css>	width: 60vw;</css>
+<css>	height: 40vw;</css>
+<css>	object-fit: contain;</css>
+<css>	margin-left:auto;</css>
+<css>	margin-right:auto;</css>
+<css>	display: block;			<comment class="css">/* to be able to center it */</comment></css>
+<css>	cursor: pointer;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.bookmark {</sc> 				<comment class="css">/* the little tab above all the boxes */</comment>
+<css>	text-align: center;</css>
+<css>	padding: 5px;</css>
+<css>	width: 36vw;</css>
+<css>	background-color : #345;</css>
+<css>	margin-bottom : 0;</css>
+<css>	border-radius: 0;</css>
+<css>	margin-top: 70px;</css>
+<css>	border-top-right-radius : 30px;</css>
+<css>	border-top-left-radius : 30px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.link_box {</sc>
+<css>	background: #345;</css>
+<css>	margin: 0 auto 30px; 	<comment class="css">/* top sides bottom */</comment></css>
+<sc>}</sc>
+<css></css>
+<sc>.link_box a {</sc>
+<css>	display:block;			<comment class="css">/* to take up full row */</comment></css>
+<css>	background: #456;</css>
+<css>	padding: 10px;</css>
+<css>	padding-left: 30px;</css>
+<css>	margin: 5px;</css>
+<css>	border-top-left-radius: 20px;</css>
+<css>	border-top-right-radius: 20px;</css>
+<css>	word-wrap: wrap;</css>
+<css>	word-break: break-all;</css>
+<sc>}</sc>
+<css></css>
+<sc>.link_box a:hover {</sc>
+<css>	background: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.image_box {</sc>
+<css>	background: #345;</css>
+<css>	display: flex;</css>
+<css>	flex-wrap: wrap;</css>
+<css>	justify-content: space-around;</css>
+<sc>}</sc>
+<css></css>
+<sc>.image_box a {</sc>
+<css>	background: #456;</css>
+<css>	max-width: 30%;</css>
+<css>	border-top-left-radius: 20px;</css>
+<css>	border-top-right-radius: 20px;</css>
+<css>	padding: 20px;</css>
+<css>	margin: 10px;</css>
+<css>	display: flex;</css>
+<css>	flex-direction : column;</css>
+<css>	align-content : center;</css>
+<css>	justify-content: center;</css>
+<sc>}</sc>
+<css></css>
+<sc>.image_box a p {</sc>
+<css>	background: inherit;</css>
+<css>	text-align: center;</css>
+<css>	word-wrap: wrap;</css>
+<css>	word-break: break-all;</css>
+<sc>}</sc>
+<css></css>
+<sc>.image_box a:hover {</sc>
+<css>	background: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.image_box img {</sc>
+<css>	max-width: 90%;</css>
+<css>	object-fit: cover;</css>
+<css>	padding:0px;</css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
+<css>	border: 1px coral solid;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.notes {</sc>
+<css>	background-color: #357;</css>
+<css>	color: white;</css>
+<css>	word-break: keep-all;</css>
+<sc>}</sc>
+<css></css>
+<sc>.notes sc {</sc>
+<css>	color : coral;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.html {</sc>
+<css>	background-color: #375;</css>
+<css>	color: #000;</css>
+<sc>}</sc>
+<css></css>
+<sc>.html kw {</sc>
+<css>	color: yellow;</css>
+<sc>}</sc>
+<css></css>
+<sc>.html sc {</sc>
+<css>	color: yellow;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<css></css>
+<css></css>
+<sc>pre.css {</sc>
+<css>	background-color: #366;</css>
+<css>	color: #eee;	</css>
+<sc>}</sc>
+<css></css>
+<sc>.css sc {</sc>
+<css>	color : #3ff;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>pre.py {</sc>
+<css>	background-color: rgb(15,65,75);</css>
+<css>	color: #ddf;</css>
+<sc>}</sc>
+<css></css>
+<sc>.py sc {</sc>
+<css>	color: #bb2;</css>
+<sc>}</sc>
+<css></css>
+<sc>.py kw {</sc>
+<css>	color: coral;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>pre.js {</sc>
+<css>	background-color: rgb(140,110,110);</css>
+<css>	color: #321;</css>
+<sc>}</sc>
+<css></css>
+<sc>.js sc {</sc>
+<css>	color: #246;</css>
+<sc>}</sc>
+<css></css>
+<sc>.js kw {</sc>
+<css>	color: #dba;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>sc, kw {</sc> <comment class="css">/* special characters and key words */</comment>
+<css>	background-color:inherit;</css>
+<css>	font-weight: bold;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>comment {</sc>
+<css>	background-color: inherit;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>css {</sc>
+<css>	background-color: inherit;</css>
+<css>	color: white;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>string {</sc>
+<css>	background-color: inherit;</css>
+<css>	color: pink;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment.css {</sc>
+<css>	color: #f64;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment.js {</sc>
+<css>	color: #f95;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment.html {</sc>
+<css>	color: #242;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment.py {</sc>
+<css>	color: #987;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment, dbl_quote, sgl_quote {</sc>
+<css>	font-weight : 100;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.py dbl_quote {</sc>
+<css>	color: #1b5;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.py sgl_quote {</sc>
+<css>	color: #1a5;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.js dbl_quote {</sc>
+<css>	color: #bca;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre.js sgl_quote {</sc>
+<css>	color: #bca;</css>
+<sc>}</sc>
+<css></css>
+<sc>comment sc, comment kw, sgl_quote sc, sgl_quote kw, dbl_quote sc, dbl_quote kw{</sc>
+<css>	color : inherit!important;</css>
+<css>	font-weight : inherit!important;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>comment sc, comment kw {</sc> <comment class="css">/* comment overrides special symbols */</comment>
+<css>	color: inherit!important;</css>
+<sc>}</sc>
+<css></css>
+<sc>wedge {</sc> <comment class="css">/*for correct spacing when linking within page */</comment>
+<css>	height: 80px;</css>
+<css>	padding-top 10px;</css>
+<css>	visibility:hidden;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
 </pre>
 <div class="bookmark">./this/encoder.py</div><pre class=py>
 <sgl_quote>''</sgl_quote><sgl_quote>'
@@ -30,15 +414,15 @@ sub-directory, the front page to be named main.html <sc>(</sc><kw>for</kw> linki
 '</sgl_quote><sgl_quote>''</sgl_quote>
 
 <dbl_quote>""</dbl_quote><dbl_quote>"
-double block quote just <kw>for</kw> testing!
-you have to account <kw>for</kw> everything when testing!
+double block quote just <kw>for</kw> testing<sc>!</sc>
+you have to account <kw>for</kw> everything when testing<sc>!</sc>
 "</dbl_quote><dbl_quote>""</dbl_quote>
 
 <kw>import</kw> sys, os.path, re
 
 <kw>import</kw> time
 
-special_symbols = list<sc>(</sc><sgl_quote>'<sc>[</sc><sc>]</sc><sc>(</sc><sc>)</sc><sc>{</sc><sc>}</sc><sc>;</sc>'</sgl_quote><sc>)</sc>
+special_symbols = list<sc>(</sc><sgl_quote>'<sc>[</sc><sc>]</sc><sc>(</sc><sc>)</sc><sc>{</sc><sc>}</sc><sc>:</sc><sc>;</sc><sc>!</sc>'</sgl_quote><sc>)</sc>
 
 js_reserved = <sc>[</sc>
     <dbl_quote>"<kw>await</kw>"</dbl_quote>,    <dbl_quote>"<kw>break</kw>"</dbl_quote>,    <dbl_quote>"case"</dbl_quote>,
@@ -96,13 +480,13 @@ c_reserved = <sc>[</sc>
 
 image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</sgl_quote>, <sgl_quote>'.JPG'</sgl_quote>, <sgl_quote>'.PNG'</sgl_quote><sc>]</sc>
 
-<kw>def</kw> findWholeWord<sc>(</sc>w<sc>)</sc>:
+<kw>def</kw> findWholeWord<sc>(</sc>w<sc>)</sc><sc>:</sc>
     <kw>return</kw> re.compile<sc>(</sc>r<sgl_quote>'\b<sc>(</sc><sc>{</sc>0<sc>}</sc><sc>)</sc>\b'</sgl_quote>.format<sc>(</sc>w<sc>)</sc><sc>)</sc>.search
 
-<kw>if</kw> __name__ == <dbl_quote>"__main__"</dbl_quote>:
+<kw>if</kw> __name__ == <dbl_quote>"__main__"</dbl_quote><sc>:</sc>
 
-    <kw>for</kw> directory <kw>in</kw> sys.argv<sc>[</sc>1:<sc>]</sc>:
-        <kw>if</kw> os.path.exists<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory + <dbl_quote>"formatted.html"</dbl_quote><sc>)</sc>:
+    <kw>for</kw> directory <kw>in</kw> sys.argv<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>:</sc>
+        <kw>if</kw> os.path.exists<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory + <dbl_quote>"formatted.html"</dbl_quote><sc>)</sc><sc>:</sc>
             os.remove<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory + <dbl_quote>"formatted.html"</dbl_quote><sc>)</sc>
 
         js_readers = <sc>[</sc><sc>]</sc>
@@ -113,24 +497,26 @@ image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</s
         pictures = <sc>[</sc><sc>]</sc>
 
 
-        <kw>for</kw> <sc>(</sc>root, subs, files<sc>)</sc> <kw>in</kw> os.walk<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory<sc>)</sc>:
-            <kw>for</kw> name <kw>in</kw> files:
-                <kw>if</kw> <sgl_quote>'screenshot'</sgl_quote> <kw>in</kw> name:
+        <kw>for</kw> <sc>(</sc>root, subs, files<sc>)</sc> <kw>in</kw> os.walk<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory<sc>)</sc><sc>:</sc>
+            <kw>if</kw> root<sc>[</sc>-1<sc>]</sc> ==<sgl_quote>'_'</sgl_quote><sc>:</sc>
+                <kw>continue</kw>
+            <kw>for</kw> name <kw>in</kw> files<sc>:</sc>
+                <kw>if</kw> <sgl_quote>'screenshot'</sgl_quote> <kw>in</kw> name<sc>:</sc>
                     pictures.append<sc>(</sc>name<sc>)</sc>
-                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.js'</sgl_quote><sc>)</sc>:
-                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp:
+                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.js'</sgl_quote><sc>)</sc><sc>:</sc>
+                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp<sc>:</sc>
                         js_readers.append<sc>(</sc><sc>[</sc>root+name<sc>]</sc> + temp.readlines<sc>(</sc><sc>)</sc><sc>)</sc>
-                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.html'</sgl_quote><sc>)</sc>:
-                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp:                
+                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.html'</sgl_quote><sc>)</sc><sc>:</sc>
+                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp<sc>:</sc>                
                         html_readers.append<sc>(</sc><sc>[</sc>root+name<sc>]</sc> + temp.readlines<sc>(</sc><sc>)</sc><sc>)</sc>
-                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.css'</sgl_quote><sc>)</sc>:
-                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp:                
+                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.css'</sgl_quote><sc>)</sc><sc>:</sc>
+                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp<sc>:</sc>                
                         css_readers.append<sc>(</sc><sc>[</sc>root+name<sc>]</sc> + temp.readlines<sc>(</sc><sc>)</sc><sc>)</sc>
-                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.txt'</sgl_quote><sc>)</sc>:
-                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp:                
+                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.txt'</sgl_quote><sc>)</sc><sc>:</sc>
+                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp<sc>:</sc>                
                         txt_readers.append<sc>(</sc><sc>[</sc>root+name<sc>]</sc> + temp.readlines<sc>(</sc><sc>)</sc><sc>)</sc>
-                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.py'</sgl_quote><sc>)</sc>:
-                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp:                
+                <kw>if</kw> name.endswith<sc>(</sc><sgl_quote>'.py'</sgl_quote><sc>)</sc><sc>:</sc>
+                    <kw>with</kw> open<sc>(</sc>root+name<sc>)</sc> <kw>as</kw> temp<sc>:</sc>                
                         py_readers.append<sc>(</sc><sc>[</sc>root+name<sc>]</sc> + temp.readlines<sc>(</sc><sc>)</sc><sc>)</sc>
 
         _tp     = open<sc>(</sc><dbl_quote>"./templates/template.html"</dbl_quote><sc>)</sc>
@@ -138,113 +524,110 @@ image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</s
         _of     = open<sc>(</sc><dbl_quote>"./"</dbl_quote> + directory + <dbl_quote>"formatted.html"</dbl_quote>, <dbl_quote>"w+"</dbl_quote><sc>)</sc>
 
         i = 0
-        <kw>while</kw> <dbl_quote>"WRITE_HERE"</dbl_quote> <kw>not</kw> <kw>in</kw> template<sc>[</sc>i<sc>]</sc>:
+        <kw>while</kw> <dbl_quote>"WRITE_HERE"</dbl_quote> <kw>not</kw> <kw>in</kw> template<sc>[</sc>i<sc>]</sc><sc>:</sc>
             _of.write<sc>(</sc>template<sc>[</sc>i<sc>]</sc><sc>)</sc>
             i += 1
 
-        <kw>if</kw> pictures: 
+        <kw>if</kw> pictures<sc>:</sc> 
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="image"&gt &lta href="main.html"&gt &ltimg <kw>class</kw>="screenshot" src="'</sgl_quote> + pictures<sc>[</sc>0<sc>]</sc> + <sgl_quote>'"&gt&lt/img&gt &lt/a&gt &lt/div&gt'</sgl_quote><sc>)</sc>
 
-        <kw>for</kw> txt <kw>in</kw> txt_readers:
+        <kw>for</kw> txt <kw>in</kw> txt_readers<sc>:</sc>
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="bookmark"&gt'</sgl_quote> + txt<sc>[</sc>0<sc>]</sc>  +  <sgl_quote>'&lt/div&gt'</sgl_quote><sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&ltpre <kw>class</kw>=notes&gt\n"</dbl_quote><sc>)</sc>
-            <kw>for</kw> line <kw>in</kw> txt<sc>[</sc>1:<sc>]</sc>:
-                <kw>for</kw> sym <kw>in</kw> special_symbols:
-                    <kw>if</kw> sym <kw>in</kw> line:
-                        line = line.replace<sc>(</sc>sym, <dbl_quote>"&ltsc&gt"</dbl_quote> + sym + <dbl_quote>"&lt/sc&gt"</dbl_quote><sc>)</sc>
+            <kw>for</kw> line <kw>in</kw> txt<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>:</sc>
                 _of.write<sc>(</sc>line<sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&lt/pre&gt\n"</dbl_quote><sc>)</sc>
 
-        <kw>for</kw> html <kw>in</kw> html_readers:
+        <kw>for</kw> html <kw>in</kw> html_readers<sc>:</sc>
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="bookmark"&gt'</sgl_quote> + html<sc>[</sc>0<sc>]</sc>  +  <sgl_quote>'&lt/div&gt'</sgl_quote><sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&ltpre <kw>class</kw>=html&gt\n"</dbl_quote><sc>)</sc>
-            <kw>for</kw> line <kw>in</kw> html<sc>[</sc>1:<sc>]</sc>:  
+            <kw>for</kw> line <kw>in</kw> html<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>:</sc>  
                 r = line.replace<sc>(</sc><dbl_quote>"&lt"</dbl_quote>, <dbl_quote>"&ltkw*^+&lt"</dbl_quote><sc>)</sc>  <comment Class="py">#  *^+ <kw>is</kw> just a token <kw>for</kw> 
 </comment>                r = r.replace<sc>(</sc><dbl_quote>"&gt"</dbl_quote>,<dbl_quote>"&gt&lt/kw&gt"</dbl_quote><sc>)</sc>       
                 r = r.replace<sc>(</sc><dbl_quote>"*^+"</dbl_quote>, <dbl_quote>"&gt"</dbl_quote><sc>)</sc>           <comment Class="py">#  this line to match. Weird, i know...
-</comment>                <kw>if</kw> <dbl_quote>"&ltkw&gt&lt!--"</dbl_quote> <kw>in</kw> r:
-                    r = r.replace<sc>(</sc><dbl_quote>"&ltkw&gt&lt!--"</dbl_quote>, <sgl_quote>'&ltcomment <kw>class</kw>="html"&gt&lt!--'</sgl_quote><sc>)</sc>
+</comment>                <kw>if</kw> <dbl_quote>"&ltkw&gt&lt<sc>!</sc>--"</dbl_quote> <kw>in</kw> r<sc>:</sc>
+                    r = r.replace<sc>(</sc><dbl_quote>"&ltkw&gt&lt<sc>!</sc>--"</dbl_quote>, <sgl_quote>'&ltcomment <kw>class</kw>="html"&gt&lt<sc>!</sc>--'</sgl_quote><sc>)</sc>
                     r = r.replace<sc>(</sc><dbl_quote>"--&gt&lt/kw&gt"</dbl_quote>, <sgl_quote>'--&gt&lt/comment&gt'</sgl_quote><sc>)</sc>
                 _of.write<sc>(</sc>r<sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&lt/pre&gt\n"</dbl_quote><sc>)</sc>
 
-        <kw>for</kw> css <kw>in</kw> css_readers:
+        <kw>for</kw> css <kw>in</kw> css_readers<sc>:</sc>
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="bookmark"&gt'</sgl_quote> + css<sc>[</sc>0<sc>]</sc>  +  <sgl_quote>'&lt/div&gt'</sgl_quote><sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&ltpre <kw>class</kw>=css&gt\n"</dbl_quote><sc>)</sc>
-            <kw>for</kw> line <kw>in</kw> css<sc>[</sc>1:<sc>]</sc>:
+            <kw>for</kw> line <kw>in</kw> css<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>:</sc>
                 r = line
-                <kw>if</kw> <dbl_quote>"<sc>{</sc>"</dbl_quote> <kw>in</kw> line:
+                <kw>if</kw> <dbl_quote>"<sc>{</sc>"</dbl_quote> <kw>in</kw> line<sc>:</sc>
                     r = <dbl_quote>"&ltsc&gt"</dbl_quote>
                     r = r + line.replace<sc>(</sc><dbl_quote>"<sc>{</sc>"</dbl_quote>, <dbl_quote>"<sc>{</sc>&lt/sc&gt"</dbl_quote><sc>)</sc>
-                <kw>elif</kw> <dbl_quote>"<sc>}</sc>"</dbl_quote> <kw>in</kw> line:
+                <kw>elif</kw> <dbl_quote>"<sc>}</sc>"</dbl_quote> <kw>in</kw> line<sc>:</sc>
                     r = line.replace<sc>(</sc><dbl_quote>"<sc>}</sc>"</dbl_quote>, <dbl_quote>"&ltsc&gt<sc>}</sc>&lt/sc&gt"</dbl_quote><sc>)</sc>
-                <kw>else</kw>:
-                    r = <dbl_quote>"&ltcss&gt"</dbl_quote> + r<sc>[</sc>:-1<sc>]</sc> + <dbl_quote>"&lt/css&gt\n"</dbl_quote>
+                <kw>else</kw><sc>:</sc>
+                    r = <dbl_quote>"&ltcss&gt"</dbl_quote> + r<sc>[</sc><sc>:</sc>-1<sc>]</sc> + <dbl_quote>"&lt/css&gt\n"</dbl_quote>
 
-                <kw>if</kw> <dbl_quote>"/*"</dbl_quote> <kw>in</kw> r:
+                <kw>if</kw> <dbl_quote>"/*"</dbl_quote> <kw>in</kw> r<sc>:</sc>
                     r = r.replace<sc>(</sc><sgl_quote>'/*'</sgl_quote>, <sgl_quote>'&ltcomment <kw>class</kw>="css"&gt/*'</sgl_quote><sc>)</sc>
                     r = r.replace<sc>(</sc><sgl_quote>'*/'</sgl_quote>, <sgl_quote>'*/&lt/comment&gt'</sgl_quote><sc>)</sc>
 
                 _of.write<sc>(</sc>r<sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&lt/pre&gt\n"</dbl_quote><sc>)</sc>
 
-        <kw>for</kw> js <kw>in</kw> js_readers:
+        <kw>for</kw> js <kw>in</kw> js_readers<sc>:</sc>
             dbl_quote = 0
             sgl_quote = 0
             block_comment = 0
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="bookmark"&gt'</sgl_quote> + js<sc>[</sc>0<sc>]</sc>  +  <sgl_quote>'&lt/div&gt'</sgl_quote><sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&ltpre <kw>class</kw>=js&gt\n"</dbl_quote><sc>)</sc>
-            <kw>for</kw> line_num, line <kw>in</kw> enumerate<sc>(</sc>js<sc>[</sc>1:<sc>]</sc><sc>)</sc>:
+            <kw>for</kw> line_num, line <kw>in</kw> enumerate<sc>(</sc>js<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>)</sc><sc>:</sc>
                 line = line.replace<sc>(</sc><dbl_quote>"&lt"</dbl_quote>, <dbl_quote>"&lt"</dbl_quote><sc>)</sc>
                 line = line.replace<sc>(</sc><dbl_quote>"&gt"</dbl_quote>, <dbl_quote>"&gt"</dbl_quote><sc>)</sc>
 
-                <kw>if</kw> <sgl_quote>'/*'</sgl_quote> <kw>in</kw> line: 
+                <kw>if</kw> <sgl_quote>'/*'</sgl_quote> <kw>in</kw> line<sc>:</sc> 
                     line = line.replace<sc>(</sc><sgl_quote>'/*'</sgl_quote>, <sgl_quote>'&ltcomment Class="js"&gt/*'</sgl_quote><sc>)</sc>
                     block_comment = 1
-                <kw>if</kw> <sgl_quote>'*/'</sgl_quote> <kw>in</kw> line:
+                <kw>if</kw> <sgl_quote>'*/'</sgl_quote> <kw>in</kw> line<sc>:</sc>
                     line = line.replace<sc>(</sc><sgl_quote>'*/'</sgl_quote>, <sgl_quote>'*/&lt/comment&gt'</sgl_quote><sc>)</sc>
                     block_comment = 0
-                <kw>if</kw> block_comment == 1:
+                <kw>if</kw> block_comment == 1<sc>:</sc>
                     _of.write<sc>(</sc>line<sc>)</sc>
                     <kw>continue</kw>
 
-                <kw>for</kw> word <kw>in</kw> js_reserved:
+                <kw>for</kw> word <kw>in</kw> js_reserved<sc>:</sc>
                     start = 0
-                    <kw>while</kw> x := findWholeWord<sc>(</sc>word<sc>)</sc><sc>(</sc>line, start<sc>)</sc>:
-                        line = line<sc>[</sc>:x.start<sc>(</sc><sc>)</sc><sc>]</sc> + <sgl_quote>'&ltkw&gt'</sgl_quote> + word + <sgl_quote>'&lt/kw&gt'</sgl_quote> + line<sc>[</sc>x.end<sc>(</sc><sc>)</sc>:<sc>]</sc>
+                    <kw>while</kw> x <sc>:</sc>= findWholeWord<sc>(</sc>word<sc>)</sc><sc>(</sc>line, start<sc>)</sc><sc>:</sc>
+                        line = line<sc>[</sc><sc>:</sc>x.start<sc>(</sc><sc>)</sc><sc>]</sc> + <sgl_quote>'&ltkw&gt'</sgl_quote> + word + <sgl_quote>'&lt/kw&gt'</sgl_quote> + line<sc>[</sc>x.end<sc>(</sc><sc>)</sc><sc>:</sc><sc>]</sc>
                         start = x.end<sc>(</sc><sc>)</sc> + len<sc>(</sc><sgl_quote>'&ltkw&gt&lt/kw&gt'</sgl_quote><sc>)</sc>
-                <kw>for</kw> sym <kw>in</kw> special_symbols:
-                    <kw>if</kw> sym <kw>in</kw> line:
+                <kw>for</kw> sym <kw>in</kw> special_symbols<sc>:</sc>
+                    <kw>if</kw> sym <kw>in</kw> line<sc>:</sc>
                         line = line.replace<sc>(</sc>sym, <dbl_quote>"&ltsc&gt"</dbl_quote> + sym + <dbl_quote>"&lt/sc&gt"</dbl_quote><sc>)</sc>
 
                 j = 0
-                in_tag = 0 <comment Class="py"># don't put tags inside other tags!
+                in_tag = 0 <comment Class="py"># don't put tags inside other tags<sc>!</sc>
 </comment>                temp = list<sc>(</sc>line<sc>)</sc>
                 
-                <kw>while</kw> j &lt len<sc>(</sc>temp<sc>)</sc>: <comment Class="py">#go through chars of the line
-</comment>                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'&lt'</sgl_quote>:
+                <kw>while</kw> j &lt len<sc>(</sc>temp<sc>)</sc><sc>:</sc> <comment Class="py">#go through chars of the line
+</comment>                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'&lt'</sgl_quote><sc>:</sc>
                         in_tag = 1
-                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'&gt'</sgl_quote>:
+                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'&gt'</sgl_quote><sc>:</sc>
                         in_tag = 0
                     <comment Class="py"># it double marks these /* quotes
-</comment>                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'/'</sgl_quote> <kw>and</kw> temp<sc>[</sc>j+1<sc>]</sc> == <sgl_quote>'/'</sgl_quote> <kw>and</kw> dbl_quote == 0 <kw>and</kw> sgl_quote ==0:
+</comment>                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'/'</sgl_quote> <kw>and</kw> temp<sc>[</sc>j+1<sc>]</sc> == <sgl_quote>'/'</sgl_quote> <kw>and</kw> dbl_quote == 0 <kw>and</kw> sgl_quote ==0<sc>:</sc>
                         temp<sc>[</sc>j<sc>]</sc> = <sgl_quote>'&ltcomment Class="js"&gt/'</sgl_quote>
                         temp.append<sc>(</sc><sgl_quote>'&lt/comment&gt'</sgl_quote><sc>)</sc>
                         <kw>break</kw>
-                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'"'</sgl_quote> <kw>and</kw> sgl_quote == 0 <kw>and</kw> in_tag == 0:
-                        <kw>if</kw> dbl_quote == 0:
+                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'"'</sgl_quote> <kw>and</kw> sgl_quote == 0 <kw>and</kw> in_tag == 0<sc>:</sc>
+                        <kw>if</kw> dbl_quote == 0<sc>:</sc>
                             temp.insert<sc>(</sc>j, <sgl_quote>'&ltdbl_quote&gt'</sgl_quote><sc>)</sc>
                             dbl_quote = 1
-                        <kw>else</kw>:
+                        <kw>else</kw><sc>:</sc>
                             temp.insert<sc>(</sc>j + 1, <sgl_quote>'&lt/dbl_quote&gt'</sgl_quote><sc>)</sc>
                             dbl_quote = 0
                         j += 2
                         <kw>continue</kw>
-                    <kw>elif</kw> temp<sc>[</sc>j<sc>]</sc> == <dbl_quote>"'</sgl_quote>"</dbl_quote>:
-                        <kw>if</kw> sgl_quote == 0 <kw>and</kw> dbl_quote == 0 <kw>and</kw> in_tag == 0:
+                    <kw>elif</kw> temp<sc>[</sc>j<sc>]</sc> == <dbl_quote>"'</sgl_quote>"</dbl_quote><sc>:</sc>
+                        <kw>if</kw> sgl_quote == 0 <kw>and</kw> dbl_quote == 0 <kw>and</kw> in_tag == 0<sc>:</sc>
                             temp.insert<sc>(</sc>j, <sgl_quote>'&ltsgl_quote&gt'</sgl_quote><sc>)</sc>
                             sgl_quote = 1
-                        <kw>else</kw>:
+                        <kw>else</kw><sc>:</sc>
                             temp.insert<sc>(</sc>j + 1, <sgl_quote>'&lt/sgl_quote&gt'</sgl_quote><sc>)</sc>
                             sgl_quote = 0
                         j += 2
@@ -256,52 +639,46 @@ image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</s
             _of.write<sc>(</sc><dbl_quote>"&lt/pre&gt\n"</dbl_quote><sc>)</sc>
 
 
-        <comment Class="py">#TODO: block quotes <kw>in</kw> python
-</comment>        <kw>for</kw> py <kw>in</kw> py_readers:
+        <comment Class="py">#TODO<sc>:</sc> block quotes <kw>in</kw> python
+</comment>        <kw>for</kw> py <kw>in</kw> py_readers<sc>:</sc>
             dbl_quote = 0
             sgl_quote = 0
-            block_quote = <kw>False</kw>
             _of.write<sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="bookmark"&gt'</sgl_quote> + py<sc>[</sc>0<sc>]</sc> + <sgl_quote>'&lt/div&gt'</sgl_quote><sc>)</sc>
             _of.write<sc>(</sc><dbl_quote>"&ltpre <kw>class</kw>=py&gt\n"</dbl_quote><sc>)</sc>
 
-            <kw>for</kw> line <kw>in</kw> py<sc>[</sc>1:<sc>]</sc>:
+            <kw>for</kw> line <kw>in</kw> py<sc>[</sc>1<sc>:</sc><sc>]</sc><sc>:</sc>
                 line = line.replace<sc>(</sc><dbl_quote>"&lt"</dbl_quote>, <dbl_quote>"&lt"</dbl_quote><sc>)</sc>
                 line = line.replace<sc>(</sc><dbl_quote>"&gt"</dbl_quote>, <dbl_quote>"&gt"</dbl_quote><sc>)</sc>
-                <kw>if</kw> <dbl_quote>"'</sgl_quote>'</sgl_quote>'</sgl_quote>"</dbl_quote> <kw>in</kw> line:
-                    block_quote ^= <kw>True</kw>
-                <kw>if</kw> block_quote:
-                    _of.write<sc>(</sc>line<sc>)</sc>
-                    <kw>continue</kw>
-                <kw>for</kw> word <kw>in</kw> py_reserved:
+                <kw>for</kw> word <kw>in</kw> py_reserved<sc>:</sc>
                     start = 0
-                    <kw>while</kw> x := findWholeWord<sc>(</sc>word<sc>)</sc><sc>(</sc>line, start<sc>)</sc>:
-                        line = line<sc>[</sc>:x.start<sc>(</sc><sc>)</sc><sc>]</sc> + <sgl_quote>'&ltkw&gt'</sgl_quote> + word + <sgl_quote>'&lt/kw&gt'</sgl_quote> + line<sc>[</sc>x.end<sc>(</sc><sc>)</sc>:<sc>]</sc>
+                    <kw>while</kw> x <sc>:</sc>= findWholeWord<sc>(</sc>word<sc>)</sc><sc>(</sc>line, start<sc>)</sc><sc>:</sc>
+                        line = line<sc>[</sc><sc>:</sc>x.start<sc>(</sc><sc>)</sc><sc>]</sc> + <sgl_quote>'&ltkw&gt'</sgl_quote> + word + <sgl_quote>'&lt/kw&gt'</sgl_quote> + line<sc>[</sc>x.end<sc>(</sc><sc>)</sc><sc>:</sc><sc>]</sc>
                         start = x.end<sc>(</sc><sc>)</sc> + len<sc>(</sc><sgl_quote>'&ltkw&gt&lt/kw&gt'</sgl_quote><sc>)</sc>
-                <kw>for</kw> sym <kw>in</kw> special_symbols:
-                    <kw>if</kw> sym <kw>in</kw> line:
+                <kw>for</kw> sym <kw>in</kw> special_symbols<sc>:</sc>
+                    <kw>if</kw> sym <kw>in</kw> line<sc>:</sc>
                         line = line.replace<sc>(</sc>sym, <dbl_quote>"&ltsc&gt"</dbl_quote> + sym + <dbl_quote>"&lt/sc&gt"</dbl_quote><sc>)</sc>
                 j = 0
-                in_tag = 0 <comment Class="py"># don't put tags inside other tags!
+                in_tag = 0 <comment Class="py"># don't put tags inside other tags<sc>!</sc>
 </comment>                temp = list<sc>(</sc>line<sc>)</sc>
-                <kw>while</kw> j &lt len<sc>(</sc>temp<sc>)</sc>:
-                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'#'</sgl_quote> <kw>and</kw> dbl_quote == 0 <kw>and</kw> sgl_quote ==0:
+                <kw>while</kw> j &lt len<sc>(</sc>temp<sc>)</sc><sc>:</sc>
+                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'#'</sgl_quote> <kw>and</kw> dbl_quote == 0 <kw>and</kw> sgl_quote ==0<sc>:</sc>
                         temp<sc>[</sc>j<sc>]</sc> = <sgl_quote>'&ltcomment Class="py"&gt#'</sgl_quote>
                         temp.append<sc>(</sc><sgl_quote>'&lt/comment&gt'</sgl_quote><sc>)</sc>
                         <kw>break</kw>
-                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'"'</sgl_quote> <kw>and</kw> sgl_quote == 0:
-                        <kw>if</kw> dbl_quote == 0:
+                    <kw>if</kw> temp<sc>[</sc>j<sc>]</sc> == <sgl_quote>'"'</sgl_quote> <kw>and</kw> sgl_quote == 0<sc>:</sc>
+                        <kw>if</kw> dbl_quote == 0<sc>:</sc>
                             temp.insert<sc>(</sc>j, <sgl_quote>'&ltdbl_quote&gt'</sgl_quote><sc>)</sc>
                             dbl_quote = 1
-                        <kw>else</kw>:
+                        <kw>else</kw><sc>:</sc>
                             temp.insert<sc>(</sc>j + 1, <sgl_quote>'&lt/dbl_quote&gt'</sgl_quote><sc>)</sc>
                             dbl_quote = 0
                         j += 2
                         <kw>continue</kw>
-                    <kw>elif</kw> temp<sc>[</sc>j<sc>]</sc> == <dbl_quote>"'</sgl_quote>"</dbl_quote>:
-                        <kw>if</kw> sgl_quote == 0 <kw>and</kw> dbl_quote == 0:
+                    <kw>elif</kw> temp<sc>[</sc>j<sc>]</sc> == <dbl_quote>"'</sgl_quote>"</dbl_quote><sc>:</sc>
+                        <kw>if</kw> sgl_quote == 0 <kw>and</kw> dbl_quote == 0<sc>:</sc>
                             temp.insert<sc>(</sc>j, <sgl_quote>'&ltsgl_quote&gt'</sgl_quote><sc>)</sc>
                             sgl_quote = 1
-                        <kw>else</kw>:
+                        <kw>else</kw><sc>:</sc>
                             temp.insert<sc>(</sc>j + 1, <sgl_quote>'&lt/sgl_quote&gt'</sgl_quote><sc>)</sc>
                             sgl_quote = 0
                         j += 2
@@ -313,7 +690,7 @@ image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</s
 
 
         i += 1
-        <kw>while</kw> i &lt len<sc>(</sc>template<sc>)</sc>:
+        <kw>while</kw> i &lt len<sc>(</sc>template<sc>)</sc><sc>:</sc>
             _of.write<sc>(</sc>template<sc>[</sc>i<sc>]</sc><sc>)</sc>
             i += 1
 </pre>

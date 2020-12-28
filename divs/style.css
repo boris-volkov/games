@@ -1,16 +1,15 @@
 body {
-	background: black;
-	display:flex; /* MOST CRUCIAL LINE HERE!!! */
-	justify-content: center;
+	background : #123;
+	display : flex; /* MOST CRUCIAL LINE HERE!!! */
+	justify-content : center;
 	align-items: center;
 	flex-wrap: wrap;
 }
 
 div {
 	display: flex;  /* divs need to declare it too */
-	margin: 1vw;  	/* padding and margin are what */
-	padding: 1vw;	/* give empty divs a "size" */
-	border-style: inset;
+	margin: 1vw;  	/* 1 percent of viewport width */
+	padding: 1vw;
 }
 
 div.blue {

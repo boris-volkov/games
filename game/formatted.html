@@ -26,8 +26,8 @@ reccomended to use keyboard and mouse!
 controls:
 wasd/arrows: move
 mouse: throw ball
-<sc>[</sc> : shorter trail
-<sc>]</sc> : longer trail
+[ : shorter trail
+] : longer trail
 - : thinner trail
 = : wider trail
 . : display physics
@@ -250,19 +250,19 @@ reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>if</kw> <sc>(</sc>show_info<sc>)</sc><sc>{</sc>
 		ctx.fillStyle = <sgl_quote>'#000'</sgl_quote><sc>;</sc>
 		ctx.fillText<sc>(</sc><sgl_quote>'====BOT====='</sgl_quote>,         10, 20  <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'   x : '</sgl_quote> + player.x,   10, 40  <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'   y : '</sgl_quote> + player.y,   10, 60  <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'  dx : '</sgl_quote> + player.dx,  10, 80  <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'  dy : '</sgl_quote> + player.dy,  10, 100 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>' ddx : '</sgl_quote> + player.ddx, 10, 120 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>' ddy : '</sgl_quote> + player.ddy, 10, 140 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'   x <sc>:</sc> '</sgl_quote> + player.x,   10, 40  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'   y <sc>:</sc> '</sgl_quote> + player.y,   10, 60  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'  dx <sc>:</sc> '</sgl_quote> + player.dx,  10, 80  <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'  dy <sc>:</sc> '</sgl_quote> + player.dy,  10, 100 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>' ddx <sc>:</sc> '</sgl_quote> + player.ddx, 10, 120 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>' ddy <sc>:</sc> '</sgl_quote> + player.ddy, 10, 140 <sc>)</sc><sc>;</sc>
 		ctx.fillText<sc>(</sc><sgl_quote>'=---BALL---='</sgl_quote>, 		 10, 160 <sc>)</sc><sc>;</sc> 
-		ctx.fillText<sc>(</sc><sgl_quote>'   x : '</sgl_quote> + ball.x,  	 10, 180 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'   y : '</sgl_quote> + ball.y,  	 10, 200 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'  dx : '</sgl_quote> + ball.dx, 	 10, 220 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>'  dy : '</sgl_quote> + ball.dy, 	 10, 240 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>' ddx : '</sgl_quote> + ball.ddx, 	 10, 260 <sc>)</sc><sc>;</sc>
-		ctx.fillText<sc>(</sc><sgl_quote>' ddy : '</sgl_quote> + ball.ddy, 	 10, 280 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'   x <sc>:</sc> '</sgl_quote> + ball.x,  	 10, 180 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'   y <sc>:</sc> '</sgl_quote> + ball.y,  	 10, 200 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'  dx <sc>:</sc> '</sgl_quote> + ball.dx, 	 10, 220 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>'  dy <sc>:</sc> '</sgl_quote> + ball.dy, 	 10, 240 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>' ddx <sc>:</sc> '</sgl_quote> + ball.ddx, 	 10, 260 <sc>)</sc><sc>;</sc>
+		ctx.fillText<sc>(</sc><sgl_quote>' ddy <sc>:</sc> '</sgl_quote> + ball.ddy, 	 10, 280 <sc>)</sc><sc>;</sc>
 		ctx.fillText<sc>(</sc><sgl_quote>'============'</sgl_quote>,         10, 300 <sc>)</sc><sc>;</sc>
 		reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
@@ -277,19 +277,19 @@ reset_background_fill<sc>(</sc><sc>)</sc><sc>;</sc>
 <kw>const</kw> PI = 3.1415926535<sc>;</sc>
 
 <kw>const</kw> ball = <sc>{</sc>
-	r: 8,
-	w: 8,
-	h: 8,
-	x: player.x,
-	y: player.y,
-	dx: player.dx,
-	dy: player.dy,
-	ddx: player.ddx,
-	ddy: player.ddy,
-	caught : 1,
-	on: undefined,
-	friction: 0.1,
-	max_vel: Infinity,
+	r<sc>:</sc> 8,
+	w<sc>:</sc> 8,
+	h<sc>:</sc> 8,
+	x<sc>:</sc> player.x,
+	y<sc>:</sc> player.y,
+	dx<sc>:</sc> player.dx,
+	dy<sc>:</sc> player.dy,
+	ddx<sc>:</sc> player.ddx,
+	ddy<sc>:</sc> player.ddy,
+	caught <sc>:</sc> 1,
+	on<sc>:</sc> undefined,
+	friction<sc>:</sc> 0.1,
+	max_vel<sc>:</sc> Infinity,
 <sc>}</sc>
 
 
@@ -442,17 +442,17 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 </pre>
 <div class="bookmark">./game/player.js</div><pre class=js>
 <kw>const</kw> player = <sc>{</sc>
-	w 			: 40		, 
-	h 			: 40		,
-	x 			: 1000		, 
-	y 			: 100		, 
-	dx			: 0			, 
-	dy			: 0			,
-	ddx 		: 0			, 
-	ddy 		: 1			,
-	on			: undefined	,
-	jumped   	: 0			,
-	friction 	: 0.5		,
+	w 			<sc>:</sc> 40		, 
+	h 			<sc>:</sc> 40		,
+	x 			<sc>:</sc> 1000		, 
+	y 			<sc>:</sc> 100		, 
+	dx			<sc>:</sc> 0			, 
+	dy			<sc>:</sc> 0			,
+	ddx 		<sc>:</sc> 0			, 
+	ddy 		<sc>:</sc> 1			,
+	on			<sc>:</sc> undefined	,
+	jumped   	<sc>:</sc> 0			,
+	friction 	<sc>:</sc> 0.5		,
 <sc>}</sc><sc>;</sc>
 
 <kw>let</kw> image = robot_standing<sc>;</sc>
@@ -491,55 +491,55 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 <comment Class="js">// KEY LISTENERS
 </comment><kw>function</kw> keyDown<sc>(</sc>e<sc>)</sc> <sc>{</sc>
 	<kw>switch</kw> <sc>(</sc>e.key<sc>)</sc><sc>{</sc>
-		<kw>case</kw> <sgl_quote>' '</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'w'</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'ArrowUp'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>' '</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'w'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowUp'</sgl_quote><sc>:</sc>
 			<kw>if</kw> <sc>(</sc>player.jumped === 0<sc>)</sc><sc>{</sc>
 				player.on = undefined<sc>;</sc>
 				player.dy = -15<sc>;</sc>
 				player.jumped = 1<sc>;</sc>
 			<sc>}</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'a'</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'ArrowLeft'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'a'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowLeft'</sgl_quote><sc>:</sc>
 			player.ddx = -1<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'d'</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'ArrowRight'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'d'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowRight'</sgl_quote><sc>:</sc>
 			player.ddx = 1<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'p'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'p'</sgl_quote><sc>:</sc>
 			clearInterval<sc>(</sc>interval_id<sc>)</sc><sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'h'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'h'</sgl_quote><sc>:</sc>
 			<kw>switch</kw> <sc>(</sc>platforms<sc>)</sc><sc>{</sc>
-				<kw>case</kw> platforms1:
+				<kw>case</kw> platforms1<sc>:</sc>
 					platforms = platforms2<sc>;</sc>
 					<kw>break</kw><sc>;</sc>
-				<kw>case</kw> platforms2:
+				<kw>case</kw> platforms2<sc>:</sc>
 					platforms = platforms3<sc>;</sc>
 					<kw>break</kw><sc>;</sc>
-				<kw>case</kw> platforms3:
+				<kw>case</kw> platforms3<sc>:</sc>
 					platforms = platforms1<sc>;</sc>
 					<kw>break</kw><sc>;</sc>
 			<sc>}</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'.'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'.'</sgl_quote><sc>:</sc>
 			show_info ^= true<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'='</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'='</sgl_quote><sc>:</sc>
 			MAX_TRAIL_RADIUS += 1<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'-'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'-'</sgl_quote><sc>:</sc>
 			MAX_TRAIL_RADIUS = Math.max<sc>(</sc>0, MAX_TRAIL_RADIUS - 1<sc>)</sc><sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'<sc>]</sc>'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'<sc>]</sc>'</sgl_quote><sc>:</sc>
 			TRAIL_LENGTH = Math.min<sc>(</sc>MAX_TRAIL_LENGTH, TRAIL_LENGTH + 1<sc>)</sc><sc>;</sc><sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'<sc>[</sc>'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'<sc>[</sc>'</sgl_quote><sc>:</sc>
 			TRAIL_LENGTH = Math.max<sc>(</sc>0, TRAIL_LENGTH - 1<sc>)</sc><sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'g'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'g'</sgl_quote><sc>:</sc>
 			show_sprite ^= true<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
 
@@ -548,24 +548,24 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 
 <kw>function</kw> keyUp<sc>(</sc>e<sc>)</sc> <sc>{</sc>
 	<kw>switch</kw> <sc>(</sc>e.key<sc>)</sc><sc>{</sc>
-		<kw>case</kw> <sgl_quote>' '</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'w'</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'ArrowUp'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>' '</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'w'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowUp'</sgl_quote><sc>:</sc>
 			player.jumped = 0<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'a'</sgl_quote>:
-		<kw>case</kw> <sgl_quote>'ArrowLeft'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'a'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowLeft'</sgl_quote><sc>:</sc>
 			player.ddx = 0<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'d'</sgl_quote>:
-		<kw>case</kw><sgl_quote>'ArrowRight'</sgl_quote>:
+		<kw>case</kw> <sgl_quote>'d'</sgl_quote><sc>:</sc>
+		<kw>case</kw><sgl_quote>'ArrowRight'</sgl_quote><sc>:</sc>
 			player.ddx = 0<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
 	<sc>}</sc>
 <sc>}</sc>
 
-						<comment Class="js">//string: what kind of event listener
-</comment>						<comment Class="js">//<kw>function</kw>: what to <kw>do</kw> when the event happens
+						<comment Class="js">//string<sc>:</sc> what kind of event listener
+</comment>						<comment Class="js">//<kw>function</kw><sc>:</sc> what to <kw>do</kw> when the event happens
 </comment>document.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>	, keyDown<sc>)</sc><sc>;</sc>
 document.addEventListener<sc>(</sc><sgl_quote>'keyup'</sgl_quote>	, keyUp<sc>)</sc><sc>;</sc>
 </pre>

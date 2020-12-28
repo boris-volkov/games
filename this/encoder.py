@@ -20,7 +20,7 @@ import sys, os.path, re
 
 import time
 
-special_symbols = list('[](){};')
+special_symbols = list('[](){}:;!')
 
 js_reserved = [
     "await",    "break",    "case",
@@ -96,6 +96,8 @@ if __name__ == "__main__":
 
 
         for (root, subs, files) in os.walk("./" + directory):
+            if root[-1] =='_':
+                continue
             for name in files:
                 if 'screenshot' in name:
                     pictures.append(name)
@@ -131,9 +133,6 @@ if __name__ == "__main__":
             _of.write('<div class="bookmark">' + txt[0]  +  '</div>')
             _of.write("<pre class=notes>\n")
             for line in txt[1:]:
-                for sym in special_symbols:
-                    if sym in line:
-                        line = line.replace(sym, "<sc>" + sym + "</sc>")
                 _of.write(line)
             _of.write("</pre>\n")
 
@@ -242,18 +241,12 @@ if __name__ == "__main__":
         for py in py_readers:
             dbl_quote = 0
             sgl_quote = 0
-            block_quote = False
             _of.write('<div class="bookmark">' + py[0] + '</div>')
             _of.write("<pre class=py>\n")
 
             for line in py[1:]:
                 line = line.replace("<", "&lt")
                 line = line.replace(">", "&gt")
-                if "'''" in line:
-                    block_quote ^= True
-                if block_quote:
-                    _of.write(line)
-                    continue
                 for word in py_reserved:
                     start = 0
                     while x := findWholeWord(word)(line, start):

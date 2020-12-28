@@ -3,6 +3,7 @@
 	font-family : Courier;
 	font-weight : 600;
 	box-sizing : border-box; /* to correct sizes */
+	scrollbar-width : none;
 }
 
 body {
