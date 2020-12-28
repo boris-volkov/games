@@ -1,0 +1,37 @@
+body{
+	display : flex;
+	background-color: #123;
+	justify-content:center;
+}
+
+div {
+	display: flex
+}
+
+div.button_holder {
+	margin : 3vw;
+	display : flex;
+
+	align-content: center;
+	border-radius: 50%;
+}	
+
+div.button_holder {
+	padding : 1vw;
+	background-color: #abc;
+}
+
+a.button {
+	margin : 3vw;
+	padding : 10vw;
+	background-color : #345;
+	border-radius: 50%;
+}
+
+a.button:hover {
+	background-color : #369;
+}
+
+a.button:active {
+	background-image: radial-gradient(#123, #247, #369);
+}

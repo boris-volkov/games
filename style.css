@@ -35,6 +35,9 @@ div {
 
 div.image {
 	background-color : #011;
+	display: flex;			/* to be able to center it */
+	justify-content : center;
+	align-items: center;	
 }
 
 a {
@@ -120,10 +123,6 @@ a {
 	width: 60vw;
 	height: 40vw;
 	object-fit: contain;
-	margin-left:auto;
-	margin-right:auto;
-	display: block;			/* to be able to center it */
-	cursor: pointer;
 }
 
 div.bookmark { 				/* the little tab above all the boxes */
@@ -136,6 +135,7 @@ div.bookmark { 				/* the little tab above all the boxes */
 	margin-top: 70px;
 	border-top-right-radius : 30px;
 	border-top-left-radius : 30px;
+	word-break: break-all;
 }
 
 .link_box {
@@ -150,7 +150,7 @@ div.bookmark { 				/* the little tab above all the boxes */
 	padding-left: 30px;
 	margin: 5px;
 	border-top-left-radius: 20px;
-	border-top-right-radius: 20px;
+	border-top-right-radius: 10px;
 	word-wrap: wrap;
 	word-break: break-all;
 }
@@ -170,7 +170,7 @@ div.bookmark { 				/* the little tab above all the boxes */
 	background: #456;
 	max-width: 30%;
 	border-top-left-radius: 20px;
-	border-top-right-radius: 20px;
+	border-top-right-radius: 10px;
 	padding: 20px;
 	margin: 10px;
 	display: flex;

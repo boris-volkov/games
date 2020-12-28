@@ -7,6 +7,10 @@ The reason that these empty divs are visible is that they have the margin and pa
 
 Try to understand how the html below leads to the picture you see above. The indentation in the code is designed to make the nesting structure more clear. The deeper an element is nested in the structure, the further it is indented. 
 
-To practice:
+to practice:
+
+copy the documents here and start changing them around. Adjust the colors to your liking, and change the picture structure. Change every setting to see what happens. Add divs to make the image more complex. Add your own color classes, Make it your own! I think this actually makes a pretty nice picture. 
+
+advanced practice:
 
 Here is the full set of <a href="./extras_/div_trees.html">the 6 div column structures</a>. Of course, any column structure can be exchanged for a row structure by changing "flex-direction : column;" to "flex-direction : row;" in that div's style description. Find a layout that you like, and try to replicate it as a nested structure of flex-boxes, then either add images or text if you like, or choose your own background colors and other settings. Make it your own!

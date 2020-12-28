@@ -1,5 +1,5 @@
 body {
-	background: #607080;
+	background-color: #567;
 	display:flex; /* MOST CRUCIAL LINE HERE!!! */
 	justify-content: center;
 	align-items: center;

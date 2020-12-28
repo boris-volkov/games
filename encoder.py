@@ -133,6 +133,8 @@ if __name__ == "__main__":
             _of.write('<div class="bookmark">' + txt[0]  +  '</div>')
             _of.write("<pre class=notes>\n")
             for line in txt[1:]:
+                line = line.replace("<", "&lt")
+                line = line.replace(">", "&gt")
                 _of.write(line)
             _of.write("</pre>\n")
 

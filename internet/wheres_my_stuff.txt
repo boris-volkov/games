@@ -1,0 +1,20 @@
+I'm afraid that the generation who grew up with smart phones has missed out on the distinctions between what is private and what is public, what is local and what is non-local.
+
+When I was a kid, a computer was like a crate containing a bunch of books and games and pictures. They existed only in that crate. 
+
+Then internet came, and there were two worlds, the internal crate of the computer, and the external mega-crate of all the computers serving content to the internet. These worlds were still quite distinct, since you had to cut off the phone-line and manually connect to the internet with a bunch of loud beeps and buzzes. If you wanted to take something from the internet and put it in your own computer, you had the distinct sense that something from "out there" was being put "in here".
+
+Now, devices are pretty much permanently on the internet, and it's pretty hard to tell the difference between "out there" and "in here", or even that there is such a difference. The rule is, what's "in here" is what remains when the wifi or service cuts out. I think everyone knows that already, but there are still several things that are worth being clear about:
+
+Storage of data today breaks into three major categories: local, cloud, and public. 
+(by data I don't just mean science stuff, but also your pictures, texts, videos, etc.)
+
+Local is what you still have when internet service cuts out.
+
+Cloud is what you keep on services like Googoo Drive. It's semi-public in the sense that only people with the password can see it.
+
+Public is what you put on sites that anyone can go to. 
+
+What must be understood is that before you make something public, you have to think of it as if it is public permanently. You can still delete something off of your own Local storage. With Cloud you probably can too. But once something is public, anyone can get a copy of it (the printers charge 10 cents per page, but copying on a computer is free), and if you later decide that you want it to no longer be public, you can no longer do it. You can try, but anyone who has a copy of it can again make it public. 
+
+Isn't it strange that all the people in memes are just regular people who had no idea it was going to happen?
