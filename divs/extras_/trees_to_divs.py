@@ -8,9 +8,9 @@ _tp     = open("template.html")
 template    = _tp.readlines()
 
 def get_color(depth):
-    red = 150 - 8 * depth
-    green = 150 - 10 * depth
-    blue = 150 - 12 * depth
+    red = 150 - 12 * depth
+    green = 150 - 15 * depth
+    blue = 150 - 18 * depth
     return red, green, blue
 
 i = 0
