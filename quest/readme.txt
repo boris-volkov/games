@@ -1,22 +1,5 @@
-This program is one of the closest to my heart. 
+Here is an arithmetic drilling program. It gives you five minutes to do as many arithmetic operations as you can in five minutes, cycling through the four major operations. You get more points for answering quickly, but the more points you have, the harder the questions get. You get a score at the end, which you can use to gauge your own progress across time.
 
-I wanted to give mental math the feeling of a speed arcade game like tetris or beat mania or ddr.
-All it does is cycle through the four arithmetic operations giving you a new problem every time you answer the last one. This goes on for five minutes. When the time runs out you have as much time as you like to answer the last question, but you don't get a point for it. Answering faster yields more points, but also raises the difficulty of the questions. That's about it. Just five minutes of mental math. "ready? set, go!"
+You'll be surprised how quick your mind can get with practice...
 
-It actually got pretty competitive at a math tutoring center that I worked at for most of my twenties. 
-
-There was a whole little saga of a group of rivals battling for the top score on the leaderboard. 
-It played out like a drama:
-a couple of the most quick-minded teachers battled for the top slot for the first few weeks or so. (I wasn't really in this group myself, being at around 7th place in the end). One teacher named W pushed ahead in the end and reached a score of over 300 points. This score was unbeaten for almost half a year. It seemed impossible to beat. I certainly couldn't beat it, and I'm no slouch at math!
-
-But the meantime, a young adversary was rising. He drilled the game at least two or three times every time he came in for a lesson, and over the weeks, we saw his score growing... 150, 160, 170, 180, ... His mind was getting faster, and so were his hands. It was very impressive to watch, and when he finally beat W's score, it was a major upheaval. He won a lavish prize that was offered him months before when it seemed that his victory would be impossible. He reached the top slot he had been training months for and then...
-
-A new challenger arrived. 
-
-We hired on a new instructor who, I kid you not, was a Japanese Abacus Champion. Watching him play was perplexing. You could see him sliding his fingers across the empty table in front of him, manipulating an imaginary abacus. Even though he had to take his hands off of the keyboard to do this, he beat the new first place score not by a few points, but by around one hundred. This moment was tense. 
-
-But the young competitor never lost his resolve. He still plays, and gets scores well over even those of the abasus champion. It's a real testament to the powers of dedication and practice. And also, I think, the desire to excell.
-
-Students asked me if I was mad that people were better than me at my own game, but that never even crossed my mind. Quite the opposite, I was happy that I could make a platform for other people to excel at. Of course it was also useful as a practice tool even for those students who did not treat it as a competitive platform. Everyone could use some practice at their arithmetic, after all.
-
-The program below is actually not the original (which is written in python and lives on my laptop), but a javascript port so that it would work in browser. I actually really want to rewrite this already. I wrote it when I was first learning javascript, and made the big mistake of trying to use someone else's terminal library (xterm.js) instead of just writing my own. This seemed like it would be easiser, but in reality it meant many hours of digging through someone else's code. It was an educational experience, since the code was good, but I eventually ended up writing my own terminal the "organic" way. It's functional though, and is a nice way to drill your arithmetic skills, even if you don't care about your "score".
+Study the code and see how it is built. Missing is the code for the terminal interface "xterm.js" which is available on github. It is just the interface to print characters to the screen; all the game logic is here.

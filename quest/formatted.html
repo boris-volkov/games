@@ -12,28 +12,11 @@
 <body>
 			
 <div class="image"> <a href="main.html"> <img class="screenshot" src="screenshot.png"></img> </a> </div><div class="bookmark">./quest/readme.txt</div><pre class=notes>
-This program is one of the closest to my heart. 
+Here is an arithmetic drilling program. It gives you five minutes to do as many arithmetic operations as you can in five minutes, cycling through the four major operations. You get more points for answering quickly, but the more points you have, the harder the questions get. You get a score at the end, which you can use to gauge your own progress across time.
 
-I wanted to give mental math the feeling of a speed arcade game like tetris or beat mania or ddr.
-All it does is cycle through the four arithmetic operations giving you a new problem every time you answer the last one. This goes on for five minutes. When the time runs out you have as much time as you like to answer the last question, but you don't get a point for it. Answering faster yields more points, but also raises the difficulty of the questions. That's about it. Just five minutes of mental math. "ready? set, go!"
+You'll be surprised how quick your mind can get with practice...
 
-It actually got pretty competitive at a math tutoring center that I worked at for most of my twenties. 
-
-There was a whole little saga of a group of rivals battling for the top score on the leaderboard. 
-It played out like a drama:
-a couple of the most quick-minded teachers battled for the top slot for the first few weeks or so. <sc>(</sc>I wasn't really in this group myself, being at around 7th place in the end<sc>)</sc>. One teacher named W pushed ahead in the end and reached a score of over 300 points. This score was unbeaten for almost half a year. It seemed impossible to beat. I certainly couldn't beat it, and I'm no slouch at math!
-
-But the meantime, a young adversary was rising. He drilled the game at least two or three times every time he came in for a lesson, and over the weeks, we saw his score growing... 150, 160, 170, 180, ... His mind was getting faster, and so were his hands. It was very impressive to watch, and when he finally beat W's score, it was a major upheaval. He won a lavish prize that was offered him months before when it seemed that his victory would be impossible. He reached the top slot he had been training months for and then...
-
-A new challenger arrived. 
-
-We hired on a new instructor who, I kid you not, was a Japanese Abacus Champion. Watching him play was perplexing. You could see him sliding his fingers across the empty table in front of him, manipulating an imaginary abacus. Even though he had to take his hands off of the keyboard to do this, he beat the new first place score not by a few points, but by around one hundred. This moment was tense. 
-
-But the young competitor never lost his resolve. He still plays, and gets scores well over even those of the abasus champion. It's a real testament to the powers of dedication and practice. And also, I think, the desire to excell.
-
-Students asked me if I was mad that people were better than me at my own game, but that never even crossed my mind. Quite the opposite, I was happy that I could make a platform for other people to excel at. Of course it was also useful as a practice tool even for those students who did not treat it as a competitive platform. Everyone could use some practice at their arithmetic, after all.
-
-The program below is actually not the original <sc>(</sc>which is written in python and lives on my laptop<sc>)</sc>, but a javascript port so that it would work in browser. I actually really want to rewrite this already. I wrote it when I was first learning javascript, and made the big mistake of trying to use someone else's terminal library <sc>(</sc>xterm.js<sc>)</sc> instead of just writing my own. This seemed like it would be easiser, but in reality it meant many hours of digging through someone else's code. It was an educational experience, since the code was good, but I eventually ended up writing my own terminal the "organic" way. It's functional though, and is a nice way to drill your arithmetic skills, even if you don't care about your "score".
+Study the code and see how it is built. Missing is the code for the terminal interface "xterm.js" which is available on github. It is just the interface to print characters to the screen; all the game logic is here.
 </pre>
 <div class="bookmark">./quest/main.html</div><pre class=html>
 <kw>&lt!DOCTYPE HTML&gt</kw>
@@ -124,7 +107,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 			ready = <kw>false</kw><sc>;</sc>
 			between_games = true<sc>;</sc>
 			clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
-			term.writeln<sc>(</sc><dbl_quote>"\n\n\rlevel: "</dbl_quote> + level.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+			term.writeln<sc>(</sc><dbl_quote>"\n\n\rlevel<sc>:</sc> "</dbl_quote> + level.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 			term.writeln<sc>(</sc><dbl_quote>"\x1b<sc>[</sc>95m&ltenter&gt again?"</dbl_quote><sc>)</sc><sc>;</sc>
 			term.writeln<sc>(</sc><dbl_quote>"  or &ltescape&gt?\x1b<sc>[</sc>97m"</dbl_quote><sc>)</sc><sc>;</sc>
 		<sc>}</sc>
@@ -150,7 +133,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 	
 	<kw>var</kw> quest = <sc>{</sc><sc>}</sc><sc>;</sc> <comment Class="js">// "object oriented programming"
 </comment>
-	<comment Class="js">// random normally distributed variable: sd=1 mean=0
+	<comment Class="js">// random normally distributed variable<sc>:</sc> sd=1 mean=0
 </comment>	<kw>function</kw> randn_bm<sc>(</sc><sc>)</sc> <sc>{</sc>
 	    <kw>var</kw> u = 0, v = 0<sc>;</sc>
 	    <kw>while</kw><sc>(</sc>u === 0<sc>)</sc> u = Math.random<sc>(</sc><sc>)</sc><sc>;</sc> <comment Class="js">//Converting <sc>[</sc>0,1<sc>)</sc> to <sc>(</sc>0,1<sc>)</sc>
@@ -249,20 +232,20 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 
 	<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc> <comment Class="js">// takes object as perameter <sc>(</sc>see docs<sc>)</sc>
 </comment>		<sc>{</sc> 
-			theme: <sc>{</sc>
-				background: <dbl_quote>"#336699"</dbl_quote>,
+			theme<sc>:</sc> <sc>{</sc>
+				background<sc>:</sc> <dbl_quote>"#336699"</dbl_quote>,
 			<sc>}</sc>,
-			rows: NUM_ROWS,
-			cols: 40,
-			cursorBlink: <kw>false</kw>,
+			rows<sc>:</sc> NUM_ROWS,
+			cols<sc>:</sc> 40,
+			cursorBlink<sc>:</sc> <kw>false</kw>,
 			<comment Class="js">// <kw>this</kw> upcoming font size is a total guess, it seems to fit on a 
 </comment>			<comment Class="js">// standard screen width but does not handle resizes well. 
 </comment>			<comment Class="js">// another thing that making an emulator from scratch would free me from
-</comment>			fontSize: Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
-			fontWeight: 900
+</comment>			fontSize<sc>:</sc> Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
+			fontWeight<sc>:</sc> 900
 		<sc>}</sc><sc>)</sc><sc>;</sc>
 
-	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO: might be accessible directly from term...
+	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO<sc>:</sc> might be accessible directly from term...
 </comment>	
 	<kw>function</kw> reset<sc>(</sc><sc>)</sc> <sc>{</sc>
 		<kw>return</kw> 0<sc>;</sc>
@@ -273,12 +256,12 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 	term.open<sc>(</sc>document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 	<comment Class="js">//term.write<sc>(</sc>'\x1b<sc>[</sc>95m'<sc>)</sc> // font color
 </comment>	term.onKey<sc>(</sc>e =&gt <sc>{</sc> <comment Class="js">// <kw>this</kw> listener can be linked to anything, even the canvas terminal
-</comment>		<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
-			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+</comment>		<kw>const</kw> printable = <sc>!</sc>e.domEvent.altKey && <sc>!</sc>e.domEvent.altGraphKey 
+			       && <sc>!</sc>e.domEvent.ctrlKey && <sc>!</sc>e.domEvent.metaKey<sc>;</sc>
 		
 		<comment Class="js">// ENTER pressed
 </comment>		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc>
-			<kw>if</kw> <sc>(</sc>!ready<sc>)</sc> <sc>{</sc> <comment Class="js">// put <kw>this</kw> <kw>in</kw> reset<sc>(</sc><sc>)</sc> subroutine
+			<kw>if</kw> <sc>(</sc><sc>!</sc>ready<sc>)</sc> <sc>{</sc> <comment Class="js">// put <kw>this</kw> <kw>in</kw> reset<sc>(</sc><sc>)</sc> subroutine
 </comment>				ready = true<sc>;</sc>
 				level = 1<sc>;</sc>
 				op_cycle<sc>[</sc><sc>(</sc>op_counter++<sc>)</sc>%op_cycle.length<sc>]</sc><sc>(</sc>level<sc>)</sc><sc>;</sc>
@@ -294,7 +277,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 			<comment Class="js">// <kw>if</kw> the answer is wrong, don't send it?
 </comment>			check<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 			buffer = <sc>[</sc><sc>]</sc><sc>;</sc>
-			<kw>if</kw> <sc>(</sc>!isTimeOut<sc>(</sc><sc>)</sc><sc>)</sc> prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc><sc>!</sc>isTimeOut<sc>(</sc><sc>)</sc><sc>)</sc> prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
 		
 		<comment Class="js">// BACKSPACE
 </comment>		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8 && 
@@ -317,7 +300,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 	<sc>}</sc><sc>)</sc><sc>;</sc>
 
 	<comment Class="js">//----------------------------------------------------------------------------------
-</comment>	<comment Class="js">//TODO control both width and height. keep it at a 2:3 ratio or something
+</comment>	<comment Class="js">//TODO control both width and height. keep it at a 2<sc>:</sc>3 ratio or something
 </comment>	onresize = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc> 
 		<comment Class="js">// make it minimum <kw>with</kw> a width-based measurement
 </comment>		term.setOption<sc>(</sc><dbl_quote>"fontSize"</dbl_quote>, Math.floor<sc>(</sc>innerHeight*4/<sc>(</sc>NUM_ROWS*6<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
@@ -328,7 +311,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 	window.onload = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
 		term.focus<sc>(</sc><sc>)</sc><sc>;</sc>
 		term.write<sc>(</sc><dbl_quote>"Calculator Quest"</dbl_quote><sc>)</sc><sc>;</sc>
-		term.write<sc>(</sc><dbl_quote>"\n\r\x1b<sc>[</sc>95m&ltf&gt : fullscreen \n\r&ltenter&gt : begin\x1b<sc>[</sc>97m"</dbl_quote><sc>)</sc><sc>;</sc>
+		term.write<sc>(</sc><dbl_quote>"\n\r\x1b<sc>[</sc>95m&ltf&gt <sc>:</sc> fullscreen \n\r&ltenter&gt <sc>:</sc> begin\x1b<sc>[</sc>97m"</dbl_quote><sc>)</sc><sc>;</sc>
 	<sc>}</sc><sc>;</sc>
 	
 	<kw>var</kw> elem = document.documentElement<sc>;</sc>
@@ -431,28 +414,28 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 </comment>
 	<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc> <comment Class="js">// takes object as perameter <sc>(</sc>see docs<sc>)</sc>
 </comment>		<sc>{</sc> 
-			theme: <sc>{</sc>
-				background: <dbl_quote>"#336699"</dbl_quote>,
+			theme<sc>:</sc> <sc>{</sc>
+				background<sc>:</sc> <dbl_quote>"#336699"</dbl_quote>,
 			<sc>}</sc>,
-			rows: NUM_ROWS,
-			cols: 40,
-			cursorBlink: <kw>false</kw>,
-			fontSize: Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
-			fontWeight: 900
+			rows<sc>:</sc> NUM_ROWS,
+			cols<sc>:</sc> 40,
+			cursorBlink<sc>:</sc> <kw>false</kw>,
+			fontSize<sc>:</sc> Math.floor<sc>(</sc>innerHeight/ <sc>(</sc>NUM_ROWS*2<sc>)</sc><sc>)</sc>,
+			fontWeight<sc>:</sc> 900
 		<sc>}</sc><sc>)</sc><sc>;</sc>
 
-	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO: might be accessible directly from term...
+	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO<sc>:</sc> might be accessible directly from term...
 </comment>	
 	<comment Class="js">//--------------------------------------------Open terminal and initiate listeners	
 </comment>
 	term.open<sc>(</sc>document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 	term.write<sc>(</sc><sgl_quote>'\x1b<sc>[</sc>97m'</sgl_quote><sc>)</sc> <comment Class="js">// font color
 </comment>	term.onKey<sc>(</sc>e =&gt <sc>{</sc>
-		<kw>const</kw> printable = !e.domEvent.altKey && !e.domEvent.altGraphKey 
-			       && !e.domEvent.ctrlKey && !e.domEvent.metaKey<sc>;</sc>
+		<kw>const</kw> printable = <sc>!</sc>e.domEvent.altKey && <sc>!</sc>e.domEvent.altGraphKey 
+			       && <sc>!</sc>e.domEvent.ctrlKey && <sc>!</sc>e.domEvent.metaKey<sc>;</sc>
 
 		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc> <comment Class="js">// ENTER pressed
-</comment>			<kw>if</kw> <sc>(</sc>!ready<sc>)</sc> <sc>{</sc>ready = true<sc>;</sc>
+</comment>			<kw>if</kw> <sc>(</sc><sc>!</sc>ready<sc>)</sc> <sc>{</sc>ready = true<sc>;</sc>
 				START_TIME = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
 				setInterval<sc>(</sc>draw_canvas, 100<sc>)</sc><sc>;</sc> <sc>}</sc>
 			check<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
@@ -473,7 +456,7 @@ The program below is actually not the original <sc>(</sc>which is written in pyt
 
 	<sc>}</sc><sc>)</sc><sc>;</sc>
 
-	<comment Class="js">//TODO control both width and height. keep it at a 2:3 ratio or something
+	<comment Class="js">//TODO control both width and height. keep it at a 2<sc>:</sc>3 ratio or something
 </comment>	onresize = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc> term.setOption<sc>(</sc><dbl_quote>"fontSize"</dbl_quote>,
 				Math.floor<sc>(</sc>innerHeight*4/<sc>(</sc>NUM_ROWS*6<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 		term.clear<sc>(</sc><sc>)</sc><sc>;</sc>
