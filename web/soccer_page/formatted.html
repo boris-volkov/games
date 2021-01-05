@@ -1,0 +1,106 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image"><img class="screenshot" src="screenshot.png"></img>
+</div>
+
+<div class="bookmark">./web/soccer_page/notes.txt</div><pre class=notes>
+Here is an example of a page layout using css and html.
+
+The way the code is written now assumes that you have 
+the following three files in your directory:
+	page.html  		&lt- containing the html text below
+	style.css  		&lt- containing the css text below(er)
+	picture.jpg		&lt- being some picture
+
+These names are not required, but whatever name you choose
+has to match what you write in the html.
+
+This layout is just here for you to practice getting a page working. 
+Choose your own topic, play around with the numbers, change the colors,
+change the borders/padding/margins to how you like it. Make it your own!
+There is still much to be done to make this page look great...
+</pre>
+<div class="bookmark">./web/soccer_page/page.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+
+<comment class="html">&lt!-- the text between these arrow things is a comment  --&gt</comment>
+<comment class="html">&lt!-- it doesn't show up on the page in any way, but is --&gt</comment>
+<comment class="html">&lt!-- just a way for you to leave notes for anyone who  --&gt</comment>
+<comment class="html">&lt!-- may be reading your code, including yourself in   --&gt</comment>
+<comment class="html">&lt!-- the future when you forget how everything works!  --&gt</comment>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&lttitle&gt</kw>soccer<kw>&lt/title&gt</kw>
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw><kw>&lt/link&gt</kw>
+		<comment class="html">&lt!-- the link tag points to the css file that controls the style 	--&gt</comment>
+		<comment class="html">&lt!-- it can be in the same directory together with your html file 	--&gt</comment>
+		<comment class="html">&lt!-- this is similar to having everything in style tags, 			--&gt</comment>
+		<comment class="html">&lt!-- but better, since multiple pages can use the same css style 	--&gt</comment>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv class="outer"&gt</kw>
+		<comment class="html">&lt!-- I give the divs class names so that I can target them   --&gt</comment>
+		<comment class="html">&lt!-- separately and give them different styles and behaviors --&gt</comment>
+			<kw>&ltimg src="picture.jpg"&gt</kw><kw>&lt/img&gt</kw>
+			<kw>&ltdiv class="inner"&gt</kw>
+				soccer is an excellent sport...<kw>&ltbr&gt</kw>
+				here are the six pillars of success in soccer:
+				<kw>&ltol&gt</kw> <comment class="html">&lt!-- starting an ordered list --&gt</comment>
+					<kw>&ltli&gt</kw> strong kicking 		<kw>&lt/li&gt</kw>
+					<kw>&ltli&gt</kw> swift running 			<kw>&lt/li&gt</kw>
+					<kw>&ltli&gt</kw> accurate passing 		<kw>&lt/li&gt</kw>
+					<kw>&ltli&gt</kw> controlled dribbling 	<kw>&lt/li&gt</kw>
+					<kw>&ltli&gt</kw> expansive field control<kw>&lt/li&gt</kw>
+					<kw>&ltli&gt</kw> staunch guarding   	<kw>&lt/li&gt</kw>
+				<kw>&lt/ol&gt</kw>
+			<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./web/soccer_page/style.css</div><pre class=css>
+<css><comment class="css">/* css comments come between these slash/star things 				*/</comment></css>
+<css><comment class="css">/* leave yourself notes about anything you think you might forget!  */</comment></css>
+<css><comment class="css">/* look up css properties at https://www.w3schools.com/csSref/      */</comment></css>
+<css></css>
+<sc>body {</sc>                     	<comment class="css">/* properties of the entire body */</comment>
+<css>	background-color: rgb(40,95,70);</css>
+<sc>}</sc>
+<css></css>
+<sc>img {</sc>					    <comment class="css">/* properties of any img on the page */</comment>
+<css>	width : 600px;</css>
+<css>	height : 600px;</css>
+<css>	margin : 20px;			</css>
+<css>	object-fit : cover; 	<comment class="css">/* to crop into image */</comment></css>
+<css>	border-radius : 50%; 	<comment class="css">/* to round the edges */</comment></css>
+<css>	float : left;			<comment class="css">/* so text can go around it */</comment></css>
+<css>	border-style : solid;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc> 						<comment class="css">/* properties that all divs will have */</comment>
+<css>	color : #fff;</css>
+<css>	border-style : solid;</css>
+<css>	margin : 20px;</css>
+<css>	font : Courier;</css>
+<css>	font-weight : 300;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.outer {</sc> 				<comment class="css">/* selects only divs with class="outer" */</comment>
+<css>	margin : auto;</css>
+<css>	background-color : rgb(20,30,60);</css>
+<css>	overflow : auto; 		<comment class="css">/* needed when all internal elements are float */</comment></css>
+<css>	display : flex;  		<comment class="css">/* to vertically center internal divs */</comment></css>
+<css>	align-items : center; 	<comment class="css">/* vertical centering */</comment></css>
+<sc>}</sc>
+<css></css>
+<sc>div.inner {</sc>					<comment class="css">/* selects only divs with class'"inner" */</comment>
+<css>	padding : 20px;</css>
+<css>	background-color : rgb(40,70,200);</css>
+<css>	font-size : 24px;</css>
+<css>	float : left;</css>
+<sc>}</sc>
+<css></css>
+</pre>
+</body></html>

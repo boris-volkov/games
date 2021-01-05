@@ -1,0 +1,562 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./exe/territory/readme.txt</div><pre class=notes>
+</pre>
+<div class="bookmark">./exe/territory/main.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&lttitle&gt</kw> territory <kw>&lt/title&gt</kw>
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw>
+	<kw>&lt/head&gt</kw>
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv id="outer"&gt</kw>
+			<kw>&ltdiv id="blue_score"&gt</kw>001<kw>&lt/div&gt</kw>
+			<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
+			<kw>&ltdiv id="pink_score"&gt</kw>001<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+		<kw>&ltscript src="code.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./exe/territory/style.css</div><pre class=css>
+<css></css>
+<sc>body {</sc>
+<css>	<comment class="css">/*background-color : #335577;*/</comment></css>
+<css>	background-color: #345;</css>
+<css>	font-size: 72px;</css>
+<css>	color:    white;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	font-family:Courier New;</css>
+<css>	border-radius:5%;</css>
+<css>	border-style: solid;</css>
+<css>	border-color: #567;</css>
+<css>	border-width: 5px;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>#outer {</sc>
+<css>	margin: auto;</css>
+<css>	background-color: rgb(30,40,60);</css>
+<css>	display: flex;</css>
+<css>	justify-content: center;</css>
+<css>	flex-direction: row;</css>
+<css>	align-items: center;</css>
+<css>	max-width: 90vw;</css>
+<css>	max-height: 90vh;</css>
+<sc>}</sc>
+<css></css>
+<sc>#blue_score {</sc>
+<css>	color: #abf;</css>
+<css>	margin: 40px;</css>
+<css>	padding: 20px;</css>
+<css>	background-color: #369;</css>
+<css>	max-width: 20%;</css>
+<sc>}</sc>
+<css></css>
+<sc>#pink_score {</sc>
+<css>	color: #eae;</css>
+<css>	margin: 40px;</css>
+<css>	padding: 20px;</css>
+<css>	background-color: #636;</css>
+<css>	max-width 10%;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.active {</sc>
+<css>	border-style:solid;</css>
+<css>	border-color: #678;</css>
+<css>	border-width: 5px;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc><comment class="css">/*this is to center the canvas*/</comment>
+<css>	border-radius:1%;</css>
+<css>	margin: 30px;</css>
+<css>	max-height: 90vh;</css>
+<sc>}</sc>
+</pre>
+<div class="bookmark">./exe/territory/cursor.js</div><pre class=js>
+<kw>const</kw> GRID_SIZE = 16<sc>;</sc>
+
+<kw>function</kw> zero_grid<sc>(</sc>size<sc>)</sc><sc>{</sc>
+	<kw>let</kw> grid = Array<sc>(</sc>size<sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt size<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		grid<sc>[</sc>i<sc>]</sc> = Array<sc>(</sc>size<sc>)</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt size<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	<kw>return</kw> grid<sc>;</sc>
+<sc>}</sc>
+
+<kw>const</kw> grid 			= zero_grid<sc>(</sc>16<sc>)</sc><sc>;</sc>
+<kw>const</kw> backup_grid 	= zero_grid<sc>(</sc>16<sc>)</sc><sc>;</sc>
+
+grid.locked = <kw>false</kw><sc>;</sc>
+
+
+<kw>class</kw> Cursor <sc>{</sc>
+	constructor<sc>(</sc>color<sc>)</sc> <sc>{</sc>
+		<kw>this</kw>.i =            
+		<kw>this</kw>.j = 			
+		<kw>this</kw>.color = color<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>static</kw> capture<sc>(</sc>grid, color<sc>)</sc> <sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+			mark<sc>(</sc>grid, i, 0, color<sc>)</sc><sc>;</sc>
+			mark<sc>(</sc>board, i, board<sc>[</sc>0<sc>]</sc>.length - 1, color<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+
+		<kw>return</kw> 0<sc>;</sc>
+	<sc>}</sc>
+
+
+
+	count<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>let</kw> count = 0<sc>;</sc>
+
+		<kw>return</kw> count<sc>;</sc>
+	<sc>}</sc>
+
+	draw<sc>(</sc><sc>)</sc> <sc>{</sc>
+
+
+	<sc>}</sc>
+<sc>}</sc>
+</pre>
+<div class="bookmark">./exe/territory/code.js</div><pre class=js>
+<kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
+
+<kw>let</kw> grid_size = 16<sc>;</sc>
+
+<kw>let</kw> grid = Array<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
+grid.width = grid_size<sc>;</sc>
+grid.height = grid_size<sc>;</sc>
+<kw>function</kw> initialize_grid<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.height<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		grid<sc>[</sc>i<sc>]</sc> = Array<sc>(</sc>grid.width<sc>)</sc><sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.width<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 0<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>	
+<sc>}</sc>
+
+initialize_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+
+
+<kw>let</kw> backup_board = Array<sc>(</sc>21<sc>)</sc><sc>;</sc>
+<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.height<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+	backup_board<sc>[</sc>i<sc>]</sc> = Array<sc>(</sc>grid.width<sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.width<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+		backup_board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 0<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>	
+
+<kw>function</kw> count_blue<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> count = 0<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.height<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.width<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> == 1<sc>)</sc>
+				count++<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>	
+	<kw>return</kw> count<sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> count_pink<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> count = 0<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.height<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.width<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> == 11<sc>)</sc>
+				count++<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>	
+	<kw>return</kw> count<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> draw_dot<sc>(</sc>i,j<sc>)</sc><sc>{</sc>
+	<kw>let</kw> x = i*square.w<sc>;</sc>
+	<kw>let</kw> y = j*square.h<sc>;</sc>
+	x += square.w/2
+	y += square.w/2
+	ctx.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.arc<sc>(</sc>x,y,5,0,2*Math.PI,<kw>false</kw><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"rgb<sc>(</sc>36,58,80<sc>)</sc>"</dbl_quote><sc>;</sc>
+	ctx.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> grid_info<sc>(</sc><sc>)</sc><sc>{</sc>	
+	<kw>let</kw> temp = ctx.fillStyle<sc>;</sc> 						<comment Class="js">// save previous color
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.height<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.width<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			ctx.fillText<sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc>, i*square.w, j*square.h<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	ctx.fillStyle = temp<sc>;</sc> 							<comment Class="js">// reset previous color
+</comment><sc>}</sc>
+	
+
+canvas.height = 760<sc>;</sc> <comment Class="js">// pick whatever dimensions fit on your screen
+</comment>canvas.width = 760<sc>;</sc>
+<kw>const</kw> ctx = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
+
+<kw>let</kw> shift_amount = canvas.height/grid.width*2<sc>;</sc>
+
+<comment Class="js">// only these first four lines are really necessary to get the canvas going
+</comment><comment Class="js">// everything following is just examples of how to use the methods
+</comment><comment Class="js">// you can look up all the available methods at<sc>:</sc> 
+</comment><comment Class="js">// https<sc>:</sc>//www.w3schools.com/html/html5_canvas.asp
+</comment>
+<comment Class="js">// <kw>this</kw> clear <kw>function</kw> can be called any time to clear the canvas
+</comment><kw>function</kw> clear<sc>(</sc>x = 0, y = 0, w = canvas.width, h = canvas.height<sc>)</sc><sc>{</sc>
+	<kw>let</kw> temp = ctx.fillStyle<sc>;</sc> 						<comment Class="js">// save previous color
+</comment>	ctx.fillStyle = <dbl_quote>"rgb<sc>(</sc>33,55,77<sc>)</sc>"</dbl_quote><sc>;</sc> 			<comment Class="js">// background color
+</comment>	ctx.fillRect<sc>(</sc>x,y, w, h<sc>)</sc><sc>;</sc> <comment Class="js">// fills over entire canvas
+</comment>	ctx.fillStyle = temp<sc>;</sc> 							<comment Class="js">// reset previous color
+</comment><sc>}</sc>
+clear<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> blue_square<sc>(</sc>x = square_blue.x, y = square_blue.y<sc>)</sc><sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/4<sc>)</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"#6ae"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/3<sc>)</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+	x += square.w/2
+	y += square.w/2
+	ctx.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.arc<sc>(</sc>x,y,5,0,2*Math.PI,<kw>false</kw><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"#adf"</dbl_quote><sc>;</sc>
+	ctx.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> pink_square<sc>(</sc>x = square_pink.x, y = square_pink.y<sc>)</sc><sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#636"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/4<sc>)</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"#b8b"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/3<sc>)</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+	x += square.w/2
+	y += square.w/2
+	ctx.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	ctx.arc<sc>(</sc>x,y,5,0,2*Math.PI,<kw>false</kw><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"#fdf"</dbl_quote><sc>;</sc>
+	ctx.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> bright_blue<sc>(</sc>x = square_blue.x, y = square_blue.y<sc>)</sc><sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/3<sc>)</sc><sc>;</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> bright_pink<sc>(</sc>x = square_pink.x, y = square_pink.y<sc>)</sc><sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#313"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/3<sc>)</sc><sc>;</sc> 
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> white_square<sc>(</sc>x = square.x, y = square.y<sc>)</sc><sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#fff"</dbl_quote><sc>;</sc>
+	im = Math.round<sc>(</sc>square.w/3<sc>)</sc><sc>;</sc>
+	ctx.fillRect<sc>(</sc>x + im, y + im, square.w - 2*im, square.h -2*im<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>let</kw> locked = 0<sc>;</sc>
+
+<comment Class="js">// <kw>do</kw> a search out from the current location
+</comment><comment Class="js">// mark potential regions
+</comment>
+
+<comment Class="js">//----------------------------------------------------------
+</comment>
+<kw>function</kw> solve_pink<sc>(</sc>board<sc>)</sc> <sc>{</sc>
+	<comment Class="js">// what happens when it finds a blue region?
+</comment>	<kw>if</kw> <sc>(</sc><sc>!</sc>board.length<sc>)</sc> <kw>return</kw><sc>;</sc>
+
+	<comment Class="js">// change every square connected to left and right borders from O to temporary #
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt board.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		mark_pink<sc>(</sc>board, i, 0<sc>)</sc><sc>;</sc>
+		mark_pink<sc>(</sc>board, i, board<sc>[</sc>0<sc>]</sc>.length - 1<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<comment Class="js">// change every square connected to top and bottom borders from O to temporary #
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 1<sc>;</sc> i &lt board<sc>[</sc>0<sc>]</sc>.length - 1<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		mark_pink<sc>(</sc>board, 0, i<sc>)</sc><sc>;</sc>
+		mark_pink<sc>(</sc>board, board.length - 1, i<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt board.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt board<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> j++<sc>)</sc> <sc>{</sc>
+			<comment Class="js">// change the rest of O to X
+</comment>			<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 0 || board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 1<sc>)</sc> board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 11<sc>;</sc>
+
+			<comment Class="js">// change temporary # back to O
+</comment>			<comment Class="js">// TODO <kw>this</kw> is not correct here.. should change back to what it was. 
+</comment>			<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 12<sc>)</sc><sc>{</sc>
+				board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = backup_board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> mark_pink<sc>(</sc>board, i ,j<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>i &lt 0 || i &gt board.length - 1 || j &lt 0 || j &gt board<sc>[</sc>0<sc>]</sc>.length - 1<sc>)</sc> <kw>return</kw><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> == 11 || board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 12<sc>)</sc> <kw>return</kw><sc>;</sc>
+
+	backup_board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+	board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 12<sc>;</sc>
+
+	mark_pink<sc>(</sc>board, i - 1, j<sc>)</sc><sc>;</sc>
+	mark_pink<sc>(</sc>board, i + 1, j<sc>)</sc><sc>;</sc>
+	mark_pink<sc>(</sc>board, i, j - 1<sc>)</sc><sc>;</sc>
+	mark_pink<sc>(</sc>board, i, j + 1<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> solve_blue<sc>(</sc>board<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc><sc>!</sc>board.length<sc>)</sc> <kw>return</kw><sc>;</sc>
+
+	<comment Class="js">// change every square connected to left and right borders from O to temporary #
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt board.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		mark_blue<sc>(</sc>board, i, 0<sc>)</sc><sc>;</sc>
+		mark_blue<sc>(</sc>board, i, board<sc>[</sc>0<sc>]</sc>.length - 1<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<comment Class="js">// change every square connected to top and bottom borders from O to temporary #
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 1<sc>;</sc> i &lt board<sc>[</sc>0<sc>]</sc>.length - 1<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		mark_blue<sc>(</sc>board, 0, i<sc>)</sc><sc>;</sc>
+		mark_blue<sc>(</sc>board, board.length - 1, i<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt board.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt board<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> j++<sc>)</sc> <sc>{</sc>
+			<comment Class="js">// change the rest of O to X
+</comment>			<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 0 || board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 11<sc>)</sc> board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 1<sc>;</sc>
+
+			<comment Class="js">// change temporary # back to O
+</comment>			<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 2<sc>)</sc><sc>{</sc>
+				board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = backup_board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> mark_blue<sc>(</sc>board, i ,j<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>i &lt 0 || i &gt board.length - 1 || j &lt 0 || j &gt board<sc>[</sc>0<sc>]</sc>.length - 1<sc>)</sc> <kw>return</kw><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> == 1 || board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> == 2<sc>)</sc> <kw>return</kw><sc>;</sc>
+
+	backup_board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>;</sc>
+	board<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = 2<sc>;</sc>
+
+	mark_blue<sc>(</sc>board, i - 1, j<sc>)</sc><sc>;</sc>
+	mark_blue<sc>(</sc>board, i + 1, j<sc>)</sc><sc>;</sc>
+	mark_blue<sc>(</sc>board, i, j - 1<sc>)</sc><sc>;</sc>
+	mark_blue<sc>(</sc>board, i, j + 1<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> zeroPad<sc>(</sc>num, numZeros<sc>)</sc> <sc>{</sc>
+    <kw>var</kw> n = Math.abs<sc>(</sc>num<sc>)</sc><sc>;</sc>
+    <kw>var</kw> zeros = Math.max<sc>(</sc>0, numZeros - Math.floor<sc>(</sc>n<sc>)</sc>.toString<sc>(</sc><sc>)</sc>.length <sc>)</sc><sc>;</sc>
+    <kw>var</kw> zeroString = Math.pow<sc>(</sc>10,zeros<sc>)</sc>.toString<sc>(</sc><sc>)</sc>.substr<sc>(</sc>1<sc>)</sc><sc>;</sc>
+    <kw>if</kw><sc>(</sc> num &lt 0 <sc>)</sc> <sc>{</sc>
+        zeroString = <sgl_quote>'-'</sgl_quote> + zeroString<sc>;</sc>
+    <sc>}</sc>
+
+    <kw>return</kw> zeroString+n<sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">//-------------------------------------------------------------------
+</comment>
+<kw>let</kw> offset = 4<sc>;</sc>
+
+<kw>const</kw> square_blue = <sc>{</sc>
+	i <sc>:</sc> offset,
+	j <sc>:</sc> offset,
+	x <sc>:</sc> canvas.width / grid.width * offset,
+	y <sc>:</sc> canvas.width / grid.width * offset,
+	w <sc>:</sc> canvas.width / grid.width,
+	h <sc>:</sc> canvas.height/ grid.height,
+<sc>}</sc>
+
+<kw>const</kw> square_pink = <sc>{</sc>
+	i <sc>:</sc> grid.width-offset-1,
+	j <sc>:</sc> grid.width-offset-1,
+	x <sc>:</sc> canvas.width / grid.width * <sc>(</sc>grid.width-offset-1<sc>)</sc>,
+	y <sc>:</sc> canvas.width / grid.width * <sc>(</sc>grid.width-offset-1<sc>)</sc>,
+	w <sc>:</sc> canvas.width / grid.width,
+	h <sc>:</sc> canvas.height/ grid.height,
+<sc>}</sc>
+
+<kw>let</kw> square = square_pink<sc>;</sc>
+
+<comment Class="js">//ctx.fillRect<sc>(</sc>square.x, square.y, square.w, square.h<sc>)</sc><sc>;</sc>
+</comment>grid<sc>[</sc>square_blue.i<sc>]</sc><sc>[</sc>square_blue.j<sc>]</sc> = 1<sc>;</sc>
+grid<sc>[</sc>square_pink.i<sc>]</sc><sc>[</sc>square_pink.j<sc>]</sc> = 11<sc>;</sc>
+grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+blue_square<sc>(</sc><sc>)</sc><sc>;</sc>
+pink_square<sc>(</sc><sc>)</sc><sc>;</sc>
+white_square<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.width<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw><sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt grid.height<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			bright_blue<sc>(</sc><sc>)</sc><sc>;</sc>
+			bright_pink<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 0<sc>)</sc>
+				draw_dot<sc>(</sc>i,j<sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>i === square.i && j === square.j<sc>)</sc><sc>{</sc>
+				ctx.globalAlpha = 1<sc>;</sc>
+				white_square<sc>(</sc>i*square.w, j*square.h<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 1<sc>)</sc>
+				blue_square<sc>(</sc>i*square.w, j*square.h<sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> === 11<sc>)</sc>
+				pink_square<sc>(</sc>i*square.w, j*square.h<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+
+document.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>locked === 1<sc>)</sc> <kw>return</kw> 0<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'w'</sgl_quote> && square === square_blue<sc>)</sc><sc>{</sc> <comment Class="js">// and not returning to last square.
+</comment>		<kw>if</kw> <sc>(</sc>square.j &gt 1 && grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 2<sc>]</sc> <sc>!</sc>= 11<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 0<sc>]</sc> = 1<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 1<sc>]</sc> = 1<sc>;</sc>
+			square.j -= 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			solve_blue<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x, square.y - shift_amount<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"s"</dbl_quote> && square === square_blue<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.j + 2 &lt grid.height && grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 2<sc>]</sc> <sc>!</sc>= 11<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 0<sc>]</sc> = 1<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 1<sc>]</sc> = 1<sc>;</sc>
+			square.j += 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			solve_blue<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x, square.y + shift_amount<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"a"</dbl_quote> && square === square_blue<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.i &gt 1 && grid<sc>[</sc>square.i - 2<sc>]</sc><sc>[</sc>square.j<sc>]</sc> <sc>!</sc>= 11<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i - 0<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			grid<sc>[</sc>square.i - 1<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			square.i -= 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			solve_blue<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x - shift_amount, square.y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"d"</dbl_quote> && square === square_blue<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.i + 2 &lt grid.width && grid<sc>[</sc>square.i + 2<sc>]</sc><sc>[</sc>square.j<sc>]</sc> <sc>!</sc>= 11<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i + 0<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			grid<sc>[</sc>square.i + 1<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			square.i += 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 1<sc>;</sc>
+			solve_blue<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x + shift_amount, square.y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"ArrowUp"</dbl_quote>&&square === square_pink<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.j &gt 1 && grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 2<sc>]</sc> <sc>!</sc>= 1<sc>)</sc><sc>{</sc>
+			slide_square<sc>(</sc>square.x, square.y - shift_amount<sc>)</sc><sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 0<sc>]</sc> = 11<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j - 1<sc>]</sc> = 11<sc>;</sc>
+			square.j -= 2<sc>;</sc>
+			solve_pink<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"ArrowDown"</dbl_quote>&&square === square_pink<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.j + 2 &lt grid.height && grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 2<sc>]</sc> <sc>!</sc>= 1<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 0<sc>]</sc> = 11<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j + 1<sc>]</sc> = 11<sc>;</sc>
+			square.j += 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			solve_pink<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x, square.y + shift_amount<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"ArrowLeft"</dbl_quote>&&square === square_pink<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.i &gt 1 && grid<sc>[</sc>square.i-2<sc>]</sc><sc>[</sc>square.j<sc>]</sc> <sc>!</sc>= 1<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i - 0<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			grid<sc>[</sc>square.i - 1<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			square.i -= 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			solve_pink<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x - shift_amount, square.y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"ArrowRight"</dbl_quote> && square === square_pink<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>square.i + 2 &lt canvas.width && grid<sc>[</sc>square.i + 2<sc>]</sc><sc>[</sc>square.j<sc>]</sc> <sc>!</sc>= 1<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>square.i + 0<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			grid<sc>[</sc>square.i + 1<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			square.i += 2<sc>;</sc>
+			grid<sc>[</sc>square.i<sc>]</sc><sc>[</sc>square.j<sc>]</sc> = 11<sc>;</sc>
+			solve_pink<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			slide_square<sc>(</sc>square.x + shift_amount, square.y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>	
+
+<kw>function</kw> slide_square<sc>(</sc>x, y<sc>)</sc> <sc>{</sc>
+	locked = 1<sc>;</sc>
+	<kw>let</kw> frames = 16<sc>;</sc>
+	<kw>let</kw> dx = <sc>(</sc>x - square.x<sc>)</sc>/frames<sc>;</sc>
+	<kw>let</kw> dy = <sc>(</sc>y - square.y<sc>)</sc>/frames<sc>;</sc>
+	<kw>let</kw> counter = 0<sc>;</sc>
+	<kw>let</kw> id = setInterval<sc>(</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+		square.x += dx<sc>;</sc>
+		square.y += dy<sc>;</sc>
+		ctx.fillStyle = <dbl_quote>"#fff"</dbl_quote><sc>;</sc>
+		ctx.globalAlpha = counter/frames<sc>;</sc>
+		<kw>if</kw> <sc>(</sc>square === square_pink<sc>)</sc>
+			bright_pink<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>else</kw>
+			bright_blue<sc>(</sc><sc>)</sc><sc>;</sc>
+		counter ++<sc>;</sc>
+		<kw>if</kw> <sc>(</sc>counter === frames<sc>)</sc><sc>{</sc>
+			clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
+			ctx.globalAlpha = 1<sc>;</sc>
+			grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>square === square_blue<sc>)</sc><sc>{</sc>
+				document.querySelector<sc>(</sc><dbl_quote>"#blue_score"</dbl_quote><sc>)</sc>.innerHTML = zeroPad<sc>(</sc>count_blue<sc>(</sc><sc>)</sc>,3<sc>)</sc><sc>;</sc> 
+				square = square_pink<sc>;</sc>
+				pink_square<sc>(</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+			<kw>else</kw> <sc>{</sc>
+				document.querySelector<sc>(</sc><dbl_quote>"#pink_score"</dbl_quote><sc>)</sc>.innerHTML = zeroPad<sc>(</sc>count_pink<sc>(</sc><sc>)</sc>,3<sc>)</sc><sc>;</sc><sc>;</sc> 
+				square = square_blue<sc>;</sc>
+				blue_square<sc>(</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+			white_square<sc>(</sc><sc>)</sc><sc>;</sc>
+			console.log<sc>(</sc>grid<sc>)</sc><sc>;</sc>
+			locked = 0<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>, 16<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+</pre>
+</body></html>

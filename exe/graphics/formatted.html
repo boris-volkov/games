@@ -1,0 +1,163 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./exe/graphics/readme.txt</div><pre class=notes>
+Here is a simple square that displays any color you ask it to. You can change its color by holding any of the [r], [g], or [b] buttons for red, green, and blue, and using the up and down arrows to adjust the amounts. 
+for example: 
+holding r and pressing the up arrow will raise the red value by 1. Hold the keys to make the change more rapid.
+
+See how different combinations of red green and blue will look on the screen.
+
+They are all set to start at the neutral level of 125, which is in the middle of the allowed range of [0,255]. All colors set to neutral creates a neutral gray. As the level of a color increases above the others, that color begins to stand out. There are over 16 million colors you can make this way (256^3).
+
+Try to find your favorite color in the magical rectangle!
+
+For advanced practice: if you look through the javascript, you will see some unused functionality. Adding controls for this functionality will let you create full spectrum color gradients.
+</pre>
+<div class="bookmark">./exe/graphics/main.html</div><pre class=html>
+<kw>&lt!DOCTYPE HTML&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="UTF-8"&gt</kw>   
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw>
+	<kw>&lt/head&gt</kw>
+	
+	<kw>&ltbody&gt</kw>
+		<kw>&ltcanvas id = "puzzle_space"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&ltscript src="color_shift.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./exe/graphics/style.css</div><pre class=css>
+<sc>body {</sc> 	
+<css>	background-color: rgb(125,125,125); </css>
+<css>	cursor: crosshair;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	display: block; <comment class="css">/* old school way to center something */</comment></css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
+<css>	cursor: none;</css>
+<sc>}</sc>
+</pre>
+<div class="bookmark">./exe/graphics/color_shift.js</div><pre class=js>
+	<comment Class="js">//----------------------------------------------------------------Initialization of canvas and grid
+</comment>	<kw>var</kw> canvas = document.getElementById<sc>(</sc><sgl_quote>'puzzle_space'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
+	<kw>var</kw> grid_size = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'size'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	grid_size = 1<sc>;</sc>
+	<kw>var</kw> grid = Array<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid_size<sc>;</sc> row++<sc>)</sc> <sc>{</sc>grid<sc>[</sc>row<sc>]</sc> = Array<sc>(</sc>grid_size<sc>)</sc>.fill<sc>(</sc>row<sc>)</sc><sc>;</sc><sc>}</sc>
+	<comment Class="js">//--------------------------------------------------------------------------Color state and methods
+</comment>	<kw>function</kw> Color<sc>(</sc>name<sc>)</sc><sc>{</sc>
+		<kw>this</kw>.name = name<sc>;</sc>
+		<kw>this</kw>.amp = 0<sc>;</sc>
+		<kw>this</kw>.freq = 6.283/grid_size<sc>;</sc>
+		<kw>this</kw>.phase = 0<sc>;</sc>
+		<kw>this</kw>.center = 125<sc>;</sc>
+		<kw>this</kw>.toString = <kw>function</kw> <sc>(</sc><sc>)</sc> <sc>{</sc>
+			<kw>return</kw> <sc>[</sc> <kw>this</kw>.name   ,<sgl_quote>' <sc>:</sc> '</sgl_quote> , <kw>this</kw>.center<sc>]</sc>.join<sc>(</sc><sgl_quote>' '</sgl_quote><sc>)</sc><sc>;</sc>
+		<sc>}</sc><sc>;</sc>
+
+		<kw>this</kw>.sin = <kw>function</kw> <sc>(</sc>x<sc>)</sc> <sc>{</sc>
+			<kw>return</kw> Math.round<sc>(</sc>Math.sin<sc>(</sc><kw>this</kw>.freq*<sc>(</sc>x+<kw>this</kw>.phase<sc>)</sc><sc>)</sc>*<kw>this</kw>.amp+<kw>this</kw>.center<sc>)</sc><sc>;</sc>
+
+		<sc>}</sc><sc>;</sc>
+	<sc>}</sc><sc>;</sc>
+
+	<kw>var</kw> gradient = <sc>{</sc>
+		red 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Red<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		grn 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Grn<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		blu 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Blu<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		rgb_codes	<sc>:</sc> <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc>,
+
+		generate_codes  <sc>:</sc> <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
+			<kw>for</kw> <sc>(</sc><kw>var</kw> i = 0<sc>;</sc> i &lt grid_size<sc>;</sc> ++i<sc>)</sc><sc>{</sc>
+				<kw>this</kw>.rgb_codes<sc>[</sc>i<sc>]</sc> = <sc>(</sc><sgl_quote>'rgb<sc>(</sc>'</sgl_quote>+<kw>this</kw>.red.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+							    <kw>this</kw>.grn.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+							    <kw>this</kw>.blu.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>'<sc>)</sc>'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>;</sc>
+	<kw>var</kw> display = true<sc>;</sc>
+	<kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc><sc>{</sc>
+		<kw>var</kw> grid_div = canvas.width/grid_size<sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>var</kw> i = 0<sc>;</sc> i &lt grid_size<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>var</kw> j = 0<sc>;</sc> j &lt grid_size<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			<kw>let</kw> x = j * grid_div<sc>;</sc>
+			<kw>let</kw> y = i * grid_div<sc>;</sc>
+			<kw>let</kw> color = gradient.rgb_codes<sc>[</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>]</sc><sc>;</sc>
+			context.fillStyle = color<sc>;</sc>
+			context.fillRect<sc>(</sc>x, y, grid_div, grid_div<sc>)</sc><sc>;</sc>
+		<sc>}</sc><sc>}</sc>
+		<kw>if</kw> <sc>(</sc>display<sc>)</sc><sc>{</sc>
+			<kw>let</kw> font_height = Math.round<sc>(</sc>canvas.width/30<sc>)</sc><sc>;</sc>
+			context.font = font_height+<dbl_quote>"px Courier New"</dbl_quote><sc>;</sc>
+			context.fillStyle = <sgl_quote>'#000'</sgl_quote><sc>;</sc>
+			context.fillText<sc>(</sc>gradient.red.toString<sc>(</sc><sc>)</sc>, canvas.width/2,   font_height<sc>)</sc><sc>;</sc>
+			context.fillText<sc>(</sc>gradient.grn.toString<sc>(</sc><sc>)</sc>, canvas.width/2, 2*font_height<sc>)</sc><sc>;</sc>
+			context.fillText<sc>(</sc>gradient.blu.toString<sc>(</sc><sc>)</sc>, canvas.width/2, 3*font_height<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>	
+
+	<comment Class="js">//----------------------------------------------------------key event listener & key -&gt <kw>function</kw> maps
+</comment>	
+	<kw>var</kw> keys_down = <sc>{</sc>
+	<sgl_quote>'r'</sgl_quote><sc>:</sc> <kw>false</kw>, 	<sgl_quote>'g'</sgl_quote><sc>:</sc> <kw>false</kw>,  	<sgl_quote>'b'</sgl_quote><sc>:</sc> <kw>false</kw>
+	<sc>}</sc><sc>;</sc>
+
+	<kw>const</kw> key_function_map = <sc>{</sc>
+		<sgl_quote>'.'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> display ^= true <sc>}</sc>, 
+		<sgl_quote>'`'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> alert<sc>(</sc>gradient.rgb_codes<sc>)</sc><sc>;</sc> <sc>}</sc>,
+				
+		<sgl_quote>'ArrowUp'</sgl_quote> <sc>:</sc> <sc>(</sc><sc>)</sc> =&gt 	<sc>{</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'r'</sgl_quote><sc>]</sc><sc>)</sc>gradient.red.center += 1<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'g'</sgl_quote><sc>]</sc><sc>)</sc>gradient.grn.center += 1<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'b'</sgl_quote><sc>]</sc><sc>)</sc>gradient.blu.center += 1<sc>;</sc>
+		<sc>}</sc>,
+
+		<sgl_quote>'ArrowDown'</sgl_quote> <sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'r'</sgl_quote><sc>]</sc><sc>)</sc>gradient.red.center -= 1<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'g'</sgl_quote><sc>]</sc><sc>)</sc>gradient.grn.center -= 1<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'b'</sgl_quote><sc>]</sc><sc>)</sc>gradient.blu.center -= 1<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>;</sc>
+
+	window.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>keys_down.hasOwnProperty<sc>(</sc>event.key<sc>)</sc><sc>)</sc><sc>{</sc>
+			keys_down<sc>[</sc>event.key<sc>]</sc> = true<sc>;</sc>
+		<sc>}</sc>
+		key_function_map<sc>[</sc>event.key<sc>]</sc><sc>(</sc><sc>)</sc><sc>;</sc>
+		gradient.generate_codes<sc>(</sc><sc>)</sc><sc>;</sc>
+		grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+	window.addEventListener<sc>(</sc><sgl_quote>'keyup'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>keys_down.hasOwnProperty<sc>(</sc>event.key<sc>)</sc><sc>)</sc>
+			keys_down<sc>[</sc>event.key<sc>]</sc> = <kw>false</kw><sc>;</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+
+
+	<comment Class="js">//-------------------------------------------------------Resize Event Listener
+</comment>	window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, draw_canvas<sc>)</sc><sc>;</sc>
+	<kw>function</kw> draw_canvas<sc>(</sc><sc>)</sc><sc>{</sc> <comment Class="js">//rename to resize?
+</comment>		<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+		<kw>let</kw> square_side = Math.min<sc>(</sc>window.innerWidth, window.innerHeight<sc>)</sc> - 30<sc>;</sc>
+		square_side -= square_side%<sc>(</sc>grid_size<sc>)</sc><sc>;</sc> 
+		canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, square_side.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
+		canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>,square_side.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+		context.textAlign = <dbl_quote>"center"</dbl_quote><sc>;</sc>
+		grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	gradient.generate_codes<sc>(</sc><sc>)</sc><sc>;</sc>
+	draw_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+</pre>
+</body></html>

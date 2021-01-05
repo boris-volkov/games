@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/twenty_four/notes.txt</div><pre class=notes>
+Theres a good math card game called twenty-four. 
+Each card has four numbers, and the goal is always to use all four of those numbers to come up with some arithmetic expression that is equal to 24.
+
+for example, if the four numbers are 6, 6, 6, 6,
+you could get 24 by 6 + 6 + 6 + 6
+
+or if the numbers are 1,2,3,4
+you could get 24 by (2 + 4) x (1 + 3)
+		      or by 4 x 2 x 3 x 1
+
+This game doesn't have to be limited to cards, of course, and a computer can find solutions very fast. I wrote this program to see how well Python can play 24...
+
+Here is a python program that automatically finds the answers to this game. It does this in the "brute force" way, by just trying all of the possible expressions through the python eval() function. eval() is a function that can be passed a python expression as a string, and if it is a legal expression, it evaluages it (aka returns the value that the expression is equal to). Here, the brute force way is actually fast enough, since there are not that many combinations, and the operations are relatively simple. 
+
+A few of the functions from the itertools module are used, product() and permutations(). These are to iterate through the different possible expressions. These are actually important functions in combinatorics, and are worth studying for advanced practice.
+
+You may notice that I am using math.isclose() rather than just checking for equality. This is actually an important detail, and has to do with the inaccuracy of computer rounding when dealing with numbers with fractional parts, or even just division with whole numbers. An example of this that you can easily try is asking your Python interpreter if 0.1 + 0.2 == 0.3. It will tell you False, even though you know it is True. This problem is actually quite complicated and has to do with the binary storage of fractional numbers. The solution is simpler: don't check for strict equality (==) when dealing with potentially fractional numbers, but instead use the math.isclose() function.
+
+Notice also the try/catch block. Some of the expressions will involve trying to divide by zero, and this way, the whole program does not crash when that happens, but just skips that expression.
+</pre>
+<div class="bookmark">./code/twenty_four/twenty_four.py</div><pre class=py>
+<kw>import</kw> itertools, math
+
+<kw>def</kw> solve<sc>(</sc>nums, TARGET = 5<sc>)</sc><sc>:</sc>
+    <comment Class="py"># input a list <sc>(</sc><kw>or</kw> tuple<sc>)</sc> of four numbers
+</comment>    paren_patterns = <sc>[</sc><sgl_quote>'%d %s %d %s %d %s %d'</sgl_quote>,
+                      <sgl_quote>'<sc>(</sc>%d %s %d<sc>)</sc> %s %d %s %d'</sgl_quote>,
+                      <sgl_quote>'<sc>(</sc>%d %s %d %s %d<sc>)</sc> %s %d'</sgl_quote>,
+                      <sgl_quote>'%d %s <sc>(</sc>%d %s %d<sc>)</sc> %s %d'</sgl_quote>,
+                      <sgl_quote>'%d %s <sc>(</sc>%d %s %d %s %d<sc>)</sc>'</sgl_quote>,
+                      <sgl_quote>'%d %s %d %s <sc>(</sc>%d %s %d<sc>)</sc>'</sgl_quote>,
+                      <sgl_quote>'<sc>(</sc>%d %s %d<sc>)</sc> %s <sc>(</sc>%d %s %d<sc>)</sc>'</sgl_quote>,<sc>]</sc>
+
+    operations = <sc>[</sc><sgl_quote>'+'</sgl_quote>,<sgl_quote>'-'</sgl_quote>,<sgl_quote>'*'</sgl_quote>,<sgl_quote>'/'</sgl_quote><sc>]</sc>
+
+    <kw>for</kw> pat <kw>in</kw> paren_patterns<sc>:</sc>
+        num_gen = itertools.permutations<sc>(</sc>nums<sc>)</sc>
+        <kw>for</kw> nums <kw>in</kw> num_gen<sc>:</sc>
+            op_gen = itertools.product<sc>(</sc>operations,operations,operations<sc>)</sc>
+            <kw>for</kw> ops <kw>in</kw> op_gen<sc>:</sc>
+                inputs = <sc>(</sc>nums<sc>[</sc>0<sc>]</sc>, ops<sc>[</sc>0<sc>]</sc>, nums<sc>[</sc>1<sc>]</sc>, ops<sc>[</sc>1<sc>]</sc>, nums<sc>[</sc>2<sc>]</sc>, ops<sc>[</sc>2<sc>]</sc>, nums<sc>[</sc>3<sc>]</sc><sc>)</sc>
+                <kw>try</kw><sc>:</sc>
+                    this = eval<sc>(</sc>pat % inputs<sc>)</sc>
+                    <kw>if</kw> math.isclose<sc>(</sc>this, TARGET<sc>)</sc><sc>:</sc> print<sc>(</sc>pat % inputs, <sgl_quote>'='</sgl_quote>, TARGET<sc>)</sc>
+                <kw>except</kw> ZeroDivisionError<sc>:</sc>
+                    <kw>continue</kw>
+    print<sc>(</sc><sgl_quote>'done'</sgl_quote><sc>)</sc>
+
+<comment Class="py"># when calling <kw>from</kw> terminal<sc>:</sc>
+</comment><kw>if</kw> __name__ == <sgl_quote>'__main__'</sgl_quote><sc>:</sc>
+    <kw>import</kw> sys
+    nums = <sc>[</sc>int<sc>(</sc>i<sc>)</sc> <kw>for</kw> i <kw>in</kw> sys.argv<sc>[</sc>1<sc>:</sc>-1<sc>]</sc><sc>]</sc>
+    solve<sc>(</sc>nums, int<sc>(</sc>sys.argv<sc>[</sc>-1<sc>]</sc><sc>)</sc><sc>)</sc>
+</pre>
+</body></html>

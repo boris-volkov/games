@@ -1,0 +1,154 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../style.css" rel="stylesheet"/></head><body><div class="bookmark">./templates/page_with_canvas.html</div><pre class=html>
+<kw>&lt!DOCTYPE HTML&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="UTF-8"&gt</kw>   
+		<kw>&ltstyle&gt</kw>
+			#mycanvas{border:5px solid white;}
+			body { background-color: #006699; }
+
+			canvas {
+				padding-left: 0;
+				padding-right: 0;
+				margin-left: auto;
+				margin-right: auto;
+				display: block;
+				}
+		<kw>&lt/style&gt</kw>
+		<kw>&ltscript src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+	  integrity="sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=" crossorigin="anonymous"&gt</kw><kw>&lt/script&gt</kw>
+
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltcanvas id = "mycanvas"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&ltscript src="sixteens.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./templates/template.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+
+  <kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+<kw>&ltlink href="../../style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+<kw>&ltbody&gt</kw>
+			
+WRITE_HERE
+
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./templates/iframe_template.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+
+  <kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+<kw>&ltlink href="../style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+<kw>&ltbody&gt</kw>
+			
+WRITE_HERE
+
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./templates/basic_terminal_page.html</div><pre class=html>
+<kw>&lt!DOCTYPE html&gt</kw>
+<kw>&lthtml&gt</kw>
+  <kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+  <kw>&ltmeta http-equiv="X-UA-Compatible" content="IE=edge"&gt</kw>
+  <kw>&ltmeta name="viewport" content="width=device-width, initial-scale=1"&gt</kw>
+  
+  
+  <kw>&ltlink rel="stylesheet" href="xterm/css/xterm.css" /&gt</kw> 
+  <kw>&ltscript src="xterm/lib/xterm.js"&gt</kw><kw>&lt/script&gt</kw> 
+  
+  <kw>&lttitle&gt</kw>Title<kw>&lt/title&gt</kw>
+
+<kw>&ltstyle&gt</kw>
+body { background-color: #006699; }
+<kw>&lt/style&gt</kw>
+<kw>&lt/head&gt</kw>
+
+  <kw>&ltbody&gt</kw>
+   <kw>&ltmain&gt</kw>
+      <kw>&ltdiv id="terminal" style="border-style: inset;"&gt</kw><kw>&lt/div&gt</kw>
+      <kw>&ltscript src="basic_terminal_code.js"&gt</kw><kw>&lt/script&gt</kw>
+    <kw>&lt/main&gt</kw>
+  <kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./templates/basic_terminal_code.js</div><pre class=js>
+<comment Class="js">/**
+ * This is just an API for the user to be able to do input/output in the browser-terminal
+ * It listens for key-presses and writes them to screen.
+ * When ENTER is pressed, everything on the working line is sent in a buffer to... 
+ * anywhere you want. This, or something similar will be necessary code in every terminal app.
+ */</comment>
+
+	<comment Class="js">//--------------------------------------------------------------Terminal settings
+</comment>	
+	<kw>const</kw> NUM_COLS = 40<sc>;</sc>
+	<kw>const</kw> NUM_ROWS = 16<sc>;</sc>
+	<kw>const</kw> PROMPT = <sgl_quote>'$ '</sgl_quote><sc>;</sc>
+	<kw>const</kw> term = <kw>new</kw> Terminal<sc>(</sc> <comment Class="js">// takes object as perameter <sc>(</sc>see docs<sc>)</sc>
+</comment>		<sc>{</sc> 
+			theme<sc>:</sc> <sc>{</sc>
+				background<sc>:</sc> <dbl_quote>"#006699"</dbl_quote>,
+			<sc>}</sc>,
+			rows<sc>:</sc> NUM_ROWS,
+			cols<sc>:</sc> 40,
+			cursorBlink<sc>:</sc> true,
+			fontSize<sc>:</sc> Math.floor<sc>(</sc>innerHeight*4/ <sc>(</sc>NUM_ROWS*5<sc>)</sc><sc>)</sc>,
+			fontWeight<sc>:</sc> 900
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+	<kw>function</kw> prompt<sc>(</sc>term<sc>)</sc> <sc>{</sc> term.write<sc>(</sc><sgl_quote>'\n\r'</sgl_quote> + PROMPT<sc>)</sc><sc>;</sc> <sc>}</sc>
+
+	<kw>var</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// TODO<sc>:</sc> might be accessible directly from term...
+</comment>	
+	<comment Class="js">//--------------------------------------------Open terminal and initiate listeners	
+</comment>
+	term.open<sc>(</sc>document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	term.write<sc>(</sc><sgl_quote>'\x1b<sc>[</sc>97m'</sgl_quote><sc>)</sc> <comment Class="js">// <kw>this</kw> is how you set font color
+</comment>	term.writeln<sc>(</sc><sgl_quote>'This is a template terminal <kw>interface</kw>. \n\rJust Add Logic<sc>!</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
+	prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+
+	term.onKey<sc>(</sc>e =&gt <sc>{</sc>
+		<kw>const</kw> printable = <sc>!</sc>e.domEvent.altKey && <sc>!</sc>e.domEvent.altGraphKey 
+			       && <sc>!</sc>e.domEvent.ctrlKey && <sc>!</sc>e.domEvent.metaKey<sc>;</sc>
+
+		<kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 13<sc>)</sc> <sc>{</sc> <comment Class="js">// ENTER pressed
+</comment>			<comment Class="js">// <kw>do</kw> something <kw>with</kw> buffer
+</comment>			buffer = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// reset buffer
+</comment>			prompt<sc>(</sc>term<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>e.domEvent.keyCode === 8<sc>)</sc> <sc>{</sc> <comment Class="js">// Backspace pressed
+</comment>			<kw>if</kw> <sc>(</sc>term._core.buffer.x &gt PROMPT.length<sc>)</sc> <sc>{</sc>
+				buffer.pop<sc>(</sc><sc>)</sc>
+				term.write<sc>(</sc><sgl_quote>'\b \b'</sgl_quote><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>printable<sc>)</sc> <sc>{</sc> <comment Class="js">// standard character
+</comment>			buffer.push<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+			term.write<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+	
+	onresize = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc> term.setOption<sc>(</sc><dbl_quote>"fontSize"</dbl_quote>,
+				Math.floor<sc>(</sc>innerHeight*4/<sc>(</sc>NUM_ROWS*5<sc>)</sc><sc>)</sc><sc>)</sc><sc>;</sc><sc>}</sc>
+
+	<comment Class="js">//----------------------------------------------------------------------------------
+</comment></pre>
+</body></html>

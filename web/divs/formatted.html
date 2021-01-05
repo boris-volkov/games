@@ -1,0 +1,109 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./web/divs/readme.txt</div><pre class=notes>
+
+This picture is made entirely of empty div's with the style property : "display : flex;", turning them into what is called a flex-box.
+
+Modern HTML layouts use flex-boxes heavily because they solve a lot of the difficulties that float elements caused over decades of web development. Flex-boxes are the answer to most layout questions, scale well to small screens, and make it very easy to keep elements centered, aligned, and well-balanced. Flex-boxes can be set to align their elements in rows or in columns with the flex-direction style property. They have other properties that can be set in the style sheet. These include setting how items wrap when the flex-box is resized, and how items are spaced out in the box. You can read about them <a href="https://developer.mozilla.org/en-US/docs/Glossary/Flex_Container">here</a>.
+
+The reason that these empty divs are visible is that they have the margin and padding properties set, and are assigned background colors in the style sheet. Any of these divs can contain pictures or text, or be shifted around inside thier boxes, and the nesting structure of the divs determines the layout. 
+
+Try to understand how the html below leads to the picture you see above. The indentation in the code is designed to make the nesting structure more clear. The deeper an element is nested in the structure, the further it is indented. 
+
+to practice:
+
+copy the documents here and start changing them around. Adjust the colors to your liking, and change the picture structure. Change every setting to see what happens. Add divs to make the image more complex. Add your own color classes, Make it your own! I think this actually makes a pretty nice picture. 
+
+advanced practice:
+
+Here is the full set of <a href="./extras_/div_trees.html">the 6 div column structures</a>. Of course, any column structure can be exchanged for a row structure by changing "flex-direction : column;" to "flex-direction : row;" in that div's style description. Find a layout that you like, and try to replicate it as a nested structure of flex-boxes, then either add images or text if you like, or choose your own background colors and other settings. Make it your own!
+</pre>
+<div class="bookmark">./web/divs/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+	<kw>&ltmeta charset="utf-8"/&gt</kw>
+	<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+	<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+<kw>&ltbody&gt</kw>
+	<kw>&ltdiv class="blue"&gt</kw>
+		<kw>&ltdiv class="red"&gt</kw>
+			<kw>&ltdiv class="yellow"&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="green"&gt</kw>
+				<kw>&ltdiv class="blue"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="blue"&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="green"&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="blue"&gt</kw>
+			<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+		<kw>&ltdiv class="green"&gt</kw>
+			<kw>&ltdiv class = "blue"&gt</kw>
+				<kw>&ltdiv class="yellow"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="yellow"&gt</kw>	
+					<kw>&ltdiv class="green"&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="green"&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="blue"&gt</kw>
+					<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="red"&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltdiv class="red"&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+	<kw>&lt/div&gt</kw>
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./web/divs/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	background : #123;</css>
+<css>	display : flex; <comment class="css">/* MOST CRUCIAL LINE HERE!!! */</comment></css>
+<css>	justify-content : center;</css>
+<css>	align-items: center;</css>
+<css>	flex-wrap: wrap;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	display: flex;  <comment class="css">/* divs need to declare it too */</comment></css>
+<css>	margin: 2vw;  	<comment class="css">/* 1 percent of viewport width */</comment></css>
+<css>	padding: 2vw;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.blue {</sc>
+<css>	background-color: #369;</css>
+<css>	flex-direction:row;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.green {</sc>
+<css>	background-color: #3a6;</css>
+<css>	flex-direction:row;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.yellow {</sc>
+<css>	background-color: #da3;</css>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.red {</sc>
+<css>	background-color: #955;</css>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+</pre>
+</body></html>

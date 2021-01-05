@@ -1,0 +1,11 @@
+body { 	
+	background-color: rgb(125,125,125); 
+	cursor: crosshair;
+}
+
+canvas {
+	display: block; /* old school way to center something */
+	margin-left: auto;
+	margin-right: auto;
+	cursor: none;
+}

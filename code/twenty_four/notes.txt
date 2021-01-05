@@ -1,0 +1,19 @@
+Theres a good math card game called twenty-four. 
+Each card has four numbers, and the goal is always to use all four of those numbers to come up with some arithmetic expression that is equal to 24.
+
+for example, if the four numbers are 6, 6, 6, 6,
+you could get 24 by 6 + 6 + 6 + 6
+
+or if the numbers are 1,2,3,4
+you could get 24 by (2 + 4) x (1 + 3)
+		      or by 4 x 2 x 3 x 1
+
+This game doesn't have to be limited to cards, of course, and a computer can find solutions very fast. I wrote this program to see how well Python can play 24...
+
+Here is a python program that automatically finds the answers to this game. It does this in the "brute force" way, by just trying all of the possible expressions through the python eval() function. eval() is a function that can be passed a python expression as a string, and if it is a legal expression, it evaluages it (aka returns the value that the expression is equal to). Here, the brute force way is actually fast enough, since there are not that many combinations, and the operations are relatively simple. 
+
+A few of the functions from the itertools module are used, product() and permutations(). These are to iterate through the different possible expressions. These are actually important functions in combinatorics, and are worth studying for advanced practice.
+
+You may notice that I am using math.isclose() rather than just checking for equality. This is actually an important detail, and has to do with the inaccuracy of computer rounding when dealing with numbers with fractional parts, or even just division with whole numbers. An example of this that you can easily try is asking your Python interpreter if 0.1 + 0.2 == 0.3. It will tell you False, even though you know it is True. This problem is actually quite complicated and has to do with the binary storage of fractional numbers. The solution is simpler: don't check for strict equality (==) when dealing with potentially fractional numbers, but instead use the math.isclose() function.
+
+Notice also the try/catch block. Some of the expressions will involve trying to divide by zero, and this way, the whole program does not crash when that happens, but just skips that expression.

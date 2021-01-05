@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./web/button/readme.txt</div><pre class=notes>
+Here is a visually responsive button. It changes color when you move your mouse over it, and it changes color again when you click it. 
+
+Notice in the html I am treating the empty &lta&gt element just like I use a div in a flex box. 
+In fact, it is given the same characteristics as the divs in the style sheet. 
+
+notice how I identify the button in the css.
+
+a.button:hover {
+	background-color : #369;
+}
+
+refers to an &lta&gt element with class="button" at the time it is being hovered over with the mouse
+
+a.button:active {
+	background-image: radial-gradient(#123, #247, #369);
+}
+
+refers to an &lta&gt element with class="button" at the time it is being clicked. 
+Here I also demonstrate how you can use a gradient instead of single color.
+
+To make this button go somewhere, just add href="somewhere" in the &lta&gt tag.
+
+advanced practice:
+
+attach an event listener to it in a javascript file and make it do something interesting.
+
+
+</pre>
+<div class="bookmark">./web/button/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="utf-8"&gt</kw>
+		<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+		<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv class="button_holder"&gt</kw>
+			<kw>&lta class="button"&gt</kw>
+			<kw>&lt/a&gt</kw>
+		<kw>&lt/div&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./web/button/style.css</div><pre class=css>
+<sc>body{</sc>
+<css>	display : flex;</css>
+<css>	background-color: #123;</css>
+<css>	justify-content:center;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	display: flex</css>
+<sc>}</sc>
+<css></css>
+<sc>div.button_holder {</sc>
+<css>	margin : 3vw;</css>
+<css>	display : flex;</css>
+<css></css>
+<css>	align-content: center;</css>
+<css>	border-radius: 50%;</css>
+<sc>}</sc>	
+<css></css>
+<sc>div.button_holder {</sc>
+<css>	padding : 1vw;</css>
+<css>	background-color: #abc;</css>
+<sc>}</sc>
+<css></css>
+<sc>a.button {</sc>
+<css>	margin : 3vw;</css>
+<css>	padding : 10vw;</css>
+<css>	background-color : #345;</css>
+<css>	border-radius: 50%;</css>
+<sc>}</sc>
+<css></css>
+<sc>a.button:hover {</sc>
+<css>	background-color : #369;</css>
+<sc>}</sc>
+<css></css>
+<sc>a.button:active {</sc>
+<css>	background-image: radial-gradient(#123, #247, #369);</css>
+<sc>}</sc>
+</pre>
+</body></html>

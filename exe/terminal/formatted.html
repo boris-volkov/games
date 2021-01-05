@@ -1,0 +1,750 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/terminal/terminal.js</div><pre class=js>
+<comment Class="js">// A fully custom terminal <kw>interface</kw> <kw>with</kw> some very strange capabilities.
+</comment>
+<comment Class="js">/*
+ * TODO
+ * keep a stack of commands and run their inveres
+ * make function-inverse map
+ * have it play back as an animation.
+ **/</comment>
+
+<comment Class="js">//----------------------------------------------------------------Initialization of canvas and grid
+</comment><kw>var</kw> canvas = document.getElementById<sc>(</sc><sgl_quote>'terminal'</sgl_quote><sc>)</sc><sc>;</sc>
+<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
+<kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 32<sc>;</sc> <sc>}</sc>
+<kw>var</kw> num_cols = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'cols'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 48<sc>;</sc> <sc>}</sc>
+<comment Class="js">// next stuff prevents touch scrolling on mobile/ipad
+</comment><kw>function</kw> preventDefault<sc>(</sc>e<sc>)</sc><sc>{</sc>
+    e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, preventDefault, <sc>{</sc> passive<sc>:</sc> <kw>false</kw> <sc>}</sc><sc>)</sc><sc>;</sc>
+<comment Class="js">//-------------------------------------------------------stylus drawing listeners/handlers
+</comment><kw>var</kw> drawing_mode = true<sc>;</sc>
+<kw>var</kw> pen_down = <kw>false</kw><sc>;</sc>
+<kw>var</kw> bb<sc>;</sc> <comment Class="js">// bounding box, to adjust x,y coordinates within the terminal.
+</comment>
+canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>drawing_mode<sc>)</sc><sc>{</sc>
+		pen_down = true<sc>;</sc>
+		bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
+		<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+		<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+		context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+		context.strokeStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>pen_down<sc>)</sc><sc>{</sc>
+			<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+			<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+			context.lineTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+			context.stroke<sc>(</sc><sc>)</sc><sc>;</sc>
+			context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+		context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>
+		pen_down = <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+<comment Class="js">//---------------------------------------------Text matrix and color matrix <kw>with</kw> mapping
+</comment>
+<comment Class="js">// backward and forward scroll stacks
+</comment><kw>var</kw> term_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>var</kw> forward_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+
+<comment Class="js">// backups <kw>for</kw> when going to text mode
+</comment><kw>var</kw> backup_history = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>var</kw> backup_future = <sc>[</sc><sc>]</sc><sc>;</sc>
+
+<kw>var</kw> text_matrix = Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc> 
+<kw>function</kw> initialize_text_matrix<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc>
+		text_matrix<sc>[</sc>i<sc>]</sc> = Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>-1<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>var</kw> grid = Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<kw>function</kw> initialize_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		grid<sc>[</sc>i<sc>]</sc> = Array<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt num_cols<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = <sc>[</sc>i,j<sc>]</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>	
+<sc>}</sc>
+
+<comment Class="js">// <kw>for</kw> mapping from the grid to the text_matrix<sc>:</sc>
+</comment><kw>function</kw> text_map<sc>(</sc>i,j<sc>)</sc> <sc>{</sc> 
+	<kw>return</kw> text_matrix<sc>[</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>[</sc>0<sc>]</sc><sc>]</sc><sc>[</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>[</sc>1<sc>]</sc><sc>]</sc><sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">//--------------------------------------------Printing and cursor functions<sc>:</sc>
+</comment>
+<comment Class="js">// to fix negative cursor indices...
+</comment>Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
+	<kw>return</kw> <sc>(</sc><sc>(</sc><kw>this</kw>%n<sc>)</sc>+n<sc>)</sc>%n<sc>;</sc>
+<sc>}</sc><sc>;</sc>
+
+<kw>function</kw> cursor_up<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>cursor_row == 0 && term_memory.length<sc>)</sc>
+		old_line<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> cursor_row = Math.max<sc>(</sc>cursor_row - 1, 0<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> cursor_down<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>cursor_row == <sc>(</sc>num_rows - 1<sc>)</sc> && forward_memory.length<sc>)</sc>
+		back_from_the_future<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> cursor_row = Math.min<sc>(</sc>cursor_row + 1, num_rows - 1<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> cursor_right<sc>(</sc><sc>)</sc><sc>{</sc>
+	cursor_col = <sc>(</sc>cursor_col+1<sc>)</sc>%num_cols<sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> cursor_left<sc>(</sc><sc>)</sc><sc>{</sc>
+	cursor_col = <sc>(</sc>cursor_col-1<sc>)</sc>.mod<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> back_space<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>cursor_col &gt 0<sc>)</sc>
+		text_matrix<sc>[</sc>cursor_row<sc>]</sc><sc>[</sc>--cursor_col<sc>]</sc> = -1<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> delete_row<sc>(</sc><sc>)</sc><sc>{</sc>
+	<comment Class="js">//<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_cols<sc>;</sc> i++<sc>)</sc>
+</comment>	<comment Class="js">//	text_matrix<sc>[</sc>cursor_row<sc>]</sc><sc>[</sc>i<sc>]</sc> = -1<sc>;</sc>
+</comment>	fit_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> tab<sc>(</sc><sc>)</sc><sc>{</sc>
+	cursor_col = <sc>(</sc>cursor_col+4<sc>)</sc>%num_cols<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> clear<sc>(</sc><sc>)</sc><sc>{</sc>
+	term_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+	forward_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+	initialize_text_matrix<sc>(</sc><sc>)</sc><sc>;</sc>
+	cursor_row = 0<sc>;</sc>
+	cursor_col = 0<sc>;</sc>
+<sc>}</sc>
+
+<kw>var</kw> cursor_col = 0<sc>;</sc>
+<kw>var</kw> cursor_row = 0<sc>;</sc>
+<kw>var</kw> terminal_mode = true<sc>;</sc>
+<kw>var</kw> text_mode = <kw>false</kw><sc>;</sc>
+
+<kw>function</kw> new_line<sc>(</sc><sc>)</sc> <sc>{</sc>
+	term_memory.push<sc>(</sc>text_matrix.shift<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	text_matrix.push<sc>(</sc>Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>-1<sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> old_line<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>term_memory.length<sc>)</sc>
+		text_matrix.unshift<sc>(</sc>term_memory.pop<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	forward_memory.push<sc>(</sc>text_matrix.pop<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> back_from_the_future<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>forward_memory.length<sc>)</sc><sc>{</sc>
+		term_memory.push<sc>(</sc>text_matrix.shift<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		text_matrix.push<sc>(</sc>forward_memory.pop<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> write<sc>(</sc>key<sc>)</sc> <sc>{</sc>
+	text_matrix<sc>[</sc>cursor_row<sc>]</sc><sc>[</sc>cursor_col<sc>]</sc> = key<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>cursor_col == num_cols - 1<sc>)</sc><sc>{</sc>
+		cursor_col = 0<sc>;</sc>
+		<kw>if</kw> <sc>(</sc><sc>(</sc>cursor_row + 1<sc>)</sc> == num_rows<sc>)</sc>
+			new_line<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>else</kw> cursor_row = <sc>(</sc>cursor_row+1<sc>)</sc>%num_rows<sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		cursor_col += 1<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> echo<sc>(</sc>buffer<sc>)</sc> <sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt buffer.length<sc>;</sc> i++<sc>)</sc>
+		write<sc>(</sc>buffer<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>cursor_col &gt 0<sc>)</sc><sc>{</sc> <comment Class="js">// linebreak after printing
+</comment>		<kw>if</kw> <sc>(</sc><sc>(</sc>cursor_row + 1<sc>)</sc> == num_rows<sc>)</sc>
+			new_line<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>else</kw> cursor_row++<sc>;</sc>
+		cursor_col = 0<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+
+<kw>var</kw> ps1 = <dbl_quote>"$"</dbl_quote><sc>;</sc>
+<kw>function</kw> prompt<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>ps1<sc>)</sc><sc>{</sc>
+		write<sc>(</sc>ps1<sc>)</sc><sc>;</sc> 
+		cursor_col++<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>const</kw> invalid_usage = <dbl_quote>"● Invalid usage ●"</dbl_quote><sc>;</sc>
+
+<kw>function</kw> help<sc>(</sc>title, list<sc>)</sc><sc>{</sc> <comment Class="js">//TODO does not handle long lines
+</comment>	title = <dbl_quote>"<sc>:</sc><sc>:</sc>"</dbl_quote> + title + <dbl_quote>"<sc>:</sc><sc>:</sc>"</dbl_quote><sc>;</sc>
+	echo<sc>(</sc>title + <dbl_quote>" "</dbl_quote>.repeat<sc>(</sc>num_cols-title.length<sc>)</sc><sc>)</sc><sc>;</sc>
+	echo<sc>(</sc><sgl_quote>'●'</sgl_quote> + <sgl_quote>'―'</sgl_quote>.repeat<sc>(</sc>num_cols-2<sc>)</sc> + <dbl_quote>"●"</dbl_quote><sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt list.length<sc>;</sc> i++<sc>)</sc>
+		echo<sc>(</sc><dbl_quote>"| "</dbl_quote> + list<sc>[</sc>i<sc>]</sc> + <dbl_quote>" "</dbl_quote>.repeat<sc>(</sc>num_cols-list<sc>[</sc>i<sc>]</sc>.length - 3<sc>)</sc> + <dbl_quote>"|"</dbl_quote><sc>)</sc><sc>;</sc>
+	echo<sc>(</sc><sgl_quote>'●'</sgl_quote> + <sgl_quote>'―'</sgl_quote>.repeat<sc>(</sc>num_cols-2<sc>)</sc> + <dbl_quote>"●"</dbl_quote><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+initialize_text_matrix<sc>(</sc><sc>)</sc><sc>;</sc>
+initialize_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> ls<sc>(</sc><sc>)</sc><sc>{</sc>
+	help<sc>(</sc><dbl_quote>"File Listing"</dbl_quote>, Object.keys<sc>(</sc>file_list<sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> cat<sc>(</sc>file_name<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>file_list.hasOwnProperty<sc>(</sc>file_name<sc>)</sc><sc>)</sc>
+		help<sc>(</sc>file_name, file_list<sc>[</sc>file_name<sc>]</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <sc>{</sc>
+		echo<sc>(</sc>invalid_usage<sc>)</sc><sc>;</sc>
+		echo<sc>(</sc><dbl_quote>"<sc>:</sc><sc>:</sc>cat must be called on a file"</dbl_quote><sc>)</sc><sc>;</sc>
+		echo<sc>(</sc><dbl_quote>"<sc>:</sc><sc>:</sc>example usage<sc>:</sc> cat about"</dbl_quote><sc>)</sc><sc>;</sc>
+		echo<sc>(</sc><dbl_quote>"<sc>:</sc><sc>:</sc>use ls to see a file listing"</dbl_quote><sc>)</sc><sc>;</sc>
+		<comment Class="js">//echo<sc>(</sc>"<sc>:</sc><sc>:</sc>use help cat to learn more"<sc>)</sc><sc>;</sc>
+</comment>	<sc>}</sc>
+<sc>}</sc>
+	
+<comment Class="js">//---------------------------Everything related to color manipulation <kw>in</kw> phase mode<sc>:</sc> 
+</comment><kw>function</kw> Color<sc>(</sc>name<sc>)</sc><sc>{</sc>
+	<kw>this</kw>.name = name<sc>;</sc>
+	<kw>this</kw>.amp = 0<sc>;</sc>
+	<kw>this</kw>.freq = 6.283/num_rows<sc>;</sc>
+	<kw>this</kw>.phase = 0<sc>;</sc>
+	<kw>this</kw>.center = 0<sc>;</sc>
+	<kw>this</kw>.toString = <kw>function</kw> <sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>return</kw> <sc>[</sc> <kw>this</kw>.name   , 	<sgl_quote>'Mag<sc>:</sc>'</sgl_quote>, <kw>this</kw>.amp, <sgl_quote>'|'</sgl_quote>,
+			<sgl_quote>'Frq<sc>:</sc>'</sgl_quote>, Math.round<sc>(</sc>num_rows*<kw>this</kw>.freq/6.28*100<sc>)</sc>/100, <sgl_quote>'|'</sgl_quote>,
+			<sgl_quote>'Pha<sc>:</sc>'</sgl_quote>, <kw>this</kw>.phase,    <sgl_quote>'|'</sgl_quote>, 
+			<sgl_quote>'Cen<sc>:</sc>'</sgl_quote>, <kw>this</kw>.center<sc>]</sc>.join<sc>(</sc><sgl_quote>' '</sgl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>;</sc>
+
+	<kw>this</kw>.sin = <kw>function</kw> <sc>(</sc>x<sc>)</sc> <sc>{</sc>
+		<kw>return</kw> Math.round<sc>(</sc>Math.sin<sc>(</sc><kw>this</kw>.freq*<sc>(</sc>x+<kw>this</kw>.phase<sc>)</sc><sc>)</sc>*<kw>this</kw>.amp+<kw>this</kw>.center<sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>;</sc>
+<sc>}</sc><sc>;</sc>
+
+<kw>var</kw> gradient = <sc>{</sc>
+	red 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Red<sc>]</sc>'</sgl_quote><sc>)</sc>,
+	grn 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Grn<sc>]</sc>'</sgl_quote><sc>)</sc>,
+	blu 		<sc>:</sc> <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Blu<sc>]</sc>'</sgl_quote><sc>)</sc>,
+	rgb_codes	<sc>:</sc> <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc>,
+
+	generate_codes  <sc>:</sc> <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>var</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> ++i<sc>)</sc><sc>{</sc>
+			<kw>this</kw>.rgb_codes<sc>[</sc>i<sc>]</sc> = <sc>(</sc><sgl_quote>'rgb<sc>(</sc>'</sgl_quote>+<kw>this</kw>.red.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+				<kw>this</kw>.grn.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+				<kw>this</kw>.blu.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>'<sc>)</sc>'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> waves<sc>(</sc><sc>)</sc><sc>{</sc>
+	echo<sc>(</sc>gradient.red.toString<sc>(</sc><sc>)</sc>.replace<sc>(</sc>/\s/g,<sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	echo<sc>(</sc>gradient.grn.toString<sc>(</sc><sc>)</sc>.replace<sc>(</sc>/\s/g,<sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	echo<sc>(</sc>gradient.blu.toString<sc>(</sc><sc>)</sc>.replace<sc>(</sc>/\s/g,<sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+
+
+<kw>function</kw> invert_color<sc>(</sc>string<sc>)</sc><sc>{</sc>
+	<kw>return</kw><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> reset_colors<sc>(</sc><sc>)</sc> <sc>{</sc>		
+		gradient.red 		= <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Red<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		gradient.grn 		= <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Grn<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		gradient.blu 		= <kw>new</kw> Color<sc>(</sc><sgl_quote>'<sc>[</sc>Blu<sc>]</sc>'</sgl_quote><sc>)</sc>,
+		gradient.rgb_codes	= <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc>,
+
+		gradient.generate_codes  = <kw>function</kw><sc>(</sc><sc>)</sc> <sc>{</sc>
+			<kw>for</kw> <sc>(</sc><kw>var</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> ++i<sc>)</sc><sc>{</sc>
+				<kw>this</kw>.rgb_codes<sc>[</sc>i<sc>]</sc> = <sc>(</sc><sgl_quote>'rgb<sc>(</sc>'</sgl_quote>+<kw>this</kw>.red.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+					<kw>this</kw>.grn.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>','</sgl_quote>+
+					<kw>this</kw>.blu.sin<sc>(</sc>i<sc>)</sc>+<sgl_quote>'<sc>)</sc>'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+				<sc>}</sc>
+
+		gradient.generate_codes<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> set_text_color<sc>(</sc>rgb<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>isHexColor<sc>(</sc>rgb<sc>)</sc><sc>)</sc>
+		text_color = <dbl_quote>"#"</dbl_quote> + rgb<sc>;</sc>
+	<kw>else</kw> <sc>{</sc>
+		echo<sc>(</sc>invalid_usage<sc>)</sc><sc>;</sc>
+		echo<sc>(</sc><dbl_quote>"<sc>:</sc><sc>:</sc>txtcolor must be called <kw>with</kw> an RGB hex code"</dbl_quote><sc>)</sc><sc>;</sc>
+		echo<sc>(</sc><dbl_quote>"<sc>:</sc><sc>:</sc>example usage<sc>:</sc> txtcolor fff or txtcolor 3366ff"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> isHexColor <sc>(</sc>hex<sc>)</sc> <sc>{</sc>
+  <kw>return</kw> <kw>typeof</kw> hex === <sgl_quote>'string'</sgl_quote>
+      && <sc>(</sc>hex.length === 3 || hex.length === 6<sc>)</sc>
+      && <sc>!</sc>isNaN<sc>(</sc>Number<sc>(</sc><sgl_quote>'0x'</sgl_quote> + hex<sc>)</sc><sc>)</sc>
+<sc>}</sc>
+
+<kw>function</kw> rgb<sc>(</sc><sc>)</sc><sc>{</sc> <comment Class="js">// to be depracated ?
+</comment>	alert<sc>(</sc>gradient.rgb_codes<sc>)</sc><sc>;</sc>
+<sc>}</sc> 
+reset_colors<sc>(</sc><sc>)</sc><sc>;</sc>
+<comment Class="js">//--------------------------------------------------------------Drawing to canvas.
+</comment><kw>var</kw> display = <kw>false</kw><sc>;</sc>
+<kw>var</kw> text_hidden = <kw>false</kw><sc>;</sc>
+<kw>var</kw> cursor_color = <sgl_quote>'#47a'</sgl_quote><sc>;</sc>
+<kw>var</kw> text_color = <sgl_quote>'#69c'</sgl_quote><sc>;</sc>
+<kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>var</kw> ver_div = canvas.width/num_cols<sc>;</sc>
+	<kw>var</kw> hor_div = canvas.height/num_rows<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>var</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>var</kw> j = 0<sc>;</sc> j &lt num_cols<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+			<kw>let</kw> x = j * hor_div<sc>;</sc>
+			<kw>let</kw> y = i * ver_div<sc>;</sc>
+			<kw>let</kw> color = gradient.rgb_codes<sc>[</sc>grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>[</sc>0<sc>]</sc><sc>]</sc><sc>;</sc> <comment Class="js">// color element
+</comment>			context.fillStyle = color<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>text_hidden<sc>)</sc><sc>{</sc> <comment Class="js">// fill background no matter what
+</comment>				context.fillRect<sc>(</sc>x , y, hor_div, ver_div<sc>)</sc><sc>;</sc>	
+			<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">// otherwise fill background and text on top of it
+</comment>				<kw>if</kw> <sc>(</sc>terminal_mode && cursor_row == grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>[</sc>0<sc>]</sc> && cursor_col == grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc><sc>[</sc>1<sc>]</sc><sc>)</sc>
+					context.fillStyle = cursor_color<sc>;</sc>
+
+				context.fillRect<sc>(</sc>x , y, hor_div, ver_div<sc>)</sc><sc>;</sc>
+				<kw>let</kw> character = text_map<sc>(</sc>i,j<sc>)</sc><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>character <sc>!</sc>= -1<sc>)</sc><sc>{</sc> <comment Class="js">// need to draw char.
+</comment>					context.fillStyle = text_color<sc>;</sc>
+					<kw>if</kw> <sc>(</sc><dbl_quote>"●◷◵◴◶→←―|↑↓_"</dbl_quote>.includes<sc>(</sc>character<sc>)</sc><sc>)</sc> <comment Class="js">// orange special chars
+</comment>						context.fillStyle = <sgl_quote>'#f60'</sgl_quote><sc>;</sc>
+					<kw>if</kw> <sc>(</sc><dbl_quote>"<sc>:</sc>$₽"</dbl_quote>.includes<sc>(</sc>character<sc>)</sc><sc>)</sc>   <comment Class="js">// blue special chars
+</comment>						context.fillStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+					<kw>if</kw> <sc>(</sc><dbl_quote>"<sc>[</sc><sc>]</sc><sc>(</sc><sc>)</sc><sc>{</sc><sc>}</sc>&gt&lt+=-*/</comment>"</dbl_quote>.includes<sc>(</sc>character<sc>)</sc><sc>)</sc>  <comment Class="js">// yellow special chars
+</comment>						context.fillStyle = <dbl_quote>"#990"</dbl_quote><sc>;</sc>
+					context.fillText<sc>(</sc>character, Math.round<sc>(</sc>x+hor_div/4<sc>)</sc>, Math.round<sc>(</sc>y+ver_div/5<sc>)</sc><sc>)</sc><sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<comment Class="js">//context.rotate<sc>(</sc>0.1<sc>)</sc><sc>;</sc>
+</comment>	<comment Class="js">//// investigate <kw>this</kw><sc>!</sc> <kw>this</kw> is how you get rotated characters bro<sc>!</sc>
+</comment>	<comment Class="js">//context.translate<sc>(</sc>x,y<sc>)</sc>
+</comment>	<comment Class="js">//context.transform<sc>(</sc>a,b,c,d,e,f<sc>)</sc> most advanced transformations
+</comment>	<kw>if</kw> <sc>(</sc>display<sc>)</sc><sc>{</sc> <comment Class="js">// <kw>this</kw> is <kw>if</kw> color information display is turned on
+</comment>		context.fillStyle = <dbl_quote>"#000"</dbl_quote><sc>;</sc>
+		context.fillRect<sc>(</sc>Math.round<sc>(</sc>canvas.width/5<sc>)</sc> ,ver_div/2, Math.round<sc>(</sc>3*canvas.width/5<sc>)</sc>, ver_div*4<sc>)</sc><sc>;</sc>
+		context.textBaseline = <dbl_quote>"top"</dbl_quote><sc>;</sc>
+		context.textAlign = <dbl_quote>"center"</dbl_quote><sc>;</sc>
+		context.fillStyle = <dbl_quote>"#a33"</dbl_quote><sc>;</sc>
+		context.fillText<sc>(</sc>gradient.red.toString<sc>(</sc><sc>)</sc>, canvas.width/2,   ver_div<sc>)</sc><sc>;</sc>
+		context.fillStyle = <dbl_quote>"#3a3"</dbl_quote><sc>;</sc>
+		context.fillText<sc>(</sc>gradient.grn.toString<sc>(</sc><sc>)</sc>, canvas.width/2, 2*ver_div<sc>)</sc><sc>;</sc>
+		context.fillStyle = <dbl_quote>"#36f"</dbl_quote><sc>;</sc>
+		context.fillText<sc>(</sc>gradient.blu.toString<sc>(</sc><sc>)</sc>, canvas.width/2, 3*ver_div<sc>)</sc><sc>;</sc>
+		context.textAlign = <dbl_quote>"start"</dbl_quote><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>	
+<comment Class="js">//-------------------------------------------key event listener & key -&gt <kw>function</kw> maps
+</comment>
+<kw>var</kw> keys_down = <sc>{</sc>
+	<sgl_quote>'r'</sgl_quote><sc>:</sc> <kw>false</kw>, 	<sgl_quote>'g'</sgl_quote><sc>:</sc> <kw>false</kw>,  	<sgl_quote>'b'</sgl_quote><sc>:</sc> <kw>false</kw>, 	<sgl_quote>'p'</sgl_quote><sc>:</sc> <kw>false</kw>,
+	<sgl_quote>'f'</sgl_quote><sc>:</sc> <kw>false</kw>,		<sgl_quote>'m'</sgl_quote><sc>:</sc> <kw>false</kw>, 	<sgl_quote>'c'</sgl_quote><sc>:</sc> <kw>false</kw>, 	<sgl_quote>'e'</sgl_quote><sc>:</sc> <kw>false</kw>,
+	<sgl_quote>'h'</sgl_quote><sc>:</sc> <kw>false</kw>,
+<sc>}</sc><sc>;</sc>
+<kw>const</kw> key_function_map = <sc>{</sc>
+	<sgl_quote>'i'</sgl_quote><sc>:</sc> torus_up,		<sgl_quote>'k'</sgl_quote><sc>:</sc> torus_down,	<sgl_quote>'j'</sgl_quote><sc>:</sc> torus_left,
+	<sgl_quote>'l'</sgl_quote><sc>:</sc> torus_right,	<sgl_quote>'w'</sgl_quote><sc>:</sc> mobius_up,		<sgl_quote>'s'</sgl_quote><sc>:</sc> mobius_down,
+	<sgl_quote>'a'</sgl_quote><sc>:</sc> mobius_left,	<sgl_quote>'d'</sgl_quote><sc>:</sc> mobius_right,      <sgl_quote>'t'</sgl_quote><sc>:</sc> transpose,
+	<sgl_quote>'.'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> display ^= true<sc>;</sc> <sc>}</sc>, 
+	<sgl_quote>'`'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> alert<sc>(</sc>gradient.rgb_codes<sc>)</sc><sc>;</sc> <sc>}</sc>,
+	<sgl_quote>'h'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> text_hidden ^= true<sc>;</sc> <sc>}</sc>,
+	<sgl_quote>'Escape'</sgl_quote><sc>:</sc> <sc>(</sc><sc>)</sc> =&gt <sc>{</sc> 
+		<kw>if</kw> <sc>(</sc><sc>!</sc>terminal_mode && <sc>!</sc>text_mode<sc>)</sc><sc>{</sc> <comment Class="js">// means phase_mode 
+</comment>			terminal_mode = true<sc>;</sc> 
+			text_hidden = <kw>false</kw><sc>;</sc> 
+			display = <kw>false</kw><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>,
+	<sgl_quote>'='</sgl_quote> <sc>:</sc>  reset_colors,
+
+	<sgl_quote>'ArrowUp'</sgl_quote> <sc>:</sc> <sc>(</sc><sc>)</sc> =&gt 	<sc>{</sc><kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'r'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.freq *= 1.01<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.phase += 1<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.amp += 5<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.center += 5<sc>;</sc>
+				<sc>}</sc>
+				<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'g'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.grn.freq *= 1.01<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.grn.phase += 1<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.grn.amp += 5<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.grn.center += 5<sc>;</sc>
+				<sc>}</sc>
+				<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'b'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.blu.freq *= 1.01<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.blu.phase += 1<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.blu.amp += 5<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.blu.center += 5<sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc>,
+
+	<sgl_quote>'ArrowDown'</sgl_quote> <sc>:</sc> <sc>(</sc><sc>)</sc> =&gt 	<sc>{</sc><kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'r'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.freq /= 1.01<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.phase -= 1<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.amp -= 5<sc>;</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+						gradient.red.center -= 5<sc>;</sc>
+				<sc>}</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'g'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.grn.freq /= 1.01<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.grn.phase -= 1<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.grn.amp -= 5<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.grn.center -= 5<sc>;</sc>
+					<sc>}</sc>
+					<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'b'</sgl_quote><sc>]</sc><sc>)</sc><sc>{</sc> 
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'f'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.blu.freq /= 1.01<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'p'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.blu.phase -= 1<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'m'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.blu.amp -= 5<sc>;</sc>
+						<kw>if</kw> <sc>(</sc>keys_down<sc>[</sc><sgl_quote>'c'</sgl_quote><sc>]</sc><sc>)</sc>
+							gradient.blu.center -= 5<sc>;</sc>
+					<sc>}</sc>
+				<sc>}</sc>
+<sc>}</sc><sc>;</sc>
+<comment Class="js">//---------------------------------------------------------------Commands and maps
+</comment>command_list = <sc>[</sc><dbl_quote>"about"</dbl_quote>, <dbl_quote>"cat"</dbl_quote>, <dbl_quote>"clear"</dbl_quote>, <dbl_quote>"codes"</dbl_quote>, <dbl_quote>"echo"</dbl_quote>, 
+				<dbl_quote>"help"</dbl_quote>, <dbl_quote>"ls"</dbl_quote>, <dbl_quote>"programs"</dbl_quote>, <dbl_quote>"refresh"</dbl_quote>, <dbl_quote>"rgb"</dbl_quote>,
+				<dbl_quote>"txtcolor"</dbl_quote>, <dbl_quote>"visual"</dbl_quote>,
+				<dbl_quote>"____________________________________________"</dbl_quote>,
+				<dbl_quote>"◶ SPECIAL MODES    <sc>(</sc>press <sc>[</sc>esc<sc>]</sc> to <kw>return</kw><sc>)</sc> ◵"</dbl_quote>,
+				<dbl_quote>"text"</dbl_quote>,
+				<dbl_quote>"phase"</dbl_quote>
+				<sc>]</sc><sc>;</sc>
+<comment Class="js">// TODO pull from properties of command map rather than actually writing <kw>this</kw> list
+</comment>
+program_list = <sc>[</sc><dbl_quote>"quest"</dbl_quote>, <dbl_quote>"princess"</dbl_quote>, <dbl_quote>"fifteen"</dbl_quote>, <dbl_quote>"sixteen"</dbl_quote>, <dbl_quote>"game"</dbl_quote>, <dbl_quote>"territory"</dbl_quote><sc>]</sc>
+
+<comment Class="js">// put these <kw>in</kw> a <kw>function</kw> map
+</comment><kw>function</kw> execute_command<sc>(</sc>buffer<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> command = buffer.join<sc>(</sc><dbl_quote>""</dbl_quote><sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>command == <dbl_quote>"clear"</dbl_quote><sc>)</sc> 		clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command.startsWith<sc>(</sc><dbl_quote>"echo"</dbl_quote><sc>)</sc><sc>)</sc> 	echo<sc>(</sc>buffer.slice<sc>(</sc>5<sc>)</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command.startsWith<sc>(</sc><dbl_quote>"txtcolor"</dbl_quote><sc>)</sc><sc>)</sc>	set_text_color<sc>(</sc>buffer.slice<sc>(</sc>9<sc>)</sc>.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command.startsWith<sc>(</sc><dbl_quote>"cat"</dbl_quote><sc>)</sc><sc>)</sc>    cat<sc>(</sc>buffer.slice<sc>(</sc>4<sc>)</sc>.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"help"</dbl_quote><sc>)</sc> 			help<sc>(</sc><dbl_quote>"Commands Available"</dbl_quote>, command_list<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"programs"</dbl_quote><sc>)</sc>		help<sc>(</sc><dbl_quote>"Program Listing"</dbl_quote>, program_list<sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"codes"</dbl_quote><sc>)</sc> 		rgb<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"about"</dbl_quote><sc>)</sc>        cat<sc>(</sc><dbl_quote>"about"</dbl_quote><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"unscramble"</dbl_quote><sc>)</sc> 	initialize_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"reset"</dbl_quote><sc>)</sc> 		reset_colors<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"rgb"</dbl_quote><sc>)</sc> 			waves<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"rubles"</dbl_quote><sc>)</sc> 		ps1 = <dbl_quote>"₽"</dbl_quote><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"dollars"</dbl_quote><sc>)</sc> 		ps1 = <dbl_quote>"$"</dbl_quote><sc>;</sc>
+	<comment Class="js">//<kw>else</kw> <kw>if</kw> <sc>(</sc>command == "undo"<sc>)</sc> 		grid = JSON.parse<sc>(</sc>JSON.stringify<sc>(</sc>b_grid<sc>)</sc><sc>)</sc><sc>;</sc>
+</comment>	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"quest"</dbl_quote><sc>)</sc> 		quest<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"game"</dbl_quote> <sc>)</sc>     	game<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"princess"</dbl_quote><sc>)</sc> 	princess<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"sixteen"</dbl_quote><sc>)</sc>		sixteen<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"visual"</dbl_quote><sc>)</sc>		visual<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"phase"</dbl_quote><sc>)</sc>		<sc>{</sc>terminal_mode = <kw>false</kw><sc>;</sc>display=true<sc>;</sc>text_hidden=true<sc>;</sc><sc>}</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"text"</dbl_quote><sc>)</sc>			enter_text_mode<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"fifteen"</dbl_quote><sc>)</sc>		fifteen<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"territory"</dbl_quote><sc>)</sc>    territory<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"refresh"</dbl_quote><sc>)</sc>		location.reload<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"rmps1"</dbl_quote><sc>)</sc>			ps1 = <dbl_quote>""</dbl_quote><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"ls"</dbl_quote><sc>)</sc>			ls<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> echo <sc>(</sc><dbl_quote>"● Invalid command ● Type help ●"</dbl_quote><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">//----------------------------------------------------------------------------------Out-links
+</comment>
+<kw>function</kw> quest<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/quest/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> princess<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/princess/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> sixteen<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/sixteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> fifteen<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/fifteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> game<sc>(</sc><sc>)</sc> 	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/game/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> territory<sc>(</sc><sc>)</sc><sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/territory/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> visual<sc>(</sc><sc>)</sc>   <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./visual.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+
+<kw>var</kw> cursor_backup<sc>;</sc>
+<kw>var</kw> b_grid<sc>;</sc> <comment Class="js">//backup grid
+</comment>
+<comment Class="js">// everyone reccomends <kw>this</kw> <kw>for</kw> deep copy
+</comment><kw>function</kw> backup<sc>(</sc>grid<sc>)</sc> <sc>{</sc><comment Class="js">//TODO decide whether <kw>this</kw> is multi-purpose or not
+</comment>	b_grid = JSON.parse<sc>(</sc>JSON.stringify<sc>(</sc>grid<sc>)</sc><sc>)</sc><sc>;</sc>
+	backup_history = JSON.parse<sc>(</sc>JSON.stringify<sc>(</sc>term_memory<sc>)</sc><sc>)</sc><sc>;</sc>
+	backup_future = JSON.parse<sc>(</sc>JSON.stringify<sc>(</sc>forward_memory<sc>)</sc><sc>)</sc><sc>;</sc>
+	term_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+	forward_memory = <sc>[</sc><sc>]</sc><sc>;</sc>
+	<kw>return</kw> 0<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> enter_text_mode<sc>(</sc><sc>)</sc><sc>{</sc>
+	backup<sc>(</sc>text_matrix<sc>)</sc><sc>;</sc>
+	cursor_backup = <sc>[</sc>cursor_row, cursor_col<sc>]</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	ps1 = <dbl_quote>""</dbl_quote><sc>;</sc>
+	text_mode = true<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> exit_text_mode<sc>(</sc><sc>)</sc><sc>{</sc>
+	ps1 = <dbl_quote>"$"</dbl_quote><sc>;</sc>
+	text_mode = <kw>false</kw><sc>;</sc>
+	text_matrix = b_grid<sc>;</sc>
+	cursor_row = cursor_backup<sc>[</sc>0<sc>]</sc><sc>;</sc>
+	cursor_col = cursor_backup<sc>[</sc>1<sc>]</sc><sc>;</sc>
+	term_memory = backup_history<sc>;</sc>
+	forward_memory = backup_future<sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">//TODO need separate handler <kw>for</kw> every mode <kw>this</kw> is getting bloated
+</comment><kw>var</kw> buffer = <sc>[</sc><sc>]</sc> <comment Class="js">/* IMPORTANT <sc>:</sc> input buffer  */</comment>
+window.addEventListener<sc>(</sc><sgl_quote>'keydown'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+
+	<kw>if</kw> <sc>(</sc>text_mode && event.key == <dbl_quote>"Escape"</dbl_quote><sc>)</sc><sc>{</sc>
+		exit_text_mode<sc>(</sc><sc>)</sc><sc>;</sc>
+		prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'Delete'</sgl_quote><sc>)</sc><sc>{</sc>
+		delete_row<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>terminal_mode == true<sc>)</sc><sc>{</sc>
+
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'Enter'</sgl_quote><sc>)</sc><sc>{</sc>
+			cursor_col = 0<sc>;</sc>
+			<kw>if</kw> <sc>(</sc><sc>(</sc>cursor_row + 1<sc>)</sc> == num_rows<sc>)</sc>
+				new_line<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>else</kw> cursor_row++<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>buffer.length && <sc>!</sc>text_mode<sc>)</sc><sc>{</sc>
+				execute_command<sc>(</sc>Array.from<sc>(</sc>buffer<sc>)</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+			buffer = <sc>[</sc><sc>]</sc><sc>;</sc>
+			prompt<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'Backspace'</sgl_quote><sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>buffer.length && <sc>!</sc>text_mode<sc>)</sc>
+				buffer.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+			back_space<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'ArrowUp'</sgl_quote><sc>)</sc><sc>{</sc>
+			cursor_up<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'ArrowDown'</sgl_quote><sc>)</sc><sc>{</sc>
+			cursor_down<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'ArrowRight'</sgl_quote><sc>)</sc><sc>{</sc>
+			cursor_right<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'ArrowLeft'</sgl_quote><sc>)</sc><sc>{</sc>
+			cursor_left<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key == <sgl_quote>'Tab'</sgl_quote><sc>)</sc><sc>{</sc>
+			tab<sc>(</sc><sc>)</sc><sc>;</sc>
+			event.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>event.key.length === 1<sc>)</sc><sc>{</sc>
+			event.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc><sc>!</sc>text_mode<sc>)</sc>
+				buffer.push<sc>(</sc>event.key<sc>)</sc><sc>;</sc>
+			write<sc>(</sc>event.key<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>keys_down.hasOwnProperty<sc>(</sc>event.key<sc>)</sc><sc>)</sc><sc>{</sc>
+		keys_down<sc>[</sc>event.key<sc>]</sc> = true<sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>key_function_map.hasOwnProperty<sc>(</sc>event.key<sc>)</sc><sc>)</sc>
+		key_function_map<sc>[</sc>event.key<sc>]</sc><sc>(</sc><sc>)</sc><sc>;</sc>
+
+	gradient.generate_codes<sc>(</sc><sc>)</sc><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+window.addEventListener<sc>(</sc><sgl_quote>'keyup'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>keys_down.hasOwnProperty<sc>(</sc>event.key<sc>)</sc><sc>)</sc>
+		keys_down<sc>[</sc>event.key<sc>]</sc> = <kw>false</kw><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+<comment Class="js">//-------------------------------------------------------Resize Event Listener
+</comment>window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, fit_canvas<sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"onload"</dbl_quote>, fit_canvas<sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"onload"</dbl_quote>, canvas.focus<sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"onload"</dbl_quote>, prompt<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+
+<comment Class="js">// when it tries to get as tall as possible to fit, there end up being
+</comment><comment Class="js">// extra cols on the right side
+</comment>
+<kw>function</kw> fit_canvas<sc>(</sc><sc>)</sc><sc>{</sc><comment Class="js">// resizing <kw>this</kw> way is costly and clobbers anything that was drawn. 
+</comment>	context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>let</kw> available_x_pixels = window.innerWidth-32<sc>;</sc>
+	<kw>let</kw> available_y_pixels = window.innerHeight-32<sc>;</sc>
+	<kw>let</kw> desired_ratio = num_cols/num_rows<sc>;</sc> <comment Class="js">//width to height
+</comment>	<kw>let</kw> window_ratio = available_x_pixels/available_y_pixels<sc>;</sc>
+	<kw>let</kw> actual_width = 0<sc>;</sc>
+	<kw>let</kw> actual_height = 0<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>desired_ratio &gt window_ratio <sc>)</sc><sc>{</sc> <comment Class="js">// too narrow, width dominates
+</comment>		actual_width = available_x_pixels<sc>;</sc>
+		actual_height = Math.round<sc>(</sc>actual_width/<sc>(</sc>desired_ratio<sc>)</sc><sc>)</sc><sc>;</sc>
+		actual_width -= actual_width%<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
+		actual_height -= actual_height%<sc>(</sc>num_rows<sc>)</sc><sc>;</sc> 
+	<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">// too wide, height dominates
+</comment>		actual_height = available_y_pixels<sc>;</sc>
+		actual_width = Math.round<sc>(</sc>actual_height*<sc>(</sc>desired_ratio<sc>)</sc><sc>)</sc><sc>;</sc>
+		actual_height -= actual_height%<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+		actual_width -= actual_width%<sc>(</sc>num_cols<sc>)</sc><sc>;</sc> 
+	<sc>}</sc>
+	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, actual_width.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
+	canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>, actual_height.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+	context.textAlign = <dbl_quote>"start"</dbl_quote><sc>;</sc>
+	context.textBaseline = <dbl_quote>"top"</dbl_quote><sc>;</sc>
+	context.lineCap = <dbl_quote>"round"</dbl_quote><sc>;</sc>
+	context.lineJoin = <dbl_quote>"round"</dbl_quote><sc>;</sc>
+	context.lineWidth = 3<sc>;</sc>
+	<kw>let</kw> font_size_pixels = Math.round<sc>(</sc>actual_height/num_rows*0.8<sc>)</sc><sc>;</sc>
+	context.font = <dbl_quote>"Bold "</dbl_quote> + font_size_pixels+<dbl_quote>"px Courier"</dbl_quote><sc>;</sc>	
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> change_font<sc>(</sc>font<sc>)</sc> <sc>{</sc>
+	<kw>return</kw><sc>;</sc>
+<sc>}</sc>
+
+gradient.generate_codes<sc>(</sc><sc>)</sc><sc>;</sc>
+fit_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+
+<comment Class="js">//-----------------------------------------------------------------------------------Motion functions
+</comment><kw>function</kw> torus_up<sc>(</sc><sc>)</sc>		<sc>{</sc>
+	<kw>let</kw> temp = grid.shift<sc>(</sc><sc>)</sc><sc>;</sc> 
+	grid.push<sc>(</sc>temp<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> torus_down<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>let</kw> temp = grid.pop<sc>(</sc><sc>)</sc><sc>;</sc> 
+	grid.unshift<sc>(</sc>temp<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+<kw>function</kw> torus_left<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> temp = grid<sc>[</sc>i<sc>]</sc>.shift<sc>(</sc><sc>)</sc><sc>;</sc> grid<sc>[</sc>i<sc>]</sc>.push<sc>(</sc>temp<sc>)</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> torus_right<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> temp = grid<sc>[</sc>i<sc>]</sc>.pop<sc>(</sc><sc>)</sc><sc>;</sc> grid<sc>[</sc>i<sc>]</sc>.unshift<sc>(</sc>temp<sc>)</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> mobius_up<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>let</kw> temp = grid.shift<sc>(</sc><sc>)</sc><sc>;</sc> 
+	grid.push<sc>(</sc>temp.reverse<sc>(</sc><sc>)</sc><sc>)</sc>
+<sc>}</sc>
+
+<kw>function</kw> mobius_down<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>let</kw> temp = grid.pop<sc>(</sc><sc>)</sc><sc>;</sc> 
+	grid.unshift<sc>(</sc>temp.reverse<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> mobius_left<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>let</kw> row = <sc>[</sc><sc>]</sc><sc>;</sc> 
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		row.unshift<sc>(</sc>grid<sc>[</sc>i<sc>]</sc>.shift<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt num_rows<sc>;</sc> j++<sc>)</sc><sc>{</sc>
+		grid<sc>[</sc>j<sc>]</sc>.push<sc>(</sc>row<sc>[</sc>j<sc>]</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> mobius_right<sc>(</sc><sc>)</sc>	<sc>{</sc>
+	<kw>let</kw> row = <sc>[</sc><sc>]</sc><sc>;</sc> 
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		row.unshift<sc>(</sc>grid<sc>[</sc>i<sc>]</sc>.pop<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt num_rows<sc>;</sc> j++<sc>)</sc> <sc>{</sc> 
+		grid<sc>[</sc>j<sc>]</sc>.unshift<sc>(</sc>row<sc>[</sc>j<sc>]</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>function</kw> transpose<sc>(</sc><sc>)</sc> <sc>{</sc> 
+	<kw>if</kw> <sc>(</sc>num_rows == num_cols<sc>)</sc>
+		grid =  grid<sc>[</sc>0<sc>]</sc>.map<sc>(</sc><sc>(</sc>col, i<sc>)</sc> =&gt grid.map<sc>(</sc>row =&gt row<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>var</kw> file_list = <sc>{</sc>
+	<dbl_quote>"about"</dbl_quote> <sc>:</sc> 
+	<sc>[</sc>
+	 	<dbl_quote>"Welcome to the ●Mobius Terminal●"</dbl_quote>,
+	 	<dbl_quote>"This is a small Unix-like command line"</dbl_quote>,
+	 	<dbl_quote>"<kw>with</kw> some special properties..."</dbl_quote>,
+	 	<dbl_quote>"Some are readily available, some are hidden,"</dbl_quote>,
+	 	<dbl_quote>"and some will emerge from experimentation."</dbl_quote>,	
+	 	<dbl_quote>"<sc>:</sc>phase<sc>:</sc> toggles a special '</sgl_quote>phase mode'</sgl_quote>"</dbl_quote>,
+		<dbl_quote>"<sc>:</sc>cat<sc>:</sc> the phase_mode file to learn more."</dbl_quote>,
+		<dbl_quote>"You might find something interesting."</dbl_quote>
+	<sc>]</sc>,
+
+	<dbl_quote>"phase_mode"</dbl_quote> <sc>:</sc> 
+	<sc>[</sc>
+		<dbl_quote>"The phase command toggles PHASE MODE."</dbl_quote>,
+		<dbl_quote>"In phase mode, you can SLIDE the grid."</dbl_quote>,
+		<dbl_quote>"<sc>[</sc>IJKL<sc>]</sc> keys translate it along a Torus"</dbl_quote>,
+		<dbl_quote>"<sc>[</sc>WASD<sc>]</sc> keys translate it along a"</dbl_quote>,
+		<dbl_quote>"Real Projective Plane, which"</dbl_quote>,
+		<dbl_quote>"acts like a ●Mobius● strip <kw>in</kw> all directions."</dbl_quote>,
+		<dbl_quote>"If you find things get too scrambled up,"</dbl_quote>, 
+		<dbl_quote>"the unscramble command may be helpful."</dbl_quote>,
+		<dbl_quote>"---------------------------------------------"</dbl_quote>,
+		<dbl_quote>"Here you can also control the color gradient<sc>:</sc>"</dbl_quote>,
+		<dbl_quote>"defined by three waves<sc>:</sc> red, green, and blue."</dbl_quote>,
+		<dbl_quote>"Each wave has four alterable properties<sc>:</sc>"</dbl_quote>,
+		<dbl_quote>"magnitude, frequency, center, and phase."</dbl_quote>,
+		<dbl_quote>"By <kw>default</kw>, all color centers are set to 0,"</dbl_quote>,
+		<dbl_quote>"<kw>this</kw> is why the screen is black"</dbl_quote>,
+		<dbl_quote>"pressing <sc>[</sc>.<sc>]</sc> toggles <kw>this</kw> information."</dbl_quote>,
+		<dbl_quote>"To adjust a particular property level<sc>:</sc>,"</dbl_quote>,
+		<dbl_quote>"hold keys <kw>for</kw> the FIRST LETTERS"</dbl_quote>,
+		<dbl_quote>"of the property you want to change,"</dbl_quote>,
+		<dbl_quote>"and adjust <kw>with</kw> the <sc>[</sc>↓<sc>]</sc> or <sc>[</sc>↑<sc>]</sc> arrow keys."</dbl_quote>,
+		<dbl_quote>"ex<sc>:</sc> holding <sc>[</sc>b<sc>]</sc> <kw>with</kw> <sc>[</sc>c<sc>]</sc> and pressing <sc>[</sc>↑<sc>]</sc>"</dbl_quote>,
+		<dbl_quote>"raises the blue center<sc>:</sc> see it grow blue."</dbl_quote>,
+		<dbl_quote>"holding <sc>[</sc>b<sc>]</sc> <kw>with</kw> <sc>[</sc>m<sc>]</sc> and pressing <sc>[</sc>↑<sc>]</sc>"</dbl_quote>,
+		<dbl_quote>"raises the blue magnitude<sc>:</sc> blue fluctuates."</dbl_quote>,
+		<dbl_quote>"Altering all the waves produces gradients."</dbl_quote>,
+		<dbl_quote>"Some can be quite beautiful, and they become"</dbl_quote>,
+		<dbl_quote>"even more interesting when scrambled"</dbl_quote>,
+		<dbl_quote>"Experiment <kw>with</kw> it and see."</dbl_quote>,
+		<dbl_quote>"<sc>[</sc>=<sc>]</sc> resets colors, <sc>[</sc>h<sc>]</sc> toggles text."</dbl_quote>
+	<sc>]</sc>
+<sc>}</sc><sc>;</sc>
+</pre>
+</body></html>
