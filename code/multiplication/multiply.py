@@ -1,15 +1,19 @@
-import time
+import time, random
 
-cards = set()
-
-for i in range(1,13):
+deck = []             # empty list for the deck
+for i in range(1,13): # fill the deck with cards
     for j in range(i, 13):
-        cards.add( (i, j, i*j) )
+        deck.append( (i, j, i*j) )
+
+for _ in range(1000): # 1000 swaps to scramble
+    a = random.randint(1, len(deck)-1)
+    b = random.randint(1, len(deck)-1)
+    deck[a], deck[b] = deck[b], deck[a] # python swap
 
 start_time = time.time()
 
-while cards: # while there are still cards left
-    a, b, answer = cards.pop() 
+for i in range(len(deck)):
+    a, b, answer = deck[i] 
     prompt = str(a) + ' x ' + str(b) + ' = '
 
     # setting initial false value to 

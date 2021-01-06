@@ -19,18 +19,22 @@ technical notes:
 The call to time.time() returns the number of seconds since new year 1970. It may seem like a strange way to measure time, but that is how all computers are calibrated. The moment the function time.time() it returns the current time in seconds since 1970, so the number will be over one billion. That is fine, and we do not need to do any conversion, simply call time.time() again after the cards loop finishes, subtract the times, and you get how many seconds were in between, and that's the number to print().
 </pre>
 <div class="bookmark">./code/multiplication/multiply.py</div><pre class=py>
-<kw>import</kw> time
+<kw>import</kw> time, random
 
-cards = set<sc>(</sc><sc>)</sc>
+deck = <sc>[</sc><sc>]</sc>             <comment Class="py"># empty list <kw>for</kw> the deck
+</comment><kw>for</kw> i <kw>in</kw> range<sc>(</sc>1,13<sc>)</sc><sc>:</sc> <comment Class="py"># fill the deck <kw>with</kw> cards
+</comment>    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>i, 13<sc>)</sc><sc>:</sc>
+        deck.append<sc>(</sc> <sc>(</sc>i, j, i*j<sc>)</sc> <sc>)</sc>
 
-<kw>for</kw> i <kw>in</kw> range<sc>(</sc>1,13<sc>)</sc><sc>:</sc>
-    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>i, 13<sc>)</sc><sc>:</sc>
-        cards.add<sc>(</sc> <sc>(</sc>i, j, i*j<sc>)</sc> <sc>)</sc>
-
+<kw>for</kw> _ <kw>in</kw> range<sc>(</sc>1000<sc>)</sc><sc>:</sc> <comment Class="py"># 1000 swaps to scramble
+</comment>    a = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>
+    b = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>
+    deck<sc>[</sc>a<sc>]</sc>, deck<sc>[</sc>b<sc>]</sc> = deck<sc>[</sc>b<sc>]</sc>, deck<sc>[</sc>a<sc>]</sc> <comment Class="py"># python swap
+</comment>
 start_time = time.time<sc>(</sc><sc>)</sc>
 
-<kw>while</kw> cards<sc>:</sc> <comment Class="py"># <kw>while</kw> there are still cards left
-</comment>    a, b, answer = cards.pop<sc>(</sc><sc>)</sc> 
+<kw>for</kw> i <kw>in</kw> range<sc>(</sc>len<sc>(</sc>deck<sc>)</sc><sc>)</sc><sc>:</sc>
+    a, b, answer = deck<sc>[</sc>i<sc>]</sc> 
     prompt = str<sc>(</sc>a<sc>)</sc> + <sgl_quote>' x '</sgl_quote> + str<sc>(</sc>b<sc>)</sc> + <sgl_quote>' = '</sgl_quote>
 
     <comment Class="py"># setting initial false value to 
