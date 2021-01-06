@@ -96,7 +96,7 @@ if __name__ == "__main__":
                 os.remove("./" + root + "/" + "formatted.html")
             print(root, subs, files)
             
-            if '/_' in root:
+            if '/_' in root or 'xterm' in root:
                 continue
             for name in files:
                 print(name)

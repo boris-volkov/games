@@ -1336,7 +1336,7 @@ image_extensions = <sc>[</sc><sgl_quote>'.jpg'</sgl_quote>, <sgl_quote>'.png'</s
                 os.remove<sc>(</sc><dbl_quote>"./"</dbl_quote> + root + <dbl_quote>"/"</dbl_quote> + <dbl_quote>"formatted.html"</dbl_quote><sc>)</sc>
             print<sc>(</sc>root, subs, files<sc>)</sc>
             
-            <kw>if</kw> <sgl_quote>'/_'</sgl_quote> <kw>in</kw> root<sc>:</sc>
+            <kw>if</kw> <sgl_quote>'/_'</sgl_quote> <kw>in</kw> root <kw>or</kw> <sgl_quote>'xterm'</sgl_quote> <kw>in</kw> root<sc>:</sc>
                 <kw>continue</kw>
             <kw>for</kw> name <kw>in</kw> files<sc>:</sc>
                 print<sc>(</sc>name<sc>)</sc>
