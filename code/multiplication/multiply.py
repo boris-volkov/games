@@ -2,7 +2,7 @@ import time, random
 
 deck = []                               # empty list for the deck
 for a in range(1,13):                   # fill the deck with cards
-    for b in range(i, 13):
+    for b in range(a, 13):
         deck.append( (a, b, a*b) )      # pack
 
 for _ in range(1000):                   # 1000 swaps to scramble
