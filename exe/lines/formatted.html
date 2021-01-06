@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/lines/main.html</div><pre class=html>
+</pre>
+<div class="bookmark">./exe/lines/style.css</div><pre class=css>
+</pre>
+<div class="bookmark">./exe/lines/logic.js</div><pre class=js>
+
+
+
+
+<kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
+    <kw>let</kw> x_sum = 0<sc>;</sc>
+    <kw>let</kw> y_sum = 0<sc>;</sc>
+    <kw>let</kw> xy_sum = 0<sc>;</sc>
+    <kw>let</kw> xx_sum = 0<sc>;</sc>
+    <kw>let</kw> count = 0<sc>;</sc>
+
+    <kw>let</kw> x = 0<sc>;</sc>
+    <kw>let</kw> y = 0<sc>;</sc>
+    <kw>let</kw> values_length = values_x.length<sc>;</sc>
+
+    <kw>if</kw> <sc>(</sc>values_length <sc>!</sc>= values_y.length<sc>)</sc> <sc>{</sc>
+        <kw>throw</kw> <kw>new</kw> Error<sc>(</sc><sgl_quote>'The parameters values_x and values_y need to have same size<sc>!</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
+    <sc>}</sc>
+
+    <kw>if</kw> <sc>(</sc>values_length === 0<sc>)</sc> <sc>{</sc>
+        <kw>return</kw> <sc>[</sc> <sc>[</sc><sc>]</sc>, <sc>[</sc><sc>]</sc> <sc>]</sc><sc>;</sc>
+    <sc>}</sc>
+
+    <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i&lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+        x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
+        y = values_y<sc>[</sc>i<sc>]</sc><sc>;</sc>
+        x_sum+= x<sc>;</sc>
+        y_sum+= y<sc>;</sc>
+        xx_sum += x*x<sc>;</sc>
+        xy_sum += x*y<sc>;</sc>
+        count++<sc>;</sc>
+    <sc>}</sc>
+
+    <kw>let</kw> m = <sc>(</sc>count*xy_sum - x_sum*y_sum<sc>)</sc> / <sc>(</sc>count*xx_sum - x_sum*x_sum<sc>)</sc><sc>;</sc>
+    <kw>let</kw> b = <sc>(</sc>y_sum/count<sc>)</sc> - <sc>(</sc>m*x_sum<sc>)</sc>/count<sc>;</sc>
+
+    <kw>let</kw> result_values_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+    <kw>let</kw> result_values_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+
+    <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+        x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
+        y = x * m + b<sc>;</sc>
+        result_values_x.push<sc>(</sc>x<sc>)</sc><sc>;</sc>
+        result_values_y.push<sc>(</sc>y<sc>)</sc><sc>;</sc>
+    <sc>}</sc>
+
+    <kw>return</kw> <sc>[</sc>m, b, result_values_x, result_values_y<sc>]</sc><sc>;</sc>
+<sc>}</sc>
+</pre>
+</body></html>

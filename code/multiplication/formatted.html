@@ -8,11 +8,18 @@ Here is a program that does a very simple but useful thing.
 It quizzes you on the entire 1-12 multiplication table, and times you.
 The more you practice, the quicker your time gets.
 
-In python, the program is fewer than 20 lines long.
+It stores each multiplication fact as a tuple, and stores all of them in a list called "deck".
 
-It stores each multiplication fact as a tuple, and stores all of them in a Set. The set is chosen here because every element is unique, and particularly because order does not matter. We want the cards to be scrambled. A set does not keep record of order, and when you call pop() on a set, there is no telling which of the elements will be removed. This is just how we want flashcards to behave : unpredictable. 
+we then scramble the set by swapping two random cards 1,000 times. 1000 seems like enough times...
 
-It is a console program, which means it will be very fast. You can just run the file in a terminal with the command: python3 multiplication.py from the directory where it is saved. Or copy the code into your IDE and run it there. Study the program, and maybe even use it to practice your mutiplication table!
+note the indexing operation: deck[3], for example, means the 3rd element in the deck list (counting from 0).
+
+The program then iterates through the scrambled deck, continuing to ask each card in a "while" loop until you enter the correct answer. 
+
+Once it gets to the end of the deck, the program calculates the amount of time taken, and prints it.
+
+This is a console program, which means it will be very fast. You can just run the file in a terminal with the command: python3 multiplication.py from the directory where it is saved. Or copy the code into your IDE and run it there. Study the program, and maybe even use it to practice your mutiplication table!
+
 
 technical notes:
 
