@@ -28,27 +28,24 @@ The call to time.time() returns the number of seconds since new year 1970. It ma
 <div class="bookmark">./code/multiplication/multiply.py</div><pre class=py>
 <kw>import</kw> time, random
 
-deck = <sc>[</sc><sc>]</sc>             <comment Class="py"># empty list <kw>for</kw> the deck
-</comment><kw>for</kw> i <kw>in</kw> range<sc>(</sc>1,13<sc>)</sc><sc>:</sc> <comment Class="py"># fill the deck <kw>with</kw> cards
-</comment>    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>i, 13<sc>)</sc><sc>:</sc>
-        deck.append<sc>(</sc> <sc>(</sc>i, j, i*j<sc>)</sc> <sc>)</sc>
-
-<kw>for</kw> _ <kw>in</kw> range<sc>(</sc>1000<sc>)</sc><sc>:</sc> <comment Class="py"># 1000 swaps to scramble
-</comment>    a = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>
-    b = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>
-    deck<sc>[</sc>a<sc>]</sc>, deck<sc>[</sc>b<sc>]</sc> = deck<sc>[</sc>b<sc>]</sc>, deck<sc>[</sc>a<sc>]</sc> <comment Class="py"># python swap
+deck = <sc>[</sc><sc>]</sc>                               <comment Class="py"># empty list <kw>for</kw> the deck
+</comment><kw>for</kw> a <kw>in</kw> range<sc>(</sc>1,13<sc>)</sc><sc>:</sc>                   <comment Class="py"># fill the deck <kw>with</kw> cards
+</comment>    <kw>for</kw> b <kw>in</kw> range<sc>(</sc>i, 13<sc>)</sc><sc>:</sc>
+        deck.append<sc>(</sc> <sc>(</sc>a, b, a*b<sc>)</sc> <sc>)</sc>      <comment Class="py"># pack
 </comment>
-start_time = time.time<sc>(</sc><sc>)</sc>
+<kw>for</kw> _ <kw>in</kw> range<sc>(</sc>1000<sc>)</sc><sc>:</sc>                   <comment Class="py"># 1000 swaps to scramble
+</comment>    i = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>  <comment Class="py"># pick two random
+</comment>    j = random.randint<sc>(</sc>1, len<sc>(</sc>deck<sc>)</sc>-1<sc>)</sc>  <comment Class="py"># slots <kw>in</kw> the deck
+</comment>    deck<sc>[</sc>i<sc>]</sc>, deck<sc>[</sc>j<sc>]</sc> = deck<sc>[</sc>j<sc>]</sc>, deck<sc>[</sc>i<sc>]</sc> <comment Class="py"># swap
+</comment>
+start_time = time.time<sc>(</sc><sc>)</sc>                
 
 <kw>for</kw> i <kw>in</kw> range<sc>(</sc>len<sc>(</sc>deck<sc>)</sc><sc>)</sc><sc>:</sc>
-    a, b, answer = deck<sc>[</sc>i<sc>]</sc> 
-    prompt = str<sc>(</sc>a<sc>)</sc> + <sgl_quote>' x '</sgl_quote> + str<sc>(</sc>b<sc>)</sc> + <sgl_quote>' = '</sgl_quote>
-
-    <comment Class="py"># setting initial false value to 
-</comment>    <comment Class="py"># get the loop going<sc>:</sc>
-</comment>    my_answer = -1  
-    <kw>while</kw> my_answer <sc>!</sc>= str<sc>(</sc>answer<sc>)</sc><sc>:</sc>
-        my_answer = input<sc>(</sc>prompt<sc>)</sc>
+    a, b, answer = deck<sc>[</sc>i<sc>]</sc>              <comment Class="py"># unpack
+</comment>    question = str<sc>(</sc>a<sc>)</sc>+<sgl_quote>' x '</sgl_quote>+str<sc>(</sc>b<sc>)</sc>+<sgl_quote>' = '</sgl_quote>
+    my_answer = -1                      <comment Class="py"># initial false value to
+</comment>    <kw>while</kw> my_answer <sc>!</sc>= str<sc>(</sc>answer<sc>)</sc><sc>:</sc>     <comment Class="py"># get the loop started
+</comment>        my_answer = input<sc>(</sc>question<sc>)</sc>
 
 time_taken = time.time<sc>(</sc><sc>)</sc> - start_time
 
