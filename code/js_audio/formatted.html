@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/js_audio/readme.txt</div><pre class=notes>
+Here is a program that demonstrates how to create audio in javascript. You can try it <a href="./main.html"> here </a> (you will need a keyboard).
+
+All the html file does is bring in the javascript file. There can be more content there of course, but this is the minimum that is required. 
+
+The javascript program takes the bottom two rows of the keyboard and uses "keydown" event-listeners turns them into the 12 standard notes arranged like on a piano. Like this:
+
+	  [s][d]   [g][h][j]
+	[z][x][c][v][b][n][m][,]
+
+(take a look at a piano if you're confused!)
+
+What's happening in this program:
+
+First we retrieve the "audio context" from the html document, (This is similar to how you get the context in a html canvas program), and name it something creative like "audio_context"
+
+To play, every note needs an OSCILLATOR which determines frequency and wavetype. Frequency is the note (i.e. 261.626 hz is middle C). Wavetype determines how smooth or rough the sound is. The default sine wave is smooth, while the triangle wave is well.. triangluar and the square wave is... just listen to them and see. You can also create your own custom waveform if you really want a unique sound (be prepared to do some math!).
+
+Each note also needs a VOLUME CONTROL which lets you gradually ramp up to full volume and fade out, or whatever you like. The volume control is not stricly required, but it sounds much better than just playing the note at full volume the whole time. (try it without volume control, you'll see).
+
+Then, connections are made oscillator -&gt volume control -&gt speakers, and the note is ready to play.
+
+	oscillator.start();  starts the note
+	oscillator.stop();   stops it.
+
+these functions take a time value as a parameter. The audio context conveniently keeps track of the current time in the variable "audio_context.currentTime", therefore: 
+
+	start_time = audio_context.currentTime;
+	stop_time = audio_context.currentTime + 1.5;
+	oscillator.start(start_time);
+	oscillator.stop(stop_time);
+
+for example, will play the note for 1.5 seconds.
+
+Study this program, and see how adjusting certain parameters will change the sound. <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API"> Go here to read the documentation on javascript Audio.</a> 
+</pre>
+<div class="bookmark">./code/js_audio/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+
+	<kw>&lthead&gt</kw>
+	  <kw>&ltmeta charset="utf-8"&gt</kw>
+	  <kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltscript src="audio_demo.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./code/js_audio/audio_demo.js</div><pre class=js>
+<kw>let</kw> audio_context = <kw>new</kw> <sc>(</sc><kw>this</kw>.AudioContext || <kw>this</kw>.webkitAudioContext<sc>)</sc><sc>(</sc><sc>)</sc><sc>;</sc>
+
+<comment Class="js">// each note has a duration, frequency, and volume control
+</comment><kw>function</kw> play_note<sc>(</sc>freq<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> start_time = audio_context.currentTime<sc>;</sc>
+	<kw>let</kw> stop_time = start_time + 1<sc>;</sc> <comment Class="js">// play <kw>for</kw> one second
+</comment>
+	<kw>let</kw> o = audio_context.createOscillator<sc>(</sc><sc>)</sc><sc>;</sc>
+	o.frequency.value = freq<sc>;</sc>
+	o.type = <dbl_quote>"triangular"</dbl_quote><sc>;</sc> <comment Class="js">// other options <sc>:</sc> sine, square, sawtooth, custom
+</comment>
+	<kw>let</kw> volume_control = audio_context.createGain<sc>(</sc><sc>)</sc><sc>;</sc>
+	volume_control.gain.setTargetAtTime<sc>(</sc>0.5, start_time, 0.02<sc>)</sc><sc>;</sc>
+	volume_control.gain.setTargetAtTime<sc>(</sc>0, start_time + 0.1, 0.1<sc>)</sc><sc>;</sc>
+						<comment Class="js">// parameters<sc>:</sc> volume <sc>(</sc>0-1<sc>)</sc>, start time, speed<sc>(</sc>sort of<sc>)</sc> -&gt
+</comment>						<comment Class="js">// -&gt smaller number means faster exponential ramp 
+</comment>
+	o.connect<sc>(</sc>volume_control<sc>)</sc>  <comment Class="js">// connect oscillator to volume control
+</comment>	volume_control.connect<sc>(</sc>audio_context.destination<sc>)</sc> <comment Class="js">// connect vol. control to speakers
+</comment>	
+	o.start<sc>(</sc>start_time<sc>)</sc><sc>;</sc> <comment Class="js">// <kw>this</kw> actually plays the note
+</comment>	o.stop<sc>(</sc>stop_time<sc>)</sc><sc>;</sc>   <comment Class="js">// and you need to stop it or <kw>else</kw> it plays forever
+</comment><sc>}</sc>
+
+<comment Class="js">// <kw>this</kw> next part is the DATA portion of the program
+</comment><comment Class="js">// to the computer, notes are just numbers, so we need to translate.
+</comment>
+<kw>let</kw> key = 261.626/2<sc>;</sc> <comment Class="js">// one octave below middle C, change <kw>this</kw> to change key
+</comment>
+<comment Class="js">// Just Temperament... music theory<sc>!</sc><sc>!</sc>
+</comment><comment Class="js">// note<sc>:</sc> regular pianos use Well Temperament
+</comment><comment Class="js">// you would have to change these numbers <kw>if</kw> you want that
+</comment><kw>let</kw> tonic = 1<sc>;</sc>
+<kw>let</kw> semitone = <sc>(</sc>16/15<sc>)</sc><sc>;</sc>
+<kw>let</kw> whole_tone = <sc>(</sc>9/8<sc>)</sc><sc>;</sc>
+<kw>let</kw> minor_third = <sc>(</sc>6/5<sc>)</sc><sc>;</sc>
+<kw>let</kw> major_third = <sc>(</sc>5/4<sc>)</sc><sc>;</sc>
+<kw>let</kw> fourth = <sc>(</sc>4/3<sc>)</sc><sc>;</sc>
+<kw>let</kw> tritone = <sc>(</sc>7/5<sc>)</sc><sc>;</sc>
+<kw>let</kw> fifth = <sc>(</sc>3/2<sc>)</sc><sc>;</sc>
+<kw>let</kw> minor_sixth = <sc>(</sc>8/5<sc>)</sc><sc>;</sc>
+<kw>let</kw> major_sixth = <sc>(</sc>5/3<sc>)</sc><sc>;</sc>
+<kw>let</kw> minor_seventh = <sc>(</sc>9/5<sc>)</sc><sc>;</sc>
+<kw>let</kw> major_seventh = <sc>(</sc>15/8<sc>)</sc><sc>;</sc>
+<kw>let</kw> octave = 2<sc>;</sc>
+
+<comment Class="js">// keep track of keys down since we don't want the note
+</comment><comment Class="js">// to spam when the key is held down
+</comment><kw>let</kw> keys_down = <kw>new</kw> Set<sc>(</sc><sc>)</sc><sc>;</sc>
+
+document.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>keys_down.has<sc>(</sc>e.key<sc>)</sc><sc>)</sc>
+		<kw>return</kw> -1<sc>;</sc> <comment Class="js">// skip, <kw>if</kw> the key is already down
+</comment>	keys_down.add<sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'z'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * tonic<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'s'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * semitone<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'x'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * whole_tone<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'d'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * minor_third<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'c'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * major_third<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'v'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * fourth<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'g'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * tritone<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'b'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * fifth<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'h'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * minor_sixth<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'n'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * major_sixth<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'j'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * minor_seventh<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'m'</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * major_seventh<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>','</sgl_quote><sc>)</sc> play_note<sc>(</sc>key * octave<sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+document.addEventListener<sc>(</sc><dbl_quote>"keyup"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>keys_down.has<sc>(</sc>e.key<sc>)</sc><sc>)</sc>
+		keys_down.<kw>delete</kw><sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+</pre>
+</body></html>
