@@ -7,7 +7,7 @@ function play_note(freq) {
 
 	let o = audio_context.createOscillator();
 	o.frequency.value = freq;
-	o.type = "triangular"; // other options : sine, square, sawtooth, custom
+	o.type = "triangle"; // other options : sine, square, sawtooth, custom
 
 	let volume_control = audio_context.createGain();
 	volume_control.gain.setTargetAtTime(0.5, start_time, 0.02);

@@ -59,7 +59,7 @@ Study this program, and see how adjusting certain parameters will change the sou
 </comment>
 	<kw>let</kw> o = audio_context.createOscillator<sc>(</sc><sc>)</sc><sc>;</sc>
 	o.frequency.value = freq<sc>;</sc>
-	o.type = <dbl_quote>"triangular"</dbl_quote><sc>;</sc> <comment Class="js">// other options <sc>:</sc> sine, square, sawtooth, custom
+	o.type = <dbl_quote>"triangle"</dbl_quote><sc>;</sc> <comment Class="js">// other options <sc>:</sc> sine, square, sawtooth, custom
 </comment>
 	<kw>let</kw> volume_control = audio_context.createGain<sc>(</sc><sc>)</sc><sc>;</sc>
 	volume_control.gain.setTargetAtTime<sc>(</sc>0.5, start_time, 0.02<sc>)</sc><sc>;</sc>
