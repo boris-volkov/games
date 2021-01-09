@@ -1,10 +1,24 @@
 <!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/lines/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+
+  <kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+<kw>&ltlink href="./style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+<kw>&ltbody&gt</kw>
+	<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>		
+	<kw>&ltscript src="logic.js"&gt</kw><kw>&lt/script&gt</kw>
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
 </pre>
 <div class="bookmark">./exe/lines/style.css</div><pre class=css>
 </pre>
 <div class="bookmark">./exe/lines/logic.js</div><pre class=js>
-
-
 
 
 <kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
@@ -51,5 +65,63 @@
 
     <kw>return</kw> <sc>[</sc>m, b, result_values_x, result_values_y<sc>]</sc><sc>;</sc>
 <sc>}</sc>
+
+
+<kw>function</kw> ideal_line<sc>(</sc>m , b<sc>)</sc><sc>{</sc>
+	<kw>return</kw> 0<sc>;</sc>
+<sc>}</sc>
+
+<kw>var</kw> canvas = document.querySelector<sc>(</sc><sgl_quote>'#canvas'</sgl_quote><sc>)</sc><sc>;</sc>
+canvas.width = 1200<sc>;</sc>
+canvas.height = 600<sc>;</sc>
+<kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+context.fillRect<sc>(</sc>0,0,canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+
+
+<comment Class="js">//-------------------------------------------------------stylus drawing listeners/handlers
+</comment><kw>let</kw> drawing_mode = true<sc>;</sc>
+<kw>let</kw> pen_down = <kw>false</kw><sc>;</sc>
+<kw>let</kw> bb<sc>;</sc> <comment Class="js">// bounding box, to adjust x,y coordinates within the terminal.
+</comment>
+<kw>let</kw> drawn_points_x = <sc>[</sc><sc>]</sc>
+<kw>let</kw> drawn_points_y = <sc>[</sc><sc>]</sc>
+
+canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>drawing_mode<sc>)</sc><sc>{</sc>
+		pen_down = true<sc>;</sc>
+		bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
+		<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+		<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+		context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+		context.strokeStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>pen_down<sc>)</sc><sc>{</sc>
+			<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+			<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+			drawn_points_x.push<sc>(</sc>x<sc>)</sc>
+			drawn_points_y.push<sc>(</sc>y<sc>)</sc>
+			context.lineTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+			context.stroke<sc>(</sc><sc>)</sc><sc>;</sc>
+			context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+		context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>
+		pen_down = <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+
+
+<comment Class="js">// next stuff prevents touch scrolling on mobile/ipad
+</comment>
+<kw>function</kw> preventDefault<sc>(</sc>e<sc>)</sc><sc>{</sc>
+    e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, preventDefault, <sc>{</sc> passive<sc>:</sc> <kw>false</kw> <sc>}</sc><sc>)</sc><sc>;</sc>
+
+context.fillStyle = <dbl_quote>"#000"</dbl_quote>
 </pre>
 </body></html>
