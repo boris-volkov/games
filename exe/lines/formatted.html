@@ -1,4 +1,20 @@
-<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/lines/main.html</div><pre class=html>
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">exe/lines//readme.txt</div><pre class=notes>
+When you're learning how to draw, one important skill is drawing straight lines. It means you have a strong control. 
+
+This is a training program to practice drawing straight lines on a tablet. 
+For every line you draw, it overlays the line you were most probably trying to draw (if there even was one), and scores your line on a scale of 0-100. It also keeps an ongoing average. You can clear the drawing pad with the button on the bottom, or refresh your browser to reset the scores.
+
+Try drawing sun rays out from the center, aiming to maintain straight lines in every direction.  
+</pre>
+<div class="bookmark">exe/lines//main.html</div><pre class=html>
 <kw>&lt!doctype html&gt</kw>
 
 <kw>&lthtml lang="en"&gt</kw>
@@ -11,14 +27,62 @@
 
 
 <kw>&ltbody&gt</kw>
-	<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>		
+	<kw>&ltdiv id="score_board"&gt</kw>0<kw>&lt/div&gt</kw>
+	<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>	
+	<kw>&ltdiv id="button"&gt</kw>clear<kw>&lt/div&gt</kw>	
 	<kw>&ltscript src="logic.js"&gt</kw><kw>&lt/script&gt</kw>
 <kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
-<div class="bookmark">./exe/lines/style.css</div><pre class=css>
+<div class="bookmark">exe/lines//style.css</div><pre class=css>
+<css></css>
+<sc>body {</sc>
+<css>	cursor: crosshair;</css>
+<css>	display:flex;</css>
+<css>	flex-direction: column;</css>
+<css>	align-items: center;</css>
+<css>	justify-content: center;</css>
+<css>	background-color: #123;</css>
+<css>	overflow:hidden;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	color: #234;</css>
+<css>	border: 3px solid;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#button, div#score_board {</sc>
+<css>	padding: 5px;</css>
+<css>	margin: 8px;</css>
+<css>	font: 24px Courier;</css>
+<css>	color: white;</css>
+<css>	background-color: #234;</css>
+<css>	border-radius: 3px;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#score_board {</sc>
+<css>	padding-right: 10vw;</css>
+<css>	padding-left: 10vw;</css>
+<css>	position : sticky;</css>
+<css>	top:0;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#button {</sc>
+<css>	padding-right: 30vw;</css>
+<css>	padding-left:30vw;</css>
+<css>	position: sticky;</css>
+<css>	bottom: 0;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#button:hover {</sc>
+<css>	background-color: #345;</css>
+<sc>}</sc>
+<css></css>
+<sc>green {</sc>
+<css>	color: #2f2;</css>
+<sc>}</sc>
 </pre>
-<div class="bookmark">./exe/lines/logic.js</div><pre class=js>
+<div class="bookmark">exe/lines//logic.js</div><pre class=js>
 
 
 <kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
@@ -26,6 +90,7 @@
     <kw>let</kw> y_sum = 0<sc>;</sc>
     <kw>let</kw> xy_sum = 0<sc>;</sc>
     <kw>let</kw> xx_sum = 0<sc>;</sc>
+	<kw>let</kw> yy_sum = 0<sc>;</sc>
     <kw>let</kw> count = 0<sc>;</sc>
 
     <kw>let</kw> x = 0<sc>;</sc>
@@ -46,12 +111,18 @@
         x_sum+= x<sc>;</sc>
         y_sum+= y<sc>;</sc>
         xx_sum += x*x<sc>;</sc>
+		yy_sum += y*y<sc>;</sc>
         xy_sum += x*y<sc>;</sc>
         count++<sc>;</sc>
     <sc>}</sc>
 
     <kw>let</kw> m = <sc>(</sc>count*xy_sum - x_sum*y_sum<sc>)</sc> / <sc>(</sc>count*xx_sum - x_sum*x_sum<sc>)</sc><sc>;</sc>
     <kw>let</kw> b = <sc>(</sc>y_sum/count<sc>)</sc> - <sc>(</sc>m*x_sum<sc>)</sc>/count<sc>;</sc>
+
+	<kw>let</kw> r = 1.0<sc>;</sc>
+	<kw>let</kw> n = count<sc>;</sc>
+	r *= <sc>(</sc>n*xy_sum - x_sum*y_sum<sc>)</sc><sc>;</sc>
+	r /= Math.sqrt<sc>(</sc> <sc>(</sc>n * xx_sum - x_sum**2<sc>)</sc> * <sc>(</sc>n*yy_sum-y_sum**2<sc>)</sc> <sc>)</sc><sc>;</sc>
 
     <kw>let</kw> result_values_x = <sc>[</sc><sc>]</sc><sc>;</sc>
     <kw>let</kw> result_values_y = <sc>[</sc><sc>]</sc><sc>;</sc>
@@ -63,57 +134,143 @@
         result_values_y.push<sc>(</sc>y<sc>)</sc><sc>;</sc>
     <sc>}</sc>
 
-    <kw>return</kw> <sc>[</sc>m, b, result_values_x, result_values_y<sc>]</sc><sc>;</sc>
+    <kw>return</kw> <sc>[</sc>result_values_x, result_values_y, m*-1, b, r**50<sc>]</sc><sc>;</sc>
 <sc>}</sc>
 
 
-<kw>function</kw> ideal_line<sc>(</sc>m , b<sc>)</sc><sc>{</sc>
-	<kw>return</kw> 0<sc>;</sc>
-<sc>}</sc>
 
 <kw>var</kw> canvas = document.querySelector<sc>(</sc><sgl_quote>'#canvas'</sgl_quote><sc>)</sc><sc>;</sc>
 canvas.width = 1200<sc>;</sc>
-canvas.height = 600<sc>;</sc>
+canvas.height = 700<sc>;</sc>
 <kw>var</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
 context.fillRect<sc>(</sc>0,0,canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+context.lineWidth=4<sc>;</sc>
+
+<kw>let</kw> score_board = document.querySelector<sc>(</sc><dbl_quote>"#score_board"</dbl_quote><sc>)</sc><sc>;</sc>
 
 
 <comment Class="js">//-------------------------------------------------------stylus drawing listeners/handlers
-</comment><kw>let</kw> drawing_mode = true<sc>;</sc>
-<kw>let</kw> pen_down = <kw>false</kw><sc>;</sc>
-<kw>let</kw> bb<sc>;</sc> <comment Class="js">// bounding box, to adjust x,y coordinates within the terminal.
-</comment>
-<kw>let</kw> drawn_points_x = <sc>[</sc><sc>]</sc>
-<kw>let</kw> drawn_points_y = <sc>[</sc><sc>]</sc>
+</comment><kw>let</kw> pen_down = <kw>false</kw><sc>;</sc>
+
+<kw>let</kw> drawn_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> drawn_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> rotated_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> rotated_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> score_stack = <sc>[</sc><sc>]</sc><sc>;</sc>
 
 canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>drawing_mode<sc>)</sc><sc>{</sc>
-		pen_down = true<sc>;</sc>
-		bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
-		<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
-		<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
-		context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
-		context.strokeStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
-	<sc>}</sc>
+	context.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	pen_down = true<sc>;</sc>
+	bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
+	<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+	<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+	context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+	context.strokeStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	context.fillStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+<sc>}</sc>
+
+async <kw>function</kw> clear<sc>(</sc><sc>)</sc><sc>{</sc>
+	canvas.width = canvas.width<sc>;</sc>
+	canvas.height = canvas.height<sc>;</sc>
+	context.fillStyle = <dbl_quote>"#000"</dbl_quote><sc>;</sc>
+	context.fillRect<sc>(</sc>0,0,canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+	context.lineWidth=4<sc>;</sc>
 <sc>}</sc>
 
 canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<kw>if</kw> <sc>(</sc>pen_down<sc>)</sc><sc>{</sc>
-			<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
-			<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
-			drawn_points_x.push<sc>(</sc>x<sc>)</sc>
-			drawn_points_y.push<sc>(</sc>y<sc>)</sc>
-			context.lineTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
-			context.stroke<sc>(</sc><sc>)</sc><sc>;</sc>
-			context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+		<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+		<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>x &lt 0 || x &gt canvas.width || y &lt 0 || y &gt canvas.height<sc>)</sc><sc>{</sc>
+			finish_line<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+		drawn_points_x.push<sc>(</sc>x<sc>)</sc>
+		drawn_points_y.push<sc>(</sc>y<sc>)</sc>
+		context.lineTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
+		context.stroke<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 <sc>}</sc>
 
-canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
-		context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>
-		pen_down = <kw>false</kw><sc>;</sc>
+<kw>let</kw> total = 0<sc>;</sc>
+<kw>let</kw> lines_drawn = 0<sc>;</sc>
+
+<kw>function</kw> finish_line<sc>(</sc><sc>)</sc> <sc>{</sc>
+	context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>	
+	<kw>let</kw> <sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = findLineByLeastSquares<sc>(</sc>drawn_points_x, drawn_points_y<sc>)</sc><sc>;</sc>
+
+	console.log<sc>(</sc>m<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>Math.abs<sc>(</sc>m<sc>)</sc> &lt 0.5 || Math.abs<sc>(</sc>m<sc>)</sc> &gt 2<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt drawn_points_x.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+			old_x = drawn_points_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
+			old_y = drawn_points_y<sc>[</sc>i<sc>]</sc><sc>;</sc>
+			<kw>let</kw> rotated = rotate<sc>(</sc>old_x, old_y, Math.PI/4<sc>)</sc><sc>;</sc>
+			rotated_points_x.push<sc>(</sc>rotated<sc>[</sc>0<sc>]</sc><sc>)</sc><sc>;</sc>
+			rotated_points_y.push<sc>(</sc>rotated<sc>[</sc>1<sc>]</sc><sc>)</sc><sc>;</sc>
+			<sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = findLineByLeastSquares<sc>(</sc>rotated_points_x, rotated_points_y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt xes.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+			old_x = xes<sc>[</sc>i<sc>]</sc><sc>;</sc>
+			old_y = yes<sc>[</sc>i<sc>]</sc><sc>;</sc>
+			rotated = rotate<sc>(</sc>old_x, old_y, -Math.PI/4<sc>)</sc><sc>;</sc>
+			xes<sc>[</sc>i<sc>]</sc> = rotated<sc>[</sc>0<sc>]</sc><sc>;</sc>
+			yes<sc>[</sc>i<sc>]</sc> = rotated<sc>[</sc>1<sc>]</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>r_squared &gt 0.2<sc>)</sc><sc>{</sc>
+		ideal_line<sc>(</sc>xes,yes<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	
+	write_score<sc>(</sc>Math.round<sc>(</sc>r_squared*10000<sc>)</sc>/100<sc>)</sc><sc>;</sc>
+	drawn_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+	drawn_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+	rotated_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+	rotated_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
 <sc>}</sc>
 
+canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>drawn_points_x<sc>)</sc>
+		finish_line<sc>(</sc><sc>)</sc><sc>;</sc>
+	pen_down = <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> write_score<sc>(</sc>score<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>score <sc>!</sc>== NaN<sc>)</sc>
+		total += score<sc>;</sc>
+	lines_drawn += 1<sc>;</sc>
+	score_board.innerHTML = <dbl_quote>""</dbl_quote><sc>;</sc> 
+	score_board.innerHTML = score_board.innerHTML + <dbl_quote>"last<sc>:</sc> "</dbl_quote><sc>;</sc> 
+	score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltgreen&gt"</dbl_quote> + score.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	score_board.innerHTML = score_board.innerHTML + <dbl_quote>" <sc>;</sc> average<sc>:</sc> "</dbl_quote><sc>;</sc>
+	score_board.innerHTML = score_board.innerHTML + <sc>(</sc>Math.round<sc>(</sc>total/lines_drawn*100<sc>)</sc>/100<sc>)</sc>.toFixed<sc>(</sc>2<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	
+<sc>}</sc>
+
+<kw>function</kw> ideal_line<sc>(</sc>xes, yes<sc>)</sc><sc>{</sc>
+	context.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.moveTo<sc>(</sc>xes<sc>[</sc>0<sc>]</sc>, yes<sc>[</sc>0<sc>]</sc><sc>)</sc>
+	context.lineTo<sc>(</sc>xes<sc>[</sc>xes.length-1<sc>]</sc>, yes<sc>[</sc>yes.length-1<sc>]</sc><sc>)</sc><sc>;</sc>
+	context.lineWidth=2<sc>;</sc>
+	context.strokeStyle=<dbl_quote>"#aa3"</dbl_quote><sc>;</sc>
+	context.stroke<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>	
+<sc>}</sc>
+
+<kw>function</kw> rotate<sc>(</sc>x, y, angle<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> x_prime = Math.cos<sc>(</sc>angle<sc>)</sc>*x + Math.sin<sc>(</sc>angle<sc>)</sc>*y<sc>;</sc>
+	<kw>let</kw> y_prime = -1*Math.sin<sc>(</sc>angle<sc>)</sc>*x + Math.cos<sc>(</sc>angle<sc>)</sc>*y<sc>;</sc>
+	<kw>return</kw> <sc>[</sc>x_prime, y_prime<sc>]</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> range<sc>(</sc>points<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> min = Infinity<sc>;</sc>
+	<kw>let</kw> max = -Infinity<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt points.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		min = Math.min<sc>(</sc>min, points<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+		max = Math.max<sc>(</sc>max, points<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>return</kw> Math.abs<sc>(</sc>max-min<sc>)</sc><sc>;</sc>
+<sc>}</sc>
 
 <comment Class="js">// next stuff prevents touch scrolling on mobile/ipad
 </comment>
@@ -122,6 +279,21 @@ canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
 <sc>}</sc>
 document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, preventDefault, <sc>{</sc> passive<sc>:</sc> <kw>false</kw> <sc>}</sc><sc>)</sc><sc>;</sc>
 
-context.fillStyle = <dbl_quote>"#000"</dbl_quote>
+<kw>function</kw> resize<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>let</kw> width = Math.round<sc>(</sc>window.innerWidth*2<sc>)</sc><sc>;</sc>
+	<kw>let</kw> height = Math.round<sc>(</sc>window.innerHeight*2<sc>)</sc><sc>;</sc>
+	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, width.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
+	canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>,height.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+	<kw>let</kw> font_height_pix = Math.floor<sc>(</sc>canvas.width/12<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.font = font_height_pix + <dbl_quote>"px Courier New"</dbl_quote><sc>;</sc>
+	context.textAlign = <dbl_quote>"left"</dbl_quote><sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> button = document.querySelector<sc>(</sc><dbl_quote>"#button"</dbl_quote><sc>)</sc><sc>;</sc>
+button.onclick = resize<sc>;</sc>
+
+resize<sc>(</sc><sc>)</sc><sc>;</sc>
 </pre>
 </body></html>

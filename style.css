@@ -120,8 +120,8 @@ a {
 
 
 .screenshot {
-	width: 60vw;
-	height: 40vw;
+	max-height: 50vh;
+	max-width: 85vw;
 	object-fit: contain;
 }
 
