@@ -134,6 +134,7 @@ function finish_line() {
 	}
 	if (r_squared > 0.2){
 		ideal_line(xes,yes);
+		lines_drawn += 1;
 	}
 	
 	write_score(Math.round(r_squared*10000)/100);
@@ -160,11 +161,12 @@ canvas.onpointerup = () => {
 function write_score(score) {
 	if (score && score < Infinity){
 		total += score;
-		lines_drawn += 1;
 		score_board.innerHTML = ""; 
-		score_board.innerHTML = score_board.innerHTML + "last: "; 
+		score_board.innerHTML = score_board.innerHTML + "<small>lines_drawn: "; 
+		score_board.innerHTML = score_board.innerHTML + lines_drawn.toString();
+		score_board.innerHTML = score_board.innerHTML + "<small> ; last_score: "; 
 		score_board.innerHTML = score_board.innerHTML + "<green>" + score.toString();
-		score_board.innerHTML = score_board.innerHTML + " ; average: ";
+		score_board.innerHTML = score_board.innerHTML + "<small> ; average: ";
 		score_board.innerHTML = score_board.innerHTML + (Math.round(total/lines_drawn*100)/100).toFixed(2).toString();
 	}	
 }

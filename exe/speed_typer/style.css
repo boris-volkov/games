@@ -5,27 +5,52 @@ body {
 	flex-direction : column;
 	justify-content: center;
 	align-items: center;
+	background: linear-gradient(180deg, #123, #102030)
 }
 
 div {
-	color: white;
+	background-color: #102030;
+	border: inset;
+	border-color: #345;
+	color: #abf;
 	text-align: center;
+	padding: 20px;
 }
 
 #letter {
-	margin-top: 5vh;
+	background-color: #0b1b2b;
 	padding: 20px;
 	border: inset;
 	border-color: #345;
-	width: 20vw;
-	font : 256px Georgia;
-	vertical-align: middle;
+	/* width: 20vw; */
+	font : 528px Courier;
+	margin-top: 10vh;
+	text-align: center;
+	/*vertical-align: middle;*/
 }
 
-#timer {
+#timer, #count {
 	border:  ridge;
 	border-color: #345;
 	padding: 5px;
-	margin-top: 10vh;
+	padding-right: 10vw;
+	padding-left: 10vw;
 }
 
+#count {
+	margin-top: 5px;
+	font-size: 150%;	
+}
+
+num {
+	color: #297;
+}
+
+spec {
+	color: #993;
+}
+
+upper {
+	color: #bbf;
+	text-shadow: 20px 20px #000000;
+}
