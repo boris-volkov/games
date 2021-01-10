@@ -71,7 +71,6 @@ let drawn_points_x = [];
 let drawn_points_y = [];
 let rotated_points_x = [];
 let rotated_points_y = [];
-let score_stack = [];
 
 canvas.onpointerdown = (event) => {
 	context.beginPath();
@@ -81,6 +80,7 @@ canvas.onpointerdown = (event) => {
 	let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 	context.moveTo(x,y);
 	context.strokeStyle = "#369";
+	context.lineWidth = 4;
 	context.fillStyle = "#369";
 }
 
@@ -158,15 +158,15 @@ canvas.onpointerup = () => {
 }
 
 function write_score(score) {
-	if (score)
+	if (score && score < Infinity){
 		total += score;
-	lines_drawn += 1;
-	score_board.innerHTML = ""; 
-	score_board.innerHTML = score_board.innerHTML + "last: "; 
-	score_board.innerHTML = score_board.innerHTML + "<green>" + score.toString();
-	score_board.innerHTML = score_board.innerHTML + " ; average: ";
-	score_board.innerHTML = score_board.innerHTML + (Math.round(total/lines_drawn*100)/100).toFixed(2).toString();
-	
+		lines_drawn += 1;
+		score_board.innerHTML = ""; 
+		score_board.innerHTML = score_board.innerHTML + "last: "; 
+		score_board.innerHTML = score_board.innerHTML + "<green>" + score.toString();
+		score_board.innerHTML = score_board.innerHTML + " ; average: ";
+		score_board.innerHTML = score_board.innerHTML + (Math.round(total/lines_drawn*100)/100).toFixed(2).toString();
+	}	
 }
 
 function ideal_line(xes, yes){
@@ -210,6 +210,7 @@ function resize(){
 	canvas.setAttribute('height',height.toString());
 	canvas.width = canvas.width; canvas.height = canvas.height;
 	let font_height_pix = Math.floor(canvas.width/12).toString();
+	context.lineCap = "round";
 	context.font = font_height_pix + "px Courier New";
 	context.textAlign = "left";
 }
