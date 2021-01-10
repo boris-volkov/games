@@ -6,7 +6,7 @@
 	 </a> 
 </div>
 
-<div class="bookmark">exe/lines//readme.txt</div><pre class=notes>
+<div class="bookmark">./exe/lines/readme.txt</div><pre class=notes>
 When you're learning how to draw, one important skill is drawing straight lines. It means you have a strong control. 
 
 This is a training program to practice drawing straight lines on a tablet. 
@@ -14,7 +14,7 @@ For every line you draw, it overlays the line you were most probably trying to d
 
 Try drawing sun rays out from the center, aiming to maintain straight lines in every direction.  
 </pre>
-<div class="bookmark">exe/lines//main.html</div><pre class=html>
+<div class="bookmark">./exe/lines/main.html</div><pre class=html>
 <kw>&lt!doctype html&gt</kw>
 
 <kw>&lthtml lang="en"&gt</kw>
@@ -34,14 +34,10 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
-<div class="bookmark">exe/lines//style.css</div><pre class=css>
+<div class="bookmark">./exe/lines/style.css</div><pre class=css>
 <css></css>
 <sc>body {</sc>
 <css>	cursor: crosshair;</css>
-<css>	display:flex;</css>
-<css>	flex-direction: column;</css>
-<css>	align-items: center;</css>
-<css>	justify-content: center;</css>
 <css>	background-color: #123;</css>
 <css>	overflow:hidden;</css>
 <sc>}</sc>
@@ -49,21 +45,24 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <sc>canvas {</sc>
 <css>	color: #234;</css>
 <css>	border: 3px solid;</css>
+<css>	margin: -10px;</css>
+<css>	margin-top : -100px;</css>
 <sc>}</sc>
 <css></css>
 <sc>div#button, div#score_board {</sc>
 <css>	padding: 5px;</css>
-<css>	margin: 8px;</css>
 <css>	font: 24px Courier;</css>
 <css>	color: white;</css>
 <css>	background-color: #234;</css>
-<css>	border-radius: 3px;</css>
+<css>	text-align:center;</css>
 <sc>}</sc>
 <css></css>
 <sc>div#score_board {</sc>
 <css>	padding-right: 10vw;</css>
 <css>	padding-left: 10vw;</css>
 <css>	position : sticky;</css>
+<css>	border-bottom-left-radius: 30px;</css>
+<css>	border-bottom-right-radius: 30px;</css>
 <css>	top:0;</css>
 <sc>}</sc>
 <css></css>
@@ -71,6 +70,8 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <css>	padding-right: 30vw;</css>
 <css>	padding-left:30vw;</css>
 <css>	position: sticky;</css>
+<css>	border-top-left-radius: 30px;</css>
+<css>	border-top-right-radius: 30px;</css>
 <css>	bottom: 0;</css>
 <sc>}</sc>
 <css></css>
@@ -82,7 +83,7 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <css>	color: #2f2;</css>
 <sc>}</sc>
 </pre>
-<div class="bookmark">exe/lines//logic.js</div><pre class=js>
+<div class="bookmark">./exe/lines/logic.js</div><pre class=js>
 
 
 <kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
@@ -229,13 +230,21 @@ canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 <sc>}</sc>
 
 canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>drawn_points_x<sc>)</sc>
+	<kw>if</kw> <sc>(</sc>drawn_points_x.length &gt 4<sc>)</sc>
 		finish_line<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw><sc>{</sc>
+		context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>
+		context.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+		drawn_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+		drawn_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+		rotated_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+		rotated_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+	<sc>}</sc>
 	pen_down = <kw>false</kw><sc>;</sc>
 <sc>}</sc>
 
 <kw>function</kw> write_score<sc>(</sc>score<sc>)</sc> <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>score <sc>!</sc>== NaN<sc>)</sc>
+	<kw>if</kw> <sc>(</sc>score<sc>)</sc>
 		total += score<sc>;</sc>
 	lines_drawn += 1<sc>;</sc>
 	score_board.innerHTML = <dbl_quote>""</dbl_quote><sc>;</sc> 
@@ -281,8 +290,8 @@ document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, prev
 
 <kw>function</kw> resize<sc>(</sc><sc>)</sc><sc>{</sc>
 	<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
-	<kw>let</kw> width = Math.round<sc>(</sc>window.innerWidth*2<sc>)</sc><sc>;</sc>
-	<kw>let</kw> height = Math.round<sc>(</sc>window.innerHeight*2<sc>)</sc><sc>;</sc>
+	<kw>let</kw> width = Math.round<sc>(</sc>window.innerWidth*1.5<sc>)</sc><sc>;</sc>
+	<kw>let</kw> height = Math.round<sc>(</sc>window.innerHeight*1.5<sc>)</sc><sc>;</sc>
 	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, width.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
 	canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>,height.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
@@ -295,5 +304,7 @@ document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, prev
 button.onclick = resize<sc>;</sc>
 
 resize<sc>(</sc><sc>)</sc><sc>;</sc>
-</pre>
+
+<comment Class="js">//window.addEventListener<sc>(</sc>'resize', resize<sc>)</sc><sc>;</sc>
+</comment></pre>
 </body></html>

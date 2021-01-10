@@ -144,13 +144,21 @@ function finish_line() {
 }
 
 canvas.onpointerup = () => {
-	if (drawn_points_x)
+	if (drawn_points_x.length > 4)
 		finish_line();
+	else{
+		context.closePath();
+		context.beginPath();
+		drawn_points_x = [];
+		drawn_points_y = [];
+		rotated_points_x = [];
+		rotated_points_y = [];
+	}
 	pen_down = false;
 }
 
 function write_score(score) {
-	if (score !== NaN)
+	if (score)
 		total += score;
 	lines_drawn += 1;
 	score_board.innerHTML = ""; 
@@ -196,8 +204,8 @@ document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 function resize(){
 	let context = canvas.getContext('2d');
-	let width = Math.round(window.innerWidth*2);
-	let height = Math.round(window.innerHeight*2);
+	let width = Math.round(window.innerWidth*1.5);
+	let height = Math.round(window.innerHeight*1.5);
 	canvas.setAttribute('width', width.toString()); 
 	canvas.setAttribute('height',height.toString());
 	canvas.width = canvas.width; canvas.height = canvas.height;
@@ -210,3 +218,5 @@ let button = document.querySelector("#button");
 button.onclick = resize;
 
 resize();
+
+//window.addEventListener('resize', resize);
