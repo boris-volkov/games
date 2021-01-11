@@ -1,59 +1,3 @@
-
-
-function findLineByLeastSquares(values_x, values_y) {
-    let x_sum = 0;
-    let y_sum = 0;
-    let xy_sum = 0;
-    let xx_sum = 0;
-	let yy_sum = 0;
-    let count = 0;
-
-    let x = 0;
-    let y = 0;
-    let values_length = values_x.length;
-
-    if (values_length != values_y.length) {
-        throw new Error('The parameters values_x and values_y need to have same size!');
-    }
-
-    if (values_length === 0) {
-        return [ [], [] ];
-    }
-
-    for (let i = 0; i< values_length; i++) {
-        x = values_x[i];
-        y = values_y[i];
-        x_sum+= x;
-        y_sum+= y;
-        xx_sum += x*x;
-		yy_sum += y*y;
-        xy_sum += x*y;
-        count++;
-    }
-
-    let m = (count*xy_sum - x_sum*y_sum) / (count*xx_sum - x_sum*x_sum);
-    let b = (y_sum/count) - (m*x_sum)/count;
-
-	let r = 1.0;
-	let n = count;
-	r *= (n*xy_sum - x_sum*y_sum);
-	r /= Math.sqrt( (n * xx_sum - x_sum**2) * (n*yy_sum-y_sum**2) );
-
-    let result_values_x = [];
-    let result_values_y = [];
-
-    for (let i = 0; i < values_length; i++) {
-        x = values_x[i];
-        y = x * m + b;
-        result_values_x.push(x);
-        result_values_y.push(y);
-    }
-
-    return [result_values_x, result_values_y, m*-1, b, r**50];
-}
-
-
-
 var canvas = document.querySelector('#canvas');
 canvas.width = 1200;
 canvas.height = 700;
@@ -112,7 +56,7 @@ let lines_drawn = 0;
 
 function finish_line() {
 	context.closePath();	
-	let [xes, yes, m, b, r_squared] = findLineByLeastSquares(drawn_points_x, drawn_points_y);
+	let [xes, yes, m, b, r_squared] = least_squares(drawn_points_x, drawn_points_y);
 
 	console.log(m);
 	if (Math.abs(m) < 0.5 || Math.abs(m) > 2){
@@ -122,7 +66,7 @@ function finish_line() {
 			let rotated = rotate(old_x, old_y, Math.PI/4);
 			rotated_points_x.push(rotated[0]);
 			rotated_points_y.push(rotated[1]);
-			[xes, yes, m, b, r_squared] = findLineByLeastSquares(rotated_points_x, rotated_points_y);
+			[xes, yes, m, b, r_squared] = least_squares(rotated_points_x, rotated_points_y);
 		}
 		for (let i = 0; i < xes.length; i++){
 			old_x = xes[i];
@@ -136,7 +80,7 @@ function finish_line() {
 		ideal_line(xes,yes);
 		lines_drawn += 1;
 	}
-	
+
 	write_score(Math.round(r_squared*10000)/100);
 	drawn_points_x = [];
 	drawn_points_y = [];
@@ -200,7 +144,7 @@ function range(points) {
 // next stuff prevents touch scrolling on mobile/ipad
 
 function preventDefault(e){
-    e.preventDefault();
+	e.preventDefault();
 }
 document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
@@ -228,7 +172,58 @@ function refresh(){
 
 let button = document.querySelector("#button");
 button.onclick = refresh;
+window.onload = resize;
 
-resize();
+function least_squares(values_x, values_y) {
+	let x_sum = 0;
+	let y_sum = 0;
+	let xy_sum = 0;
+	let xx_sum = 0;
+	let yy_sum = 0;
+	let count = 0;
 
-//window.addEventListener('resize', resize);
+	let x = 0;
+	let y = 0;
+	let values_length = values_x.length;
+
+	if (values_length != values_y.length) {
+		throw new Error('The parameters values_x and values_y need to have same size!');
+	}
+
+	if (values_length === 0) {
+		return [ [], [] ];
+	}
+
+	for (let i = 0; i< values_length; i++) {
+		x = values_x[i];
+		y = values_y[i];
+		x_sum+= x;
+		y_sum+= y;
+		xx_sum += x*x;
+		yy_sum += y*y;
+		xy_sum += x*y;
+		count++;
+	}
+
+	let m = (count*xy_sum - x_sum*y_sum) / (count*xx_sum - x_sum*x_sum);
+	let b = (y_sum/count) - (m*x_sum)/count;
+
+	let r = 1.0;
+	let n = count;
+	r *= (n*xy_sum - x_sum*y_sum);
+	r /= Math.sqrt( (n * xx_sum - x_sum**2) * (n*yy_sum-y_sum**2) );
+
+	let result_values_x = [];
+	let result_values_y = [];
+
+	for (let i = 0; i < values_length; i++) {
+		x = values_x[i];
+		y = x * m + b;
+		result_values_x.push(x);
+		result_values_y.push(y);
+	}
+
+	return [result_values_x, result_values_y, m*-1, b, r**50];
+}
+
+

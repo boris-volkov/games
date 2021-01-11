@@ -5,13 +5,16 @@ body {
 	flex-direction : column;
 	justify-content: center;
 	align-items: center;
-	background: linear-gradient(180deg, #123, #102030)
+	background: linear-gradient(180deg, #123, #102030);
 }
 
 div {
 	background-color: #102030;
 	border: inset;
 	border-color: #345;
+	display:flex;
+	flex-direction : column;
+	justify-content: center;
 	color: #abf;
 	text-align: center;
 	padding: 20px;
@@ -22,11 +25,9 @@ div {
 	padding: 20px;
 	border: inset;
 	border-color: #345;
-	/* width: 20vw; */
 	font : 528px Courier;
 	margin-top: 10vh;
 	text-align: center;
-	/*vertical-align: middle;*/
 }
 
 #timer, #count {

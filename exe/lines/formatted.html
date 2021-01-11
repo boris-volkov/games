@@ -6,7 +6,7 @@
 	 </a> 
 </div>
 
-<div class="bookmark">exe/lines//readme.txt</div><pre class=notes>
+<div class="bookmark">./exe/lines/readme.txt</div><pre class=notes>
 When you're learning how to draw, one important skill is drawing straight lines. It means you have a strong control. 
 
 This is a training program to practice drawing straight lines on a tablet. 
@@ -14,7 +14,7 @@ For every line you draw, it overlays the line you were most probably trying to d
 
 Try drawing sun rays out from the center, aiming to maintain straight lines in every direction.  
 </pre>
-<div class="bookmark">exe/lines//main.html</div><pre class=html>
+<div class="bookmark">./exe/lines/main.html</div><pre class=html>
 <kw>&lt!doctype html&gt</kw>
 
 <kw>&lthtml lang="en"&gt</kw>
@@ -34,7 +34,7 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
-<div class="bookmark">exe/lines//style.css</div><pre class=css>
+<div class="bookmark">./exe/lines/style.css</div><pre class=css>
 <css></css>
 <sc>body {</sc>
 <css>	cursor: crosshair;</css>
@@ -84,63 +84,7 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <sc>}</sc>
 <css></css>
 </pre>
-<div class="bookmark">exe/lines//logic.js</div><pre class=js>
-
-
-<kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
-    <kw>let</kw> x_sum = 0<sc>;</sc>
-    <kw>let</kw> y_sum = 0<sc>;</sc>
-    <kw>let</kw> xy_sum = 0<sc>;</sc>
-    <kw>let</kw> xx_sum = 0<sc>;</sc>
-	<kw>let</kw> yy_sum = 0<sc>;</sc>
-    <kw>let</kw> count = 0<sc>;</sc>
-
-    <kw>let</kw> x = 0<sc>;</sc>
-    <kw>let</kw> y = 0<sc>;</sc>
-    <kw>let</kw> values_length = values_x.length<sc>;</sc>
-
-    <kw>if</kw> <sc>(</sc>values_length <sc>!</sc>= values_y.length<sc>)</sc> <sc>{</sc>
-        <kw>throw</kw> <kw>new</kw> Error<sc>(</sc><sgl_quote>'The parameters values_x and values_y need to have same size<sc>!</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
-    <sc>}</sc>
-
-    <kw>if</kw> <sc>(</sc>values_length === 0<sc>)</sc> <sc>{</sc>
-        <kw>return</kw> <sc>[</sc> <sc>[</sc><sc>]</sc>, <sc>[</sc><sc>]</sc> <sc>]</sc><sc>;</sc>
-    <sc>}</sc>
-
-    <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i&lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-        x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
-        y = values_y<sc>[</sc>i<sc>]</sc><sc>;</sc>
-        x_sum+= x<sc>;</sc>
-        y_sum+= y<sc>;</sc>
-        xx_sum += x*x<sc>;</sc>
-		yy_sum += y*y<sc>;</sc>
-        xy_sum += x*y<sc>;</sc>
-        count++<sc>;</sc>
-    <sc>}</sc>
-
-    <kw>let</kw> m = <sc>(</sc>count*xy_sum - x_sum*y_sum<sc>)</sc> / <sc>(</sc>count*xx_sum - x_sum*x_sum<sc>)</sc><sc>;</sc>
-    <kw>let</kw> b = <sc>(</sc>y_sum/count<sc>)</sc> - <sc>(</sc>m*x_sum<sc>)</sc>/count<sc>;</sc>
-
-	<kw>let</kw> r = 1.0<sc>;</sc>
-	<kw>let</kw> n = count<sc>;</sc>
-	r *= <sc>(</sc>n*xy_sum - x_sum*y_sum<sc>)</sc><sc>;</sc>
-	r /= Math.sqrt<sc>(</sc> <sc>(</sc>n * xx_sum - x_sum**2<sc>)</sc> * <sc>(</sc>n*yy_sum-y_sum**2<sc>)</sc> <sc>)</sc><sc>;</sc>
-
-    <kw>let</kw> result_values_x = <sc>[</sc><sc>]</sc><sc>;</sc>
-    <kw>let</kw> result_values_y = <sc>[</sc><sc>]</sc><sc>;</sc>
-
-    <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-        x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
-        y = x * m + b<sc>;</sc>
-        result_values_x.push<sc>(</sc>x<sc>)</sc><sc>;</sc>
-        result_values_y.push<sc>(</sc>y<sc>)</sc><sc>;</sc>
-    <sc>}</sc>
-
-    <kw>return</kw> <sc>[</sc>result_values_x, result_values_y, m*-1, b, r**50<sc>]</sc><sc>;</sc>
-<sc>}</sc>
-
-
-
+<div class="bookmark">./exe/lines/logic.js</div><pre class=js>
 <kw>var</kw> canvas = document.querySelector<sc>(</sc><sgl_quote>'#canvas'</sgl_quote><sc>)</sc><sc>;</sc>
 canvas.width = 1200<sc>;</sc>
 canvas.height = 700<sc>;</sc>
@@ -199,7 +143,7 @@ canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 
 <kw>function</kw> finish_line<sc>(</sc><sc>)</sc> <sc>{</sc>
 	context.closePath<sc>(</sc><sc>)</sc><sc>;</sc>	
-	<kw>let</kw> <sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = findLineByLeastSquares<sc>(</sc>drawn_points_x, drawn_points_y<sc>)</sc><sc>;</sc>
+	<kw>let</kw> <sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = least_squares<sc>(</sc>drawn_points_x, drawn_points_y<sc>)</sc><sc>;</sc>
 
 	console.log<sc>(</sc>m<sc>)</sc><sc>;</sc>
 	<kw>if</kw> <sc>(</sc>Math.abs<sc>(</sc>m<sc>)</sc> &lt 0.5 || Math.abs<sc>(</sc>m<sc>)</sc> &gt 2<sc>)</sc><sc>{</sc>
@@ -209,7 +153,7 @@ canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 			<kw>let</kw> rotated = rotate<sc>(</sc>old_x, old_y, Math.PI/4<sc>)</sc><sc>;</sc>
 			rotated_points_x.push<sc>(</sc>rotated<sc>[</sc>0<sc>]</sc><sc>)</sc><sc>;</sc>
 			rotated_points_y.push<sc>(</sc>rotated<sc>[</sc>1<sc>]</sc><sc>)</sc><sc>;</sc>
-			<sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = findLineByLeastSquares<sc>(</sc>rotated_points_x, rotated_points_y<sc>)</sc><sc>;</sc>
+			<sc>[</sc>xes, yes, m, b, r_squared<sc>]</sc> = least_squares<sc>(</sc>rotated_points_x, rotated_points_y<sc>)</sc><sc>;</sc>
 		<sc>}</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt xes.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
 			old_x = xes<sc>[</sc>i<sc>]</sc><sc>;</sc>
@@ -223,7 +167,7 @@ canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 		ideal_line<sc>(</sc>xes,yes<sc>)</sc><sc>;</sc>
 		lines_drawn += 1<sc>;</sc>
 	<sc>}</sc>
-	
+
 	write_score<sc>(</sc>Math.round<sc>(</sc>r_squared*10000<sc>)</sc>/100<sc>)</sc><sc>;</sc>
 	drawn_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
 	drawn_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
@@ -287,12 +231,12 @@ canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
 <comment Class="js">// next stuff prevents touch scrolling on mobile/ipad
 </comment>
 <kw>function</kw> preventDefault<sc>(</sc>e<sc>)</sc><sc>{</sc>
-    e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+	e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, preventDefault, <sc>{</sc> passive<sc>:</sc> <kw>false</kw> <sc>}</sc><sc>)</sc><sc>;</sc>
 
 <kw>function</kw> resize<sc>(</sc><sc>)</sc><sc>{</sc>
-	<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
 	<kw>let</kw> width = window.innerWidth<sc>;</sc>
 	<kw>let</kw> height = window.innerHeight<sc>;</sc>
 	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, width.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
@@ -304,11 +248,71 @@ document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, prev
 	context.textAlign = <dbl_quote>"left"</dbl_quote><sc>;</sc>
 <sc>}</sc>
 
+<kw>function</kw> refresh<sc>(</sc><sc>)</sc><sc>{</sc>
+	context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
+	<kw>let</kw> font_height_pix = Math.floor<sc>(</sc>canvas.width/12<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.lineCap = <dbl_quote>"round"</dbl_quote><sc>;</sc>
+	context.font = font_height_pix + <dbl_quote>"px Courier New"</dbl_quote><sc>;</sc>
+	context.textAlign = <dbl_quote>"left"</dbl_quote><sc>;</sc>
+<sc>}</sc>
+
 <kw>let</kw> button = document.querySelector<sc>(</sc><dbl_quote>"#button"</dbl_quote><sc>)</sc><sc>;</sc>
-button.onclick = resize<sc>;</sc>
+button.onclick = refresh<sc>;</sc>
+window.onload = resize<sc>;</sc>
 
-resize<sc>(</sc><sc>)</sc><sc>;</sc>
+<kw>function</kw> least_squares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> x_sum = 0<sc>;</sc>
+	<kw>let</kw> y_sum = 0<sc>;</sc>
+	<kw>let</kw> xy_sum = 0<sc>;</sc>
+	<kw>let</kw> xx_sum = 0<sc>;</sc>
+	<kw>let</kw> yy_sum = 0<sc>;</sc>
+	<kw>let</kw> count = 0<sc>;</sc>
 
-<comment Class="js">//window.addEventListener<sc>(</sc>'resize', resize<sc>)</sc><sc>;</sc>
-</comment></pre>
+	<kw>let</kw> x = 0<sc>;</sc>
+	<kw>let</kw> y = 0<sc>;</sc>
+	<kw>let</kw> values_length = values_x.length<sc>;</sc>
+
+	<kw>if</kw> <sc>(</sc>values_length <sc>!</sc>= values_y.length<sc>)</sc> <sc>{</sc>
+		<kw>throw</kw> <kw>new</kw> Error<sc>(</sc><sgl_quote>'The parameters values_x and values_y need to have same size<sc>!</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>values_length === 0<sc>)</sc> <sc>{</sc>
+		<kw>return</kw> <sc>[</sc> <sc>[</sc><sc>]</sc>, <sc>[</sc><sc>]</sc> <sc>]</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i&lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
+		y = values_y<sc>[</sc>i<sc>]</sc><sc>;</sc>
+		x_sum+= x<sc>;</sc>
+		y_sum+= y<sc>;</sc>
+		xx_sum += x*x<sc>;</sc>
+		yy_sum += y*y<sc>;</sc>
+		xy_sum += x*y<sc>;</sc>
+		count++<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>let</kw> m = <sc>(</sc>count*xy_sum - x_sum*y_sum<sc>)</sc> / <sc>(</sc>count*xx_sum - x_sum*x_sum<sc>)</sc><sc>;</sc>
+	<kw>let</kw> b = <sc>(</sc>y_sum/count<sc>)</sc> - <sc>(</sc>m*x_sum<sc>)</sc>/count<sc>;</sc>
+
+	<kw>let</kw> r = 1.0<sc>;</sc>
+	<kw>let</kw> n = count<sc>;</sc>
+	r *= <sc>(</sc>n*xy_sum - x_sum*y_sum<sc>)</sc><sc>;</sc>
+	r /= Math.sqrt<sc>(</sc> <sc>(</sc>n * xx_sum - x_sum**2<sc>)</sc> * <sc>(</sc>n*yy_sum-y_sum**2<sc>)</sc> <sc>)</sc><sc>;</sc>
+
+	<kw>let</kw> result_values_x = <sc>[</sc><sc>]</sc><sc>;</sc>
+	<kw>let</kw> result_values_y = <sc>[</sc><sc>]</sc><sc>;</sc>
+
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt values_length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+		x = values_x<sc>[</sc>i<sc>]</sc><sc>;</sc>
+		y = x * m + b<sc>;</sc>
+		result_values_x.push<sc>(</sc>x<sc>)</sc><sc>;</sc>
+		result_values_y.push<sc>(</sc>y<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>return</kw> <sc>[</sc>result_values_x, result_values_y, m*-1, b, r**50<sc>]</sc><sc>;</sc>
+<sc>}</sc>
+
+
+</pre>
 </body></html>
