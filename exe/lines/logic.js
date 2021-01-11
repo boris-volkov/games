@@ -206,8 +206,8 @@ document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 function resize(){
 	let context = canvas.getContext('2d');
-	let width = Math.round(window.innerWidth*1.5);
-	let height = Math.round(window.innerHeight*1.5);
+	let width = window.innerWidth;
+	let height = window.innerHeight;
 	canvas.setAttribute('width', width.toString()); 
 	canvas.setAttribute('height',height.toString());
 	canvas.width = canvas.width; canvas.height = canvas.height;
