@@ -205,7 +205,7 @@ function preventDefault(e){
 document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 function resize(){
-	let context = canvas.getContext('2d');
+	context = canvas.getContext('2d');
 	let width = window.innerWidth;
 	let height = window.innerHeight;
 	canvas.setAttribute('width', width.toString()); 
@@ -218,7 +218,7 @@ function resize(){
 }
 
 function refresh(){
-	let context = canvas.getContext('2d');
+	context = canvas.getContext('2d');
 	canvas.width = canvas.width; canvas.height = canvas.height;
 	let font_height_pix = Math.floor(canvas.width/12).toString();
 	context.lineCap = "round";
