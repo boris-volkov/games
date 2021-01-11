@@ -217,8 +217,17 @@ function resize(){
 	context.textAlign = "left";
 }
 
+function refresh(){
+	let context = canvas.getContext('2d');
+	canvas.width = canvas.width; canvas.height = canvas.height;
+	let font_height_pix = Math.floor(canvas.width/12).toString();
+	context.lineCap = "round";
+	context.font = font_height_pix + "px Courier New";
+	context.textAlign = "left";
+}
+
 let button = document.querySelector("#button");
-button.onclick = resize;
+button.onclick = refresh;
 
 resize();
 
