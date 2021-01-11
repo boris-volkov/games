@@ -6,7 +6,7 @@
 	 </a> 
 </div>
 
-<div class="bookmark">./exe/lines/readme.txt</div><pre class=notes>
+<div class="bookmark">exe/lines//readme.txt</div><pre class=notes>
 When you're learning how to draw, one important skill is drawing straight lines. It means you have a strong control. 
 
 This is a training program to practice drawing straight lines on a tablet. 
@@ -14,7 +14,7 @@ For every line you draw, it overlays the line you were most probably trying to d
 
 Try drawing sun rays out from the center, aiming to maintain straight lines in every direction.  
 </pre>
-<div class="bookmark">./exe/lines/main.html</div><pre class=html>
+<div class="bookmark">exe/lines//main.html</div><pre class=html>
 <kw>&lt!doctype html&gt</kw>
 
 <kw>&lthtml lang="en"&gt</kw>
@@ -27,26 +27,24 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 
 
 <kw>&ltbody&gt</kw>
-	<kw>&ltdiv id="score_board"&gt</kw>0<kw>&lt/div&gt</kw>
+	<kw>&ltdiv id="score_board"&gt</kw>begin drawing lines to practice:<kw>&lt/div&gt</kw>
 	<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>	
 	<kw>&ltdiv id="button"&gt</kw>clear<kw>&lt/div&gt</kw>	
 	<kw>&ltscript src="logic.js"&gt</kw><kw>&lt/script&gt</kw>
 <kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
-<div class="bookmark">./exe/lines/style.css</div><pre class=css>
+<div class="bookmark">exe/lines//style.css</div><pre class=css>
 <css></css>
 <sc>body {</sc>
 <css>	cursor: crosshair;</css>
 <css>	background-color: #123;</css>
 <css>	overflow:hidden;</css>
+<css>	padding : 0;</css>
 <sc>}</sc>
 <css></css>
 <sc>canvas {</sc>
 <css>	color: #234;</css>
-<css>	border: 3px solid;</css>
-<css>	margin: -10px;</css>
-<css>	margin-top : -100px;</css>
 <sc>}</sc>
 <css></css>
 <sc>div#button, div#score_board {</sc>
@@ -58,18 +56,20 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <sc>}</sc>
 <css></css>
 <sc>div#score_board {</sc>
-<css>	padding-right: 10vw;</css>
-<css>	padding-left: 10vw;</css>
-<css>	position : sticky;</css>
+<css>	position : absolute;</css>
+<css>	left: 20px;</css>
+<css>	right: 20px;</css>
+<css>	margin-left: auto;</css>
+<css>	margin-right: auto;</css>
 <css>	border-bottom-left-radius: 30px;</css>
 <css>	border-bottom-right-radius: 30px;</css>
 <css>	top:0;</css>
 <sc>}</sc>
 <css></css>
 <sc>div#button {</sc>
-<css>	padding-right: 30vw;</css>
-<css>	padding-left:30vw;</css>
-<css>	position: sticky;</css>
+<css>	position : absolute;</css>
+<css>	left: 20px;</css>
+<css>	right: 20px;</css>
 <css>	border-top-left-radius: 30px;</css>
 <css>	border-top-right-radius: 30px;</css>
 <css>	bottom: 0;</css>
@@ -82,8 +82,9 @@ Try drawing sun rays out from the center, aiming to maintain straight lines in e
 <sc>green {</sc>
 <css>	color: #2f2;</css>
 <sc>}</sc>
+<css></css>
 </pre>
-<div class="bookmark">./exe/lines/logic.js</div><pre class=js>
+<div class="bookmark">exe/lines//logic.js</div><pre class=js>
 
 
 <kw>function</kw> findLineByLeastSquares<sc>(</sc>values_x, values_y<sc>)</sc> <sc>{</sc>
@@ -157,7 +158,6 @@ context.lineWidth=4<sc>;</sc>
 <kw>let</kw> drawn_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
 <kw>let</kw> rotated_points_x = <sc>[</sc><sc>]</sc><sc>;</sc>
 <kw>let</kw> rotated_points_y = <sc>[</sc><sc>]</sc><sc>;</sc>
-<kw>let</kw> score_stack = <sc>[</sc><sc>]</sc><sc>;</sc>
 
 canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	context.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -167,6 +167,7 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
 	context.moveTo<sc>(</sc>x,y<sc>)</sc><sc>;</sc>
 	context.strokeStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	context.lineWidth = 4<sc>;</sc>
 	context.fillStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
 <sc>}</sc>
 
@@ -220,6 +221,7 @@ canvas.onpointermove = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<sc>}</sc>
 	<kw>if</kw> <sc>(</sc>r_squared &gt 0.2<sc>)</sc><sc>{</sc>
 		ideal_line<sc>(</sc>xes,yes<sc>)</sc><sc>;</sc>
+		lines_drawn += 1<sc>;</sc>
 	<sc>}</sc>
 	
 	write_score<sc>(</sc>Math.round<sc>(</sc>r_squared*10000<sc>)</sc>/100<sc>)</sc><sc>;</sc>
@@ -244,15 +246,16 @@ canvas.onpointerup = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
 <sc>}</sc>
 
 <kw>function</kw> write_score<sc>(</sc>score<sc>)</sc> <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>score<sc>)</sc>
+	<kw>if</kw> <sc>(</sc>score && score &lt Infinity<sc>)</sc><sc>{</sc>
 		total += score<sc>;</sc>
-	lines_drawn += 1<sc>;</sc>
-	score_board.innerHTML = <dbl_quote>""</dbl_quote><sc>;</sc> 
-	score_board.innerHTML = score_board.innerHTML + <dbl_quote>"last<sc>:</sc> "</dbl_quote><sc>;</sc> 
-	score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltgreen&gt"</dbl_quote> + score.toString<sc>(</sc><sc>)</sc><sc>;</sc>
-	score_board.innerHTML = score_board.innerHTML + <dbl_quote>" <sc>;</sc> average<sc>:</sc> "</dbl_quote><sc>;</sc>
-	score_board.innerHTML = score_board.innerHTML + <sc>(</sc>Math.round<sc>(</sc>total/lines_drawn*100<sc>)</sc>/100<sc>)</sc>.toFixed<sc>(</sc>2<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
-	
+		score_board.innerHTML = <dbl_quote>""</dbl_quote><sc>;</sc> 
+		score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltsmall&gtlines_drawn<sc>:</sc> "</dbl_quote><sc>;</sc> 
+		score_board.innerHTML = score_board.innerHTML + lines_drawn.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+		score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltsmall&gt <sc>;</sc> last_score<sc>:</sc> "</dbl_quote><sc>;</sc> 
+		score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltgreen&gt"</dbl_quote> + score.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+		score_board.innerHTML = score_board.innerHTML + <dbl_quote>"&ltsmall&gt <sc>;</sc> average<sc>:</sc> "</dbl_quote><sc>;</sc>
+		score_board.innerHTML = score_board.innerHTML + <sc>(</sc>Math.round<sc>(</sc>total/lines_drawn*100<sc>)</sc>/100<sc>)</sc>.toFixed<sc>(</sc>2<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>	
 <sc>}</sc>
 
 <kw>function</kw> ideal_line<sc>(</sc>xes, yes<sc>)</sc><sc>{</sc>
@@ -290,12 +293,13 @@ document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, prev
 
 <kw>function</kw> resize<sc>(</sc><sc>)</sc><sc>{</sc>
 	<kw>let</kw> context = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
-	<kw>let</kw> width = Math.round<sc>(</sc>window.innerWidth*1.5<sc>)</sc><sc>;</sc>
-	<kw>let</kw> height = Math.round<sc>(</sc>window.innerHeight*1.5<sc>)</sc><sc>;</sc>
+	<kw>let</kw> width = window.innerWidth<sc>;</sc>
+	<kw>let</kw> height = window.innerHeight<sc>;</sc>
 	canvas.setAttribute<sc>(</sc><sgl_quote>'width'</sgl_quote>, width.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> 
 	canvas.setAttribute<sc>(</sc><sgl_quote>'height'</sgl_quote>,height.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 	canvas.width = canvas.width<sc>;</sc> canvas.height = canvas.height<sc>;</sc>
 	<kw>let</kw> font_height_pix = Math.floor<sc>(</sc>canvas.width/12<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>;</sc>
+	context.lineCap = <dbl_quote>"round"</dbl_quote><sc>;</sc>
 	context.font = font_height_pix + <dbl_quote>"px Courier New"</dbl_quote><sc>;</sc>
 	context.textAlign = <dbl_quote>"left"</dbl_quote><sc>;</sc>
 <sc>}</sc>
