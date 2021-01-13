@@ -1,0 +1,19 @@
+body {
+	display: flex;
+	background-color : #123;
+	justify-content : center;
+}
+
+pre {
+	background-color: #234;
+	width : 85vw;
+	min-height : 80vh;
+	border-radius: 30px;
+	padding : 36px;
+	font: 18px Courier;
+	letter-spacing : 2px;
+	color : white;
+	white-space: pre-wrap;
+	word-break: break-all;
+	cursor: text;
+}

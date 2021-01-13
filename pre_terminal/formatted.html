@@ -1,0 +1,281 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./pre_terminal/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+<kw>&lthead&gt</kw>
+  <kw>&ltmeta charset="utf-8"&gt</kw>
+
+  <kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+<kw>&lt/head&gt</kw>
+
+
+<kw>&ltbody&gt</kw>
+			
+	<kw>&ltpre id="terminal" contextmenu="menu"&gt</kw>█<kw>&lt/pre&gt</kw>
+	<kw>&ltscript src="terminal.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&ltScript src="multiply.js"&gt</kw><kw>&lt/script&gt</kw>
+
+<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./pre_terminal/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	display: flex;</css>
+<css>	background-color : #123;</css>
+<css>	justify-content : center;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre {</sc>
+<css>	background-color: #234;</css>
+<css>	width : 85vw;</css>
+<css>	min-height : 80vh;</css>
+<css>	border-radius: 30px;</css>
+<css>	padding : 36px;</css>
+<css>	font: 18px Courier;</css>
+<css>	letter-spacing : 2px;</css>
+<css>	color : white;</css>
+<css>	white-space: pre-wrap;</css>
+<css>	word-break: break-all;</css>
+<css>	cursor: text;</css>
+<sc>}</sc>
+</pre>
+<div class="bookmark">./pre_terminal/terminal.js</div><pre class=js>
+<comment Class="js">/* 
+ * This script sets up a terminal input/output user interface
+ * in the browser window, through a pre-formatted element &ltpre&gt.
+ *
+ * It offers the application-programmer-interface of these functions:
+ *
+ * 1) print(string)
+ * 2) ask(string, callback)
+ *
+ * The first function just prints to screen, the second prints
+ * to screen but also identifies a receiving function for the user
+ * input to be sent to. This is not quite like input() in Python
+ * which returns the input as a string. This ask function sends the
+ * input directly to a function whenever the ENTER key is pressed.
+ * That function should also be responsible for continuing execution.
+ */</comment>
+
+<kw>const</kw> terminal = document.querySelector<sc>(</sc><dbl_quote>"#terminal"</dbl_quote><sc>)</sc><sc>;</sc>
+	<comment Class="js">// The terminal is just a &ltpre&gt element
+</comment>
+<kw>const</kw> cursor = <dbl_quote>"█"</dbl_quote><sc>;</sc>
+	<comment Class="js">// The cursor is just a block character <kw>for</kw> now...
+</comment>
+<kw>const</kw> keys_down = <kw>new</kw> Set<sc>(</sc><sc>)</sc><sc>;</sc>
+	<comment Class="js">// to keep track of combinations of keys being held
+</comment>	<comment Class="js">// like CTRL-V <kw>for</kw> pasting
+</comment>
+<kw>const</kw> COMMANDS = <sc>{</sc><sgl_quote>'.clear'</sgl_quote><sc>:</sc> clear,
+				  <sgl_quote>'.ls'</sgl_quote><sc>:</sc> listing<sc>}</sc><sc>;</sc>
+	<comment Class="js">// storage <kw>for</kw> command line commands
+</comment>
+<kw>function</kw> listing<sc>(</sc><sc>)</sc> <sc>{</sc>
+	print<sc>(</sc><sgl_quote>'\n'</sgl_quote><sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc>command <kw>in</kw> COMMANDS<sc>)</sc>
+		print<sc>(</sc>command + <sgl_quote>'\n'</sgl_quote><sc>)</sc><sc>;</sc>
+	print<sc>(</sc><sgl_quote>'\n'</sgl_quote><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> buffer = <sc>[</sc><sc>]</sc><sc>;</sc>
+	<comment Class="js">// <kw>this</kw> is where the current input line is collected 
+</comment>	<comment Class="js">// to be sent out to callback functions.
+</comment>
+<kw>const</kw> buffer_history = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> history_index = 0<sc>;</sc>
+	<comment Class="js">// to be able to cycle through commands <kw>with</kw> arrows
+</comment>
+<kw>let</kw> input_lock = <kw>false</kw><sc>;</sc>
+	<comment Class="js">// optional input_lock 
+</comment>
+<kw>function</kw> NO_OP<sc>(</sc>input<sc>)</sc> <sc>{</sc><kw>return</kw> 0<sc>;</sc><sc>}</sc><sc>;</sc>
+<kw>let</kw> LISTENER = NO_OP<sc>;</sc>
+	<comment Class="js">// placeholder <kw>for</kw> the <kw>function</kw> currently listening <kw>for</kw> input
+</comment>
+<kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
+	terminal.innerHTML = cursor<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> clear_line<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>let</kw> content = terminal.innerHTML<sc>;</sc>
+	terminal.innerHTML = content.slice<sc>(</sc>0, content.lastIndexOf<sc>(</sc><dbl_quote>"\n"</dbl_quote><sc>)</sc>+2<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> print<sc>(</sc>c<sc>)</sc> <sc>{</sc>
+	<comment Class="js">// write a character to screen and progress the cursor
+</comment>	terminal.innerHTML = terminal.innerHTML.slice<sc>(</sc>0,-1<sc>)</sc> + c + cursor<sc>;</sc>
+	window.scrollTo<sc>(</sc>0,document.body.scrollHeight<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<comment Class="js">// print text and set up <kw>function</kw> to receive input
+</comment><kw>function</kw> ask<sc>(</sc>text, func<sc>)</sc> <sc>{</sc>
+	print<sc>(</sc>text<sc>)</sc><sc>;</sc>
+	LISTENER = func<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> backspace<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>let</kw> content = terminal.innerHTML<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>terminal.innerHTML.endsWith<sc>(</sc><sgl_quote>'\n'</sgl_quote> + cursor<sc>)</sc><sc>)</sc><sc>{</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>terminal.innerHTML.endsWith<sc>(</sc><dbl_quote>"<sc>;</sc>"</dbl_quote> + cursor<sc>)</sc><sc>)</sc><sc>{</sc> 
+		<comment Class="js">// <kw>for</kw> special characters like &gt<sc>;</sc> &lt<sc>;</sc> &amp<sc>;</sc>
+</comment>		terminal.innerHTML = content.slice<sc>(</sc>0,content.lastIndexOf<sc>(</sc><dbl_quote>"&"</dbl_quote><sc>)</sc><sc>)</sc> + cursor<sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		terminal.innerHTML = content.slice<sc>(</sc>0,-2<sc>)</sc> + cursor<sc>;</sc>
+		buffer.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+document.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, e =&gt <sc>{</sc>
+	<kw>let</kw> k = e.key<sc>;</sc>
+
+	keys_down.add<sc>(</sc>k<sc>)</sc><sc>;</sc>
+	
+	<kw>if</kw> <sc>(</sc><sc>[</sc><dbl_quote>"Shift"</dbl_quote>, <dbl_quote>"Alt"</dbl_quote>, <dbl_quote>"Tab"</dbl_quote>, <dbl_quote>"'</sgl_quote>"</dbl_quote>, <dbl_quote>"/"</dbl_quote>, <dbl_quote>"ArrowUp"</dbl_quote>, <dbl_quote>"ArrowDown"</dbl_quote><sc>]</sc>.includes<sc>(</sc>k<sc>)</sc><sc>)</sc><sc>{</sc>
+		e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>input_lock === true<sc>)</sc> <kw>return</kw><sc>;</sc>
+
+	<comment Class="js">// special keys----------------------------
+</comment>	<kw>if</kw> <sc>(</sc>k === <dbl_quote>"Enter"</dbl_quote><sc>)</sc> <sc>{</sc>
+		print<sc>(</sc><sgl_quote>'\n'</sgl_quote><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>LISTENER === NO_OP<sc>)</sc><sc>{</sc> <comment Class="js">// standard cli mode
+</comment>			<kw>if</kw> <sc>(</sc>buffer<sc>[</sc>0<sc>]</sc> === <sgl_quote>'.'</sgl_quote><sc>)</sc><sc>{</sc> <comment Class="js">// command entered
+</comment>				args = buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc>.split<sc>(</sc><sgl_quote>' '</sgl_quote><sc>)</sc><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>COMMANDS.hasOwnProperty<sc>(</sc>args<sc>[</sc>0<sc>]</sc><sc>)</sc><sc>)</sc><sc>{</sc>
+					COMMANDS<sc>[</sc>args<sc>[</sc>0<sc>]</sc><sc>]</sc><sc>(</sc>args.slice<sc>(</sc>1<sc>)</sc><sc>)</sc><sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc>
+			<kw>if</kw> <sc>(</sc>buffer.join<sc>(</sc><dbl_quote>""</dbl_quote><sc>)</sc>.trim<sc>(</sc><sc>)</sc>.length &gt 0<sc>)</sc><sc>{</sc>
+				buffer_history.push<sc>(</sc>buffer<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc>
+			LISTENER<sc>(</sc>buffer<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		buffer = <sc>[</sc><sc>]</sc><sc>;</sc>	
+		history_index = buffer_history.length<sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>k === <dbl_quote>"Backspace"</dbl_quote><sc>)</sc><sc>{</sc> 	
+		backspace<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>k === <dbl_quote>"Tab"</dbl_quote><sc>)</sc><sc>{</sc>
+		print<sc>(</sc><dbl_quote>"&ensp<sc>;</sc>&ensp<sc>;</sc>&ensp<sc>;</sc>&ensp<sc>;</sc>"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>k === <dbl_quote>"ArrowUp"</dbl_quote><sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>LISTENER === NO_OP<sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>history_index &gt 0<sc>)</sc><sc>{</sc>
+				history_index -= 1<sc>;</sc>
+				buffer = buffer_history<sc>[</sc>history_index<sc>]</sc><sc>;</sc>
+				clear_line<sc>(</sc><sc>)</sc><sc>;</sc>
+				print<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>k === <dbl_quote>"ArrowDown"</dbl_quote><sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>LISTENER === NO_OP<sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>history_index &lt buffer_history.length - 1<sc>)</sc><sc>{</sc>
+				history_index += 1<sc>;</sc>
+				buffer = buffer_history<sc>[</sc>history_index<sc>]</sc><sc>;</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc>
+				buffer = <sc>[</sc><sc>]</sc><sc>;</sc>
+				history_index = buffer_history.length<sc>;</sc>
+			<sc>}</sc>
+			clear_line<sc>(</sc><sc>)</sc><sc>;</sc>
+			print<sc>(</sc>buffer.join<sc>(</sc><sgl_quote>''</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	
+	<comment Class="js">// normal text entry<sc>:</sc>----------------------
+</comment>	<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>k.length === 1<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc>keys_down.has<sc>(</sc><dbl_quote>"Control"</dbl_quote><sc>)</sc> && <sc>(</sc><sgl_quote>'+-=v'</sgl_quote>.includes<sc>(</sc>k<sc>)</sc><sc>)</sc><sc>)</sc>
+			<kw>return</kw><sc>;</sc>
+		print<sc>(</sc>k<sc>)</sc><sc>;</sc>
+		buffer.push<sc>(</sc>k<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+document.addEventListener<sc>(</sc><dbl_quote>"keyup"</dbl_quote>, e =&gt <sc>{</sc>
+	keys_down.<kw>delete</kw><sc>(</sc>e.key<sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+terminal.addEventListener<sc>(</sc><sgl_quote>'paste'</sgl_quote>, <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc> <comment Class="js">// CTRL-V pasting
+</comment>    <kw>let</kw> paste = <sc>(</sc>event.clipboardData || 
+							window.clipboardData<sc>)</sc>.getData<sc>(</sc><sgl_quote>'text'</sgl_quote><sc>)</sc><sc>;</sc>
+	print<sc>(</sc>paste<sc>)</sc><sc>;</sc>
+	buffer.push<sc>(</sc>paste<sc>)</sc><sc>;</sc>
+    event.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+</pre>
+<div class="bookmark">./pre_terminal/multiply.js</div><pre class=js>
+<kw>let</kw> cards = <sc>[</sc><sc>]</sc><sc>;</sc>
+<kw>let</kw> start_time<sc>;</sc>
+
+<kw>function</kw> check<sc>(</sc>my_answer<sc>)</sc><sc>{</sc>
+	my_answer = my_answer.join<sc>(</sc><dbl_quote>""</dbl_quote><sc>)</sc><sc>;</sc>
+
+	<kw>if</kw> <sc>(</sc>my_answer === <sgl_quote>'<sc>:</sc>q'</sgl_quote><sc>)</sc><sc>{</sc> <comment Class="js">// allow users a way out
+</comment>		finish<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>my_answer === cards<sc>[</sc>cards.length-1<sc>]</sc>.answer<sc>)</sc><sc>{</sc>
+		cards.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>cards.length === 0<sc>)</sc> <sc>{</sc>
+			finish<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	ask<sc>(</sc>cards<sc>[</sc>cards.length-1<sc>]</sc>.question, check<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> init_multiplication<sc>(</sc>args<sc>)</sc> <sc>{</sc>
+	n = 12<sc>;</sc> <comment Class="js">// <kw>default</kw>
+</comment>	<kw>if</kw> <sc>(</sc>args<sc>[</sc>0<sc>]</sc><sc>)</sc>
+		n = Number<sc>(</sc>args<sc>[</sc>0<sc>]</sc><sc>)</sc><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 1<sc>;</sc> i &lt n+1<sc>;</sc> i++<sc>)</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> j = i<sc>;</sc> j &lt n+1<sc>;</sc> j++<sc>)</sc>
+			cards.push<sc>(</sc><sc>{</sc>question <sc>:</sc> i + <sgl_quote>' x '</sgl_quote> + j + <sgl_quote>' = '</sgl_quote>,
+						answer   <sc>:</sc> <sc>(</sc>i*j<sc>)</sc>.toString<sc>(</sc><sc>)</sc><sc>}</sc><sc>)</sc><sc>;</sc>
+	scramble<sc>(</sc><sc>)</sc><sc>;</sc>
+	print<sc>(</sc><dbl_quote>"\nLets practice multiplication<sc>!</sc>\n"</dbl_quote><sc>)</sc><sc>;</sc>
+	print<sc>(</sc><dbl_quote>"Enter <sc>:</sc>q any time to quit\n\n"</dbl_quote><sc>)</sc><sc>;</sc>
+	start_time = <kw>new</kw> Date<sc>(</sc><sc>)</sc>.getTime<sc>(</sc><sc>)</sc>/1000<sc>;</sc>
+	ask<sc>(</sc>cards<sc>[</sc>cards.length-1<sc>]</sc>.question, check<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> finish<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>cards.length === 0<sc>)</sc><sc>{</sc>
+		<kw>let</kw> elapsed = <kw>new</kw> Date<sc>(</sc><sc>)</sc>.getTime<sc>(</sc><sc>)</sc>/1000 - start_time<sc>;</sc>
+		print<sc>(</sc><dbl_quote>"\nyou took "</dbl_quote> + Math.round<sc>(</sc>elapsed<sc>)</sc> + <dbl_quote>" seconds<sc>!</sc>\n"</dbl_quote><sc>)</sc><sc>;</sc>
+		print<sc>(</sc><dbl_quote>"great job<sc>!</sc>\n-------------\n"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">// early exit
+</comment>		print<sc>(</sc><dbl_quote>"quit\n\n"</dbl_quote><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	cards = <sc>[</sc><sc>]</sc><sc>;</sc>
+	LISTENER = NO_OP<sc>;</sc> <comment Class="js">// important<sc>:</sc> stop listening
+</comment><sc>}</sc>
+
+<kw>function</kw> scramble<sc>(</sc><sc>)</sc><sc>{</sc>
+	<comment Class="js">// swap two random cards 300 times
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt 300<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>let</kw> a = Math.floor<sc>(</sc>Math.random<sc>(</sc><sc>)</sc>*cards.length<sc>)</sc><sc>;</sc>
+		<kw>let</kw> b = Math.floor<sc>(</sc>Math.random<sc>(</sc><sc>)</sc>*cards.length<sc>)</sc><sc>;</sc>
+		<kw>let</kw> temp = cards<sc>[</sc>a<sc>]</sc><sc>;</sc>
+		cards<sc>[</sc>a<sc>]</sc> = cards<sc>[</sc>b<sc>]</sc><sc>;</sc>
+		cards<sc>[</sc>b<sc>]</sc> = temp<sc>;</sc>
+	<sc>}</sc>
+	<kw>return</kw> 0<sc>;</sc>
+<sc>}</sc>
+	
+COMMANDS<sc>[</sc><sgl_quote>'.times'</sgl_quote><sc>]</sc> = init_multiplication<sc>;</sc>
+</pre>
+</body></html>

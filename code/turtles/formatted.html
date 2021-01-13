@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/turtles/hex_spiral.py</div><pre class=py>
+<kw>import</kw> turtle, random, math
+
+s = turtle.Turtle<sc>(</sc><sc>)</sc>
+screen = turtle.Screen<sc>(</sc><sc>)</sc>
+screen.screensize<sc>(</sc>2000,2000<sc>)</sc>
+s.pencolor<sc>(</sc><dbl_quote>"white"</dbl_quote><sc>)</sc>
+screen.colormode<sc>(</sc>255<sc>)</sc>
+screen.bgcolor<sc>(</sc>30,60,90<sc>)</sc>
+s.fillcolor<sc>(</sc><sc>(</sc>255,0,255<sc>)</sc><sc>)</sc> <comment Class="py"># on a range of 0-255
+</comment>s.pensize<sc>(</sc>3<sc>)</sc>
+s.speed<sc>(</sc>0<sc>)</sc> <comment Class="py"># 1 - 10, but then 0 <kw>is</kw> faster than 10
+</comment>
+
+n = 400
+<kw>for</kw> i <kw>in</kw> range<sc>(</sc>1, n<sc>)</sc><sc>:</sc>
+    s.penup<sc>(</sc><sc>)</sc>
+    s.forward<sc>(</sc>i*5<sc>)</sc>
+    s.right<sc>(</sc>76<sc>)</sc>
+    s.begin_fill<sc>(</sc><sc>)</sc>
+    s.fillcolor<sc>(</sc>round<sc>(</sc>125*math.sin<sc>(</sc>20*i/n<sc>)</sc><sc>)</sc> + 125, 
+                round<sc>(</sc>125*math.sin<sc>(</sc>30*i/n<sc>)</sc><sc>)</sc> + 125, 
+                round<sc>(</sc>125*math.sin<sc>(</sc>i/n<sc>)</sc><sc>)</sc> + 125<sc>)</sc>
+    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>6<sc>)</sc><sc>:</sc> <comment Class="py"># nested loops
+</comment>        s.forward<sc>(</sc>20<sc>)</sc>
+        s.left<sc>(</sc>60<sc>)</sc>
+    s.end_fill<sc>(</sc><sc>)</sc>
+    s.right<sc>(</sc>95<sc>)</sc>
+
+</pre>
+</body></html>
