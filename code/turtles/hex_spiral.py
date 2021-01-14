@@ -9,6 +9,7 @@ screen.bgcolor(30,60,90)
 s.fillcolor((255,0,255)) # on a range of 0-255
 s.pensize(3)
 s.speed(0) # 1 - 10, but then 0 is faster than 10
+s.hideturtle()
 
 
 n = 400
