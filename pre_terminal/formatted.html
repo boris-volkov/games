@@ -117,6 +117,14 @@
 	window.scrollTo<sc>(</sc>0,document.body.scrollHeight<sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
+<comment Class="js">//TODO backspace doesn't work <kw>with</kw> <kw>this</kw> yet. 
+</comment><kw>function</kw> print_color<sc>(</sc>c, r, g, b<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> entry = <dbl_quote>"&ltspan style='</sgl_quote>color<sc>:</sc>rgb<sc>(</sc>"</dbl_quote> + r + <dbl_quote>","</dbl_quote> + g + <dbl_quote>","</dbl_quote> + b + <dbl_quote>"<sc>)</sc>'</sgl_quote>&gt"</dbl_quote> + c + <dbl_quote>"&lt/span&gt"</dbl_quote><sc>;</sc>
+	<comment Class="js">// write a character to screen and progress the cursor
+</comment>	terminal.innerHTML = terminal.innerHTML.slice<sc>(</sc>0,-1<sc>)</sc> + entry + cursor<sc>;</sc>
+	window.scrollTo<sc>(</sc>0,document.body.scrollHeight<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
 <comment Class="js">// print text and set up <kw>function</kw> to receive input
 </comment><kw>function</kw> ask<sc>(</sc>text, func<sc>)</sc> <sc>{</sc>
 	print<sc>(</sc>text<sc>)</sc><sc>;</sc>

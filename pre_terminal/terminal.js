@@ -66,6 +66,14 @@ function print(c) {
 	window.scrollTo(0,document.body.scrollHeight);
 }
 
+//TODO backspace doesn't work with this yet. 
+function print_color(c, r, g, b) {
+	let entry = "<span style='color:rgb(" + r + "," + g + "," + b + ")'>" + c + "</span>";
+	// write a character to screen and progress the cursor
+	terminal.innerHTML = terminal.innerHTML.slice(0,-1) + entry + cursor;
+	window.scrollTo(0,document.body.scrollHeight);
+}
+
 // print text and set up function to receive input
 function ask(text, func) {
 	print(text);

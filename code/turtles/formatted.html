@@ -1,31 +1,97 @@
 <!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/turtles/hex_spiral.py</div><pre class=py>
-<kw>import</kw> turtle, random, math
+<kw>import</kw> turtle, math
 
-s = turtle.Turtle<sc>(</sc><sc>)</sc>
-screen = turtle.Screen<sc>(</sc><sc>)</sc>
-screen.screensize<sc>(</sc>2000,2000<sc>)</sc>
-s.pencolor<sc>(</sc><dbl_quote>"white"</dbl_quote><sc>)</sc>
-screen.colormode<sc>(</sc>255<sc>)</sc>
-screen.bgcolor<sc>(</sc>30,60,90<sc>)</sc>
-s.fillcolor<sc>(</sc><sc>(</sc>255,0,255<sc>)</sc><sc>)</sc> <comment Class="py"># on a range of 0-255
-</comment>s.pensize<sc>(</sc>3<sc>)</sc>
-s.speed<sc>(</sc>0<sc>)</sc> <comment Class="py"># 1 - 10, but then 0 <kw>is</kw> faster than 10
-</comment>
+s = turtle.Screen<sc>(</sc><sc>)</sc>
+s.screensize<sc>(</sc>2000,2000<sc>)</sc>
+s.colormode<sc>(</sc>255<sc>)</sc>
+s.bgcolor<sc>(</sc>30,60,90<sc>)</sc>
+
+t = turtle.Turtle<sc>(</sc><sc>)</sc>
+t.fillcolor<sc>(</sc><sc>(</sc>255,0,255<sc>)</sc><sc>)</sc> <comment Class="py"># on a range of 0-255
+</comment>t.speed<sc>(</sc>0<sc>)</sc> <comment Class="py"># 1 - 10, but then 0 <kw>is</kw> faster than 10
+</comment>t.hideturtle<sc>(</sc><sc>)</sc>
+t.penup<sc>(</sc><sc>)</sc>
 
 n = 400
 <kw>for</kw> i <kw>in</kw> range<sc>(</sc>1, n<sc>)</sc><sc>:</sc>
-    s.penup<sc>(</sc><sc>)</sc>
-    s.forward<sc>(</sc>i*5<sc>)</sc>
-    s.right<sc>(</sc>76<sc>)</sc>
-    s.begin_fill<sc>(</sc><sc>)</sc>
-    s.fillcolor<sc>(</sc>round<sc>(</sc>125*math.sin<sc>(</sc>20*i/n<sc>)</sc><sc>)</sc> + 125, 
+    t.forward<sc>(</sc>i*5<sc>)</sc>
+    t.right<sc>(</sc>171<sc>)</sc>
+    t.begin_fill<sc>(</sc><sc>)</sc>
+    t.fillcolor<sc>(</sc>round<sc>(</sc>125*math.sin<sc>(</sc>20*i/n<sc>)</sc><sc>)</sc> + 125, 
                 round<sc>(</sc>125*math.sin<sc>(</sc>30*i/n<sc>)</sc><sc>)</sc> + 125, 
                 round<sc>(</sc>125*math.sin<sc>(</sc>i/n<sc>)</sc><sc>)</sc> + 125<sc>)</sc>
-    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>6<sc>)</sc><sc>:</sc> <comment Class="py"># nested loops
-</comment>        s.forward<sc>(</sc>20<sc>)</sc>
-        s.left<sc>(</sc>60<sc>)</sc>
-    s.end_fill<sc>(</sc><sc>)</sc>
-    s.right<sc>(</sc>95<sc>)</sc>
+    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>6<sc>)</sc><sc>:</sc> <comment Class="py"># hexagon
+</comment>        t.forward<sc>(</sc>20<sc>)</sc>
+        t.left<sc>(</sc>60<sc>)</sc>
+    t.end_fill<sc>(</sc><sc>)</sc>
 
+s.exitonclick<sc>(</sc><sc>)</sc>
+
+</pre>
+<div class="bookmark">./code/turtles/color_wheel.py</div><pre class=py>
+<kw>import</kw> turtle, math
+
+s = turtle.Screen<sc>(</sc><sc>)</sc>
+s.screensize<sc>(</sc>640,640<sc>)</sc>
+s.colormode<sc>(</sc>255<sc>)</sc>
+s.bgcolor<sc>(</sc><sc>(</sc>16,32,48<sc>)</sc><sc>)</sc>
+
+t = turtle.Turtle<sc>(</sc><sc>)</sc>
+t.hideturtle<sc>(</sc><sc>)</sc>
+t.speed<sc>(</sc>0<sc>)</sc>
+t.penup<sc>(</sc><sc>)</sc>
+
+n = 180 <comment Class="py"># number of colors
+</comment>
+<kw>def</kw> color<sc>(</sc>i, sat<sc>)</sc><sc>:</sc>
+    b = sat*math.sin<sc>(</sc>2*math.pi/n*<sc>(</sc>i<sc>)</sc><sc>)</sc> + 125
+    r = sat*math.sin<sc>(</sc>2*math.pi/n*<sc>(</sc>i+n/3<sc>)</sc><sc>)</sc> + 125
+    g = sat*math.sin<sc>(</sc>2*math.pi/n*<sc>(</sc>i+2*n/3<sc>)</sc><sc>)</sc> + 125
+    <kw>return</kw> <sc>(</sc>round<sc>(</sc>r<sc>)</sc>,round<sc>(</sc>g<sc>)</sc>,round<sc>(</sc>b<sc>)</sc><sc>)</sc>
+
+<kw>def</kw> spiral<sc>(</sc>i,r<sc>)</sc><sc>:</sc>
+    x = math.cos<sc>(</sc>2*math.pi/n*i<sc>)</sc>*r
+    y = math.sin<sc>(</sc>2*math.pi/n*i<sc>)</sc>*r
+    <kw>return</kw> <sc>(</sc>round<sc>(</sc>x<sc>)</sc>,round<sc>(</sc>y<sc>)</sc><sc>)</sc>
+
+<kw>for</kw> i <kw>in</kw> range<sc>(</sc>1,7<sc>)</sc><sc>:</sc>
+    <kw>for</kw> j <kw>in</kw> range<sc>(</sc>n<sc>)</sc><sc>:</sc>
+        x,y = spiral<sc>(</sc>j,280-40*i<sc>)</sc>
+        t.goto<sc>(</sc>x,y<sc>)</sc>
+        <kw>if</kw> j%i == 0<sc>:</sc>
+            t.pencolor<sc>(</sc>color<sc>(</sc>j, 125-20*i<sc>)</sc><sc>)</sc>
+            t.dot<sc>(</sc>100-8*i<sc>)</sc>
+
+s.exitonclick<sc>(</sc><sc>)</sc>
+</pre>
+<div class="bookmark">./code/turtles/fractal.py</div><pre class=py>
+<kw>import</kw> turtle
+
+s = turtle.Screen<sc>(</sc><sc>)</sc>
+s.screensize<sc>(</sc>2000,2000<sc>)</sc>
+s.colormode<sc>(</sc>255<sc>)</sc>
+s.bgcolor<sc>(</sc><sc>(</sc>16,32,48<sc>)</sc><sc>)</sc>
+
+t = turtle.Turtle<sc>(</sc><sc>)</sc>
+t.pensize<sc>(</sc>1<sc>)</sc>
+t.speed<sc>(</sc>0<sc>)</sc>
+t.pencolor<sc>(</sc><sc>(</sc>230, 200, 250<sc>)</sc><sc>)</sc>
+t.hideturtle<sc>(</sc><sc>)</sc>
+
+<kw>def</kw> fractal<sc>(</sc>length<sc>)</sc><sc>:</sc>
+    <kw>if</kw> length &lt= 2<sc>:</sc>
+        <kw>return</kw>
+    <kw>for</kw> i <kw>in</kw> range<sc>(</sc>3<sc>)</sc><sc>:</sc>
+        fractal<sc>(</sc>length//2<sc>)</sc>
+        t.left<sc>(</sc>360//3<sc>)</sc>
+        t.forward<sc>(</sc>length<sc>)</sc>
+
+t.penup<sc>(</sc><sc>)</sc>
+t.goto<sc>(</sc>500,-250<sc>)</sc>
+t.pendown<sc>(</sc><sc>)</sc>
+
+fractal<sc>(</sc>1024<sc>)</sc>
+
+s.exitonclick<sc>(</sc><sc>)</sc>
 </pre>
 </body></html>
