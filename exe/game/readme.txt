@@ -1,27 +1,18 @@
-here is a 2d physics engine that I wrote. 
-the little robot can jet around, jump multiple times, and throw a ball.
-he is controlled by the arrow keys or wasd.
-I don't have ipad controls for his motion yet, but you can throw the ball by tapping the screen, or clicking the mouse or stylus. 
+Here is a 2d game engine written in javascript using the HTML canvas interface. 
+The little robot can jet around, jump multiple times, and throw a ball.
 
-my goal was to get the jumping and movements to feel really satisfying. 
-I also put a lot of time into the trail looking nice.
+Keyboard/Mouse controls:
+	wasd/arrows: move
+	mouse: throw ball
+	[ : shorter trail
+	] : longer trail
+	- : thinner trail
+	= : wider trail
+	. : display physics
+	h : toggle platforms/floor
+	g : toggle sprite visibility
 
-here are the full keyboard controls:
-reccomended to use keyboard and mouse!
+As it is, this is not really a "game" yet, since there is not really any goal. Instead, it offers an engine that can be used as a foundation for a game. It is here to show you how you can start setting up keyboard controls, jumping, gravity, friction, collisions, item interactions, and animations - all the elements that are needed to start making a platformer game. There is quite a lot of code here, so be patient if you would like to understand this one. A lot of work goes into making the physics in a game feel right: is the movement smooth? do the collisions feel solid? is the jump satisfying? In a game it should feel fun just to move around, even if there is nothing to do.
 
-controls:
-wasd/arrows: move
-mouse: throw ball
-[ : shorter trail
-] : longer trail
-- : thinner trail
-= : wider trail
-. : display physics
-h : toggle platforms/floor
-g : toggle sprite visibility
-
-
-It was a difficult challenge to get everything feeling smooth.
-There is still room to grow here in terms of a feeling of solidity.
-
-Mario survived, while so many of his contemporaries were forgotten, primarilly because the JUMP felt so clean. A program should always strive to feel satisfying to use. 
+advanced practice:
+take any parts that you like from this code and combine them to make your own 2D game.
