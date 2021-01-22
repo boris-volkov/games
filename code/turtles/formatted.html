@@ -1,4 +1,22 @@
-<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/turtles/hex_spiral.py</div><pre class=py>
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./code/turtles/readme.txt</div><pre class=notes>
+Here is a small collection of sample Python turtle programs for example and inspiration.
+Note: some of these have a rather large screen size, so you may need to scroll around to see what is going on.
+
+You need a Python interpreter set up on your computer to run these.
+It can be downloaded for free from www.python.org
+
+These programs can either be copy-pasted into the interactive interpreter,
+or saved into a plain-text file with the extension .py, for example:
+
+hex_spiral.py (note the underscore to separate words!)
+
+you can then edit the code in your favorite text editor, and run it from a terminal (or power shell on windows) with the line:
+
+python3 hex_spiral.py
+
+You can of course also run them from an IDE if you have one set up.
+</pre>
+<div class="bookmark">./code/turtles/hex_spiral.py</div><pre class=py>
 <kw>import</kw> turtle, math
 
 s = turtle.Screen<sc>(</sc><sc>)</sc>
@@ -68,27 +86,27 @@ s.exitonclick<sc>(</sc><sc>)</sc>
 <kw>import</kw> turtle
 
 s = turtle.Screen<sc>(</sc><sc>)</sc>
-s.screensize<sc>(</sc>2000,2000<sc>)</sc>
+s.screensize<sc>(</sc>1152, 1024<sc>)</sc>
 s.colormode<sc>(</sc>255<sc>)</sc>
 s.bgcolor<sc>(</sc><sc>(</sc>16,32,48<sc>)</sc><sc>)</sc>
 
 t = turtle.Turtle<sc>(</sc><sc>)</sc>
 t.pensize<sc>(</sc>1<sc>)</sc>
 t.speed<sc>(</sc>0<sc>)</sc>
-t.pencolor<sc>(</sc><sc>(</sc>230, 200, 250<sc>)</sc><sc>)</sc>
+t.pencolor<sc>(</sc><sc>(</sc>230, 100, 250<sc>)</sc><sc>)</sc>
 t.hideturtle<sc>(</sc><sc>)</sc>
+t.penup<sc>(</sc><sc>)</sc>
+t.goto<sc>(</sc>0, 500<sc>)</sc>
+t.left<sc>(</sc>60<sc>)</sc>
+t.pendown<sc>(</sc><sc>)</sc>
 
 <kw>def</kw> fractal<sc>(</sc>length<sc>)</sc><sc>:</sc>
-    <kw>if</kw> length &lt= 2<sc>:</sc>
+    <kw>if</kw> length &lt= 4<sc>:</sc>
         <kw>return</kw>
     <kw>for</kw> i <kw>in</kw> range<sc>(</sc>3<sc>)</sc><sc>:</sc>
         fractal<sc>(</sc>length//2<sc>)</sc>
-        t.left<sc>(</sc>360//3<sc>)</sc>
+        t.right<sc>(</sc>120<sc>)</sc>
         t.forward<sc>(</sc>length<sc>)</sc>
-
-t.penup<sc>(</sc><sc>)</sc>
-t.goto<sc>(</sc>500,-250<sc>)</sc>
-t.pendown<sc>(</sc><sc>)</sc>
 
 fractal<sc>(</sc>1024<sc>)</sc>
 
