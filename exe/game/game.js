@@ -6,6 +6,7 @@ function start_animation(){
 		clear();
 		if (platforms === platforms1)
 			move_platforms();
+		new_acc();
 		new_vel();
 		new_pos();
 		ball_vel();

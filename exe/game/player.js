@@ -7,12 +7,19 @@ const player = {
 	dy			: 0			,
 	ddx 		: 0			, 
 	ddy 		: 1			,
+	dddx        : 0         ,
+	dddy        : 0         ,
 	on			: undefined	,
 	jumped   	: 0			,
 	friction 	: 0.5		,
 };
 
 let image = robot_standing;
+
+function new_acc() {
+	player.ddx += player.dddx;
+	player.ddy += player.dddy;
+}
 
 function new_vel() {
 	on_platform(player);	
@@ -65,10 +72,16 @@ function keyDown(e) {
 		case 'ArrowRight':
 			player.ddx = 1;
 			break;
-		case 'p':
+		case 'Escape':
 			clearInterval(interval_id);
 			break;
 		case 'h':
+			player.dddx = -1;
+			break;
+		case 'l':
+			player.dddx = 1;
+			break;
+		case 'p':
 			switch (platforms){
 				case platforms1:
 					platforms = platforms2;
@@ -112,10 +125,13 @@ function keyUp(e) {
 			break;
 		case 'a':
 		case 'ArrowLeft':
+		case 'd':
+		case 'ArrowRight':
 			player.ddx = 0;
 			break;
-		case 'd':
-		case'ArrowRight':
+		case 'h':
+		case 'l':
+			player.dddx = 0;
 			player.ddx = 0;
 			break;
 	}

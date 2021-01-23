@@ -85,6 +85,7 @@ take any parts that you like from this code and combine them to make your own 2D
 		clear<sc>(</sc><sc>)</sc><sc>;</sc>
 		<kw>if</kw> <sc>(</sc>platforms === platforms1<sc>)</sc>
 			move_platforms<sc>(</sc><sc>)</sc><sc>;</sc>
+		new_acc<sc>(</sc><sc>)</sc><sc>;</sc>
 		new_vel<sc>(</sc><sc>)</sc><sc>;</sc>
 		new_pos<sc>(</sc><sc>)</sc><sc>;</sc>
 		ball_vel<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -436,12 +437,19 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	dy			<sc>:</sc> 0			,
 	ddx 		<sc>:</sc> 0			, 
 	ddy 		<sc>:</sc> 1			,
+	dddx        <sc>:</sc> 0         ,
+	dddy        <sc>:</sc> 0         ,
 	on			<sc>:</sc> undefined	,
 	jumped   	<sc>:</sc> 0			,
 	friction 	<sc>:</sc> 0.5		,
 <sc>}</sc><sc>;</sc>
 
 <kw>let</kw> image = robot_standing<sc>;</sc>
+
+<kw>function</kw> new_acc<sc>(</sc><sc>)</sc> <sc>{</sc>
+	player.ddx += player.dddx<sc>;</sc>
+	player.ddy += player.dddy<sc>;</sc>
+<sc>}</sc>
 
 <kw>function</kw> new_vel<sc>(</sc><sc>)</sc> <sc>{</sc>
 	on_platform<sc>(</sc>player<sc>)</sc><sc>;</sc>	
@@ -494,10 +502,16 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 		<kw>case</kw> <sgl_quote>'ArrowRight'</sgl_quote><sc>:</sc>
 			player.ddx = 1<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'p'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'Escape'</sgl_quote><sc>:</sc>
 			clearInterval<sc>(</sc>interval_id<sc>)</sc><sc>;</sc>
 			<kw>break</kw><sc>;</sc>
 		<kw>case</kw> <sgl_quote>'h'</sgl_quote><sc>:</sc>
+			player.dddx = -1<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <sgl_quote>'l'</sgl_quote><sc>:</sc>
+			player.dddx = 1<sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <sgl_quote>'p'</sgl_quote><sc>:</sc>
 			<kw>switch</kw> <sc>(</sc>platforms<sc>)</sc><sc>{</sc>
 				<kw>case</kw> platforms1<sc>:</sc>
 					platforms = platforms2<sc>;</sc>
@@ -541,10 +555,13 @@ canvas.onpointerdown = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 			<kw>break</kw><sc>;</sc>
 		<kw>case</kw> <sgl_quote>'a'</sgl_quote><sc>:</sc>
 		<kw>case</kw> <sgl_quote>'ArrowLeft'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'d'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'ArrowRight'</sgl_quote><sc>:</sc>
 			player.ddx = 0<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
-		<kw>case</kw> <sgl_quote>'d'</sgl_quote><sc>:</sc>
-		<kw>case</kw><sgl_quote>'ArrowRight'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'h'</sgl_quote><sc>:</sc>
+		<kw>case</kw> <sgl_quote>'l'</sgl_quote><sc>:</sc>
+			player.dddx = 0<sc>;</sc>
 			player.ddx = 0<sc>;</sc>
 			<kw>break</kw><sc>;</sc>
 	<sc>}</sc>
