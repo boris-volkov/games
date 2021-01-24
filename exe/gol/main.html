@@ -1,20 +1,19 @@
 <html>
 	<head>
-		<style>
-body {
-	display: flex;
-	justify-content: center;
-	background-color: #123;
-}
-
-canvas{
-	cursor: crosshair;
-}
-
-		</style>
+		<link href="style.css" rel="stylesheet"></style>
 	</head>
 	<body>
-		<canvas id="canvas" />
+			<div class="outer">
+				<canvas id="canvas"></canvas>
+				<div class="control_bar">
+					<div id="step">⊵</div>
+					<div id="play">▶</div>
+					<div id="stop">■</div>
+					<div id="reset">≪</div>
+					<div id="clear">⊗</div>
+					<div id="gen_display">00000</div>
+				</div>
+			</div>
 			<script src="./game.js"></script>
 	</body>
 </html>

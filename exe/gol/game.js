@@ -1,17 +1,31 @@
 
 const canvas = document.querySelector("#canvas");
+const gen_display = document.querySelector("#gen_display");
+const play_button = document.querySelector("#play");
+const stop_button = document.querySelector("#stop");
+const step_button = document.querySelector("#step");
+const clear_button = document.querySelector("#clear");
+const reset_button = document.querySelector("#reset");
 
-let grid_size = 64;
+const urlParams = new URLSearchParams(window.location.search);
+var num_rows = parseInt( urlParams.get('rows'));
+if (isNaN(num_rows)) { num_rows = 48; }
+var num_cols = parseInt( urlParams.get('cols'));
+if (isNaN(num_cols)) { num_cols = 48; }
+
+let paused = false;
 let cell_width = 16;
+let grid = new Array(num_rows);
+let temp = new Array(num_rows);
+let undo_grid = new Array(num_rows);
+let interval = 100;
+let generations = 0;
+let undo_gen = 0;
 
-let grid = new Array(grid_size);
-let temp = new Array(grid_size);
-let undo_grid = new Array(grid_size);
-
-for (let i = 0; i < grid.length; i++){
-	grid[i] = new Array(grid_size).fill(0);
-	temp[i] = new Array(grid_size).fill(0);	
-	undo_grid[i] = new Array(grid_size).fill(0);	
+for (let i = 0; i < num_rows; i++){
+	grid[i] = new Array(num_cols).fill(0);
+	temp[i] = new Array(num_cols).fill(0);	
+	undo_grid[i] = new Array(num_cols).fill(0);	
 }
 
 canvas.height = grid.length * cell_width;
@@ -19,12 +33,7 @@ canvas.width = grid[0].length * cell_width;
 const c = canvas.getContext("2d");
 
 function next_generation(){
-	/*
-	Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-	Any live cell with two or three live neighbours lives on to the next generation.
-	Any live cell with more than three live neighbours dies, as if by overpopulation.
-	Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-	*/
+	generations++;
 	for (let row = 0; row < grid.length; row++){ // make new generation
 		for (let col = 0; col < grid[0].length; col++){
 			count = count_neighbors(row, col);
@@ -47,18 +56,22 @@ function next_generation(){
 			grid[row][col] = temp[row][col]        
 		}
 	}
+	clear_transparent();
 	grid_to_canvas();
+	print_generations();
 }
+
+step_button.onclick = next_generation;
 
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 };
 
 function count_neighbors(row, col) {
-	let up = (row-1).mod(grid_size);
-	let down = (row+1).mod(grid_size);
-	let left = (col-1).mod(grid_size);
-	let right = (col+1).mod(grid_size);
+	let up = (row-1).mod(num_rows);
+	let down = (row+1).mod(num_rows);
+	let left = (col-1).mod(num_cols);
+	let right = (col+1).mod(num_cols);
 	let count = 0;
 	if (grid[up][right] === 1)
 		count++;
@@ -80,42 +93,72 @@ function count_neighbors(row, col) {
 	return count;
 }
 
+function print_generations(){
+	gen_display.innerHTML = ('00000'+generations.toString()).slice(-5);
+}
+
+function print_count(){
+	live_counter.innerHTML = living;
+}
+
+let cushion = Math.round(cell_width/6)
+cushion -= cushion%2; // make sure it's even
+
 function clear() {
-	c.fillStyle = "rgba(16,32,48,1)";
-	c.fillRect(0,0, canvas.width, canvas.height);
-	c.fillStyle = "rgba(20,40,60,1)";
+	c.fillStyle = "rgba(35,40,50,1)";
 	for (let row = 0; row < grid.length; row++)
 		for (let col = 0; col < grid[0].length; col++)
-			c.fillRect(cell_width*col + 2, cell_width*row + 2, cell_width-4, cell_width-4);
+			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
+}
+
+function clear_transparent() {
+	c.fillStyle = "rgba(35,40,50,0.9)";
+	for (let row = 0; row < grid.length; row++)
+		for (let col = 0; col < grid[0].length; col++)
+			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
 }     
 
 function grid_to_canvas() {
-	clear();
 	c.fillStyle = "white";
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			if (grid[row][col] === 1)
-				c.fillRect(cell_width*col + 2, cell_width*row + 2, cell_width-4, cell_width-4);
+			if (grid[row][col] === 1){
+				c.fillStyle = "#fff";
+				c.beginPath();
+				c.arc(Math.round(col*cell_width + cell_width/2), 
+					    Math.round(row*cell_width + cell_width/2),
+					    Math.round(cell_width/4), 0, 2*Math.PI, false);
+				c.fill();
+			}
 		}
 	}
 }
 
 function init(){
-	c.fillStyle = "rgba(50,60,130,1)";
+	c.fillStyle = "#123";
 	c.fillRect(0,0, canvas.width, canvas.height);
+	clear();
 	grid_to_canvas();
 }
 
 function clear_grid(){
+	generations = 0;
+	print_generations();
+	stop();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			grid[row][col]= 0;
 			temp[row][col]= 0;
 		}
 	}
+	clear();
+	grid_to_canvas();
 }
 
+clear_button.onclick = clear_grid;
+
 function save_grid(){
+	undo_gen = generations;
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			undo_grid[row][col]= grid[row][col];
@@ -124,31 +167,65 @@ function save_grid(){
 }
 
 function reset_grid(){
+	generations = undo_gen;
+	print_generations();
+	stop();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			grid[row][col] = undo_grid[row][col];
 			temp[row][col] = undo_grid[row][col];
 		}
 	}
+	clear();
+	grid_to_canvas();
 }
 
-function pause(){
-		clearInterval(id)
-}
-
-function start(){
-		id = setInterval( next_generation, 50);
-}
-
+reset_button.onclick = reset_grid;
 
 let id;
+function stop(){
+	if (!paused)
+		clearInterval(id);
+	paused = true;
+}
+
+stop_button.onclick = stop;
+
+function play(){
+	save_grid();
+	if (paused)
+		id = setInterval(next_generation, interval);
+	paused = false;
+}
+
+play_button.onclick = play;
+
+function faster(){
+	if (interval <= 5)
+		return;
+	interval -= 5;
+	if (paused)
+		return;
+	stop();
+	play();
+}
+
+
+function slower(){
+	interval += 5;
+	if (paused)
+		return;
+	stop();
+	play()
+}
+
+
 document.onkeypress = (e) => {
-	if (e.key === 'p'){
-		pause();
-	}
 	if (e.key === 's'){
-		save_grid();
-		start();
+		stop();
+	}
+	if (e.key === 'p'){
+		play();
 	}
 	if (e.key === 'n'){
 		next_generation();
@@ -157,20 +234,30 @@ document.onkeypress = (e) => {
 		clear_grid();
 	}
 	if (e.key === 'r'){
-		pause();
 		reset_grid();
+	}
+	if (e.key === '+'){
+		faster();
+	}
+	if (e.key === '-'){
+		slower();
 	}
 	grid_to_canvas();
 }
 
 canvas.onclick = (event) => {
-	pause();
+	generations = 0;
+	print_generations();
+	stop();
 	bb = canvas.getBoundingClientRect(); 
 	let x = (event.clientX-bb.left)*(canvas.width/bb.width);
 	let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 	let col = Math.floor(x/cell_width);
 	let row = Math.floor(y/cell_width);
 	grid[row][col] ^= 1;
+	temp[row][col] ^= 1;
+	save_grid();
+	clear();
 	grid_to_canvas();
 }
 

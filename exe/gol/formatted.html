@@ -9,40 +9,109 @@
 <div class="bookmark">./exe/gol/main.html</div><pre class=html>
 <kw>&lthtml&gt</kw>
 	<kw>&lthead&gt</kw>
-		<kw>&ltstyle&gt</kw>
-body {
-	display: flex;
-	justify-content: center;
-	background-color: #123;
-}
-
-canvas{
-	cursor: crosshair;
-}
-
-		<kw>&lt/style&gt</kw>
+		<kw>&ltlink href="style.css" rel="stylesheet"&gt</kw><kw>&lt/style&gt</kw>
 	<kw>&lt/head&gt</kw>
 	<kw>&ltbody&gt</kw>
-		<kw>&ltcanvas id="canvas" /&gt</kw>
+			<kw>&ltdiv class="outer"&gt</kw>
+				<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
+				<kw>&ltdiv class="control_bar"&gt</kw>
+					<kw>&ltdiv id="step"&gt</kw>⊵<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="play"&gt</kw>▶<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="stop"&gt</kw>■<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="reset"&gt</kw>≪<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="clear"&gt</kw>⊗<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="gen_display"&gt</kw>00000<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
 			<kw>&ltscript src="./game.js"&gt</kw><kw>&lt/script&gt</kw>
 	<kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
+<div class="bookmark">./exe/gol/style.css</div><pre class=css>
+<css></css>
+<sc>body {</sc>
+<css>	cursor: crosshair;</css>
+<css>	display: flex;</css>
+<css>	justify-content: center;</css>
+<css>	background-color: #123;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>div.outer{</sc>
+<css>	display:flex;</css>
+<css>	flex-direction: column;</css>
+<css>	justify-content: center;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>div.control_bar{</sc>
+<css>	display: flex;</css>
+<css>	flex-direction: row;</css>
+<css>	align-content: center;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div {</sc>
+<css>	text-align : center;</css>
+<css>	background-color: rgb(35,40,50);</css>
+<css>	flex : 1;</css>
+<css>	color: #678;</css>
+<css>	padding-bottom: 10px;</css>
+<css>	padding-top: 10px;</css>
+<css>	-webkit-touch-callout: none;</css>
+<css>    -webkit-user-select: none;</css>
+<css>    -khtml-user-select: none;</css>
+<css>    -moz-user-select: none;</css>
+<css>    -ms-user-select: none;</css>
+<css>    user-select: none;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:hover {</sc>
+<css>	background-color: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:first-child{</sc>
+<css>	border-bottom-left-radius: 20px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:last-child{</sc>
+<css>	border-bottom-right-radius: 20px;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>canvas{</sc>
+<css>	box-sizing: content-box;</css>
+<css>	border: 1px solid rgb(35,40,50);</css>
+<sc>}</sc>
+</pre>
 <div class="bookmark">./exe/gol/game.js</div><pre class=js>
 
 <kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> gen_display = document.querySelector<sc>(</sc><dbl_quote>"#gen_display"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> play_button = document.querySelector<sc>(</sc><dbl_quote>"#play"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> stop_button = document.querySelector<sc>(</sc><dbl_quote>"#stop"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> step_button = document.querySelector<sc>(</sc><dbl_quote>"#step"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> clear_button = document.querySelector<sc>(</sc><dbl_quote>"#clear"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> reset_button = document.querySelector<sc>(</sc><dbl_quote>"#reset"</dbl_quote><sc>)</sc><sc>;</sc>
 
-<kw>let</kw> grid_size = 64<sc>;</sc>
+<kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
+<kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 48<sc>;</sc> <sc>}</sc>
+<kw>var</kw> num_cols = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'cols'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 48<sc>;</sc> <sc>}</sc>
+
+<kw>let</kw> paused = <kw>false</kw><sc>;</sc>
 <kw>let</kw> cell_width = 16<sc>;</sc>
+<kw>let</kw> grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<kw>let</kw> temp = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<kw>let</kw> undo_grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<kw>let</kw> interval = 100<sc>;</sc>
+<kw>let</kw> generations = 0<sc>;</sc>
+<kw>let</kw> undo_gen = 0<sc>;</sc>
 
-<kw>let</kw> grid = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-<kw>let</kw> temp = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-<kw>let</kw> undo_grid = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-
-<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt grid.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
-	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>
-	temp<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
-	undo_grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>grid_size<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
+<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>
+	temp<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
+	undo_grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
 <sc>}</sc>
 
 canvas.height = grid.length * cell_width<sc>;</sc>
@@ -50,12 +119,7 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 <kw>const</kw> c = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
 
 <kw>function</kw> next_generation<sc>(</sc><sc>)</sc><sc>{</sc>
-	<comment Class="js">/*
-	Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-	Any live cell with two or three live neighbours lives on to the next generation.
-	Any live cell with more than three live neighbours dies, as if by overpopulation.
-	Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-	*/</comment>
+	generations++<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc> <comment Class="js">// make <kw>new</kw> generation
 </comment>		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			count = count_neighbors<sc>(</sc>row, col<sc>)</sc><sc>;</sc>
@@ -78,18 +142,22 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>        
 		<sc>}</sc>
 	<sc>}</sc>
+	clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
+
+step_button.onclick = next_generation<sc>;</sc>
 
 Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
 	<kw>return</kw> <sc>(</sc><sc>(</sc><kw>this</kw>%n<sc>)</sc>+n<sc>)</sc>%n<sc>;</sc>
 <sc>}</sc><sc>;</sc>
 
 <kw>function</kw> count_neighbors<sc>(</sc>row, col<sc>)</sc> <sc>{</sc>
-	<kw>let</kw> up = <sc>(</sc>row-1<sc>)</sc>.mod<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-	<kw>let</kw> down = <sc>(</sc>row+1<sc>)</sc>.mod<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-	<kw>let</kw> left = <sc>(</sc>col-1<sc>)</sc>.mod<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
-	<kw>let</kw> right = <sc>(</sc>col+1<sc>)</sc>.mod<sc>(</sc>grid_size<sc>)</sc><sc>;</sc>
+	<kw>let</kw> up = <sc>(</sc>row-1<sc>)</sc>.mod<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+	<kw>let</kw> down = <sc>(</sc>row+1<sc>)</sc>.mod<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+	<kw>let</kw> left = <sc>(</sc>col-1<sc>)</sc>.mod<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
+	<kw>let</kw> right = <sc>(</sc>col+1<sc>)</sc>.mod<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
 	<kw>let</kw> count = 0<sc>;</sc>
 	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>up<sc>]</sc><sc>[</sc>right<sc>]</sc> === 1<sc>)</sc>
 		count++<sc>;</sc>
@@ -111,42 +179,72 @@ Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
 	<kw>return</kw> count<sc>;</sc>
 <sc>}</sc>
 
+<kw>function</kw> print_generations<sc>(</sc><sc>)</sc><sc>{</sc>
+	gen_display.innerHTML = <sc>(</sc><sgl_quote>'00000'</sgl_quote>+generations.toString<sc>(</sc><sc>)</sc><sc>)</sc>.slice<sc>(</sc>-5<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> print_count<sc>(</sc><sc>)</sc><sc>{</sc>
+	live_counter.innerHTML = living<sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> cushion = Math.round<sc>(</sc>cell_width/6<sc>)</sc>
+cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
+</comment>
 <kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>16,32,48,1<sc>)</sc>"</dbl_quote><sc>;</sc>
-	c.fillRect<sc>(</sc>0,0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>20,40,60,1<sc>)</sc>"</dbl_quote><sc>;</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,1<sc>)</sc>"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
-			c.fillRect<sc>(</sc>cell_width*col + 2, cell_width*row + 2, cell_width-4, cell_width-4<sc>)</sc><sc>;</sc>
+			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,0.9<sc>)</sc>"</dbl_quote><sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
+			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
 <sc>}</sc>     
 
 <kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc> <sc>{</sc>
-	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	c.fillStyle = <dbl_quote>"white"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
-			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> === 1<sc>)</sc>
-				c.fillRect<sc>(</sc>cell_width*col + 2, cell_width*row + 2, cell_width-4, cell_width-4<sc>)</sc><sc>;</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> === 1<sc>)</sc><sc>{</sc>
+				c.fillStyle = <dbl_quote>"#fff"</dbl_quote><sc>;</sc>
+				c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+				c.arc<sc>(</sc>Math.round<sc>(</sc>col*cell_width + cell_width/2<sc>)</sc>, 
+					    Math.round<sc>(</sc>row*cell_width + cell_width/2<sc>)</sc>,
+					    Math.round<sc>(</sc>cell_width/4<sc>)</sc>, 0, 2*Math.PI, <kw>false</kw><sc>)</sc><sc>;</sc>
+				c.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 <sc>}</sc>
 
 <kw>function</kw> init<sc>(</sc><sc>)</sc><sc>{</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>50,60,130,1<sc>)</sc>"</dbl_quote><sc>;</sc>
+	c.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
 	c.fillRect<sc>(</sc>0,0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 <kw>function</kw> clear_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+	generations = 0<sc>;</sc>
+	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= 0<sc>;</sc>
 			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= 0<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
+clear_button.onclick = clear_grid<sc>;</sc>
+
 <kw>function</kw> save_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+	undo_gen = generations<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
@@ -155,31 +253,65 @@ Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
 <sc>}</sc>
 
 <kw>function</kw> reset_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+	generations = undo_gen<sc>;</sc>
+	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
 			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-<kw>function</kw> pause<sc>(</sc><sc>)</sc><sc>{</sc>
-		clearInterval<sc>(</sc>id<sc>)</sc>
-<sc>}</sc>
-
-<kw>function</kw> start<sc>(</sc><sc>)</sc><sc>{</sc>
-		id = setInterval<sc>(</sc> next_generation, 50<sc>)</sc><sc>;</sc>
-<sc>}</sc>
-
+reset_button.onclick = reset_grid<sc>;</sc>
 
 <kw>let</kw> id<sc>;</sc>
+<kw>function</kw> stop<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc><sc>!</sc>paused<sc>)</sc>
+		clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
+	paused = true<sc>;</sc>
+<sc>}</sc>
+
+stop_button.onclick = stop<sc>;</sc>
+
+<kw>function</kw> play<sc>(</sc><sc>)</sc><sc>{</sc>
+	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
+		id = setInterval<sc>(</sc>next_generation, interval<sc>)</sc><sc>;</sc>
+	paused = <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+
+play_button.onclick = play<sc>;</sc>
+
+<kw>function</kw> faster<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>if</kw> <sc>(</sc>interval &lt= 5<sc>)</sc>
+		<kw>return</kw><sc>;</sc>
+	interval -= 5<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
+		<kw>return</kw><sc>;</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
+	play<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> slower<sc>(</sc><sc>)</sc><sc>{</sc>
+	interval += 5<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
+		<kw>return</kw><sc>;</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
+	play<sc>(</sc><sc>)</sc>
+<sc>}</sc>
+
+
 document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'p'</sgl_quote><sc>)</sc><sc>{</sc>
-		pause<sc>(</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'s'</sgl_quote><sc>)</sc><sc>{</sc>
-		save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
-		start<sc>(</sc><sc>)</sc><sc>;</sc>
+		stop<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'p'</sgl_quote><sc>)</sc><sc>{</sc>
+		play<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'n'</sgl_quote><sc>)</sc><sc>{</sc>
 		next_generation<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -188,20 +320,30 @@ document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
 		clear_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'r'</sgl_quote><sc>)</sc><sc>{</sc>
-		pause<sc>(</sc><sc>)</sc><sc>;</sc>
 		reset_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'+'</sgl_quote><sc>)</sc><sc>{</sc>
+		faster<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'-'</sgl_quote><sc>)</sc><sc>{</sc>
+		slower<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 canvas.onclick = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
-	pause<sc>(</sc><sc>)</sc><sc>;</sc>
+	generations = 0<sc>;</sc>
+	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
 	<kw>let</kw> x = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
 	<kw>let</kw> y = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
 	<kw>let</kw> col = Math.floor<sc>(</sc>x/cell_width<sc>)</sc><sc>;</sc>
 	<kw>let</kw> row = Math.floor<sc>(</sc>y/cell_width<sc>)</sc><sc>;</sc>
 	grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> ^= 1<sc>;</sc>
+	temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> ^= 1<sc>;</sc>
+	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
