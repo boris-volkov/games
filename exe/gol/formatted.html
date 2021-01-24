@@ -16,8 +16,8 @@
 				<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
 				<kw>&ltdiv class="control_bar"&gt</kw>
 					<kw>&ltdiv id="step"&gt</kw>⊵<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="play"&gt</kw>▶<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="stop"&gt</kw>■<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="play"&gt</kw>⊳<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="stop"&gt</kw>⊡<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="reset"&gt</kw>≪<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="clear"&gt</kw>⊗<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="gen_display"&gt</kw>00000<kw>&lt/div&gt</kw>
@@ -95,9 +95,9 @@
 
 <kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
 <kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
-<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 48<sc>;</sc> <sc>}</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 40<sc>;</sc> <sc>}</sc>
 <kw>var</kw> num_cols = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'cols'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
-<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 48<sc>;</sc> <sc>}</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 40<sc>;</sc> <sc>}</sc>
 
 <kw>let</kw> paused = <kw>false</kw><sc>;</sc>
 <kw>let</kw> cell_width = 16<sc>;</sc>

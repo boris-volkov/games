@@ -9,9 +9,9 @@ const reset_button = document.querySelector("#reset");
 
 const urlParams = new URLSearchParams(window.location.search);
 var num_rows = parseInt( urlParams.get('rows'));
-if (isNaN(num_rows)) { num_rows = 48; }
+if (isNaN(num_rows)) { num_rows = 40; }
 var num_cols = parseInt( urlParams.get('cols'));
-if (isNaN(num_cols)) { num_cols = 48; }
+if (isNaN(num_cols)) { num_cols = 40; }
 
 let paused = false;
 let cell_width = 16;
