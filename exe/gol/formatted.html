@@ -39,6 +39,7 @@ Additionally, for speed there are also keyboard controls:
 		[s]  stop
 		[x]  clear
 		[r]  reset to last setup
+		[?]  randomize
 
 Oh, and one more important detail: I've altered the game a little here. The trouble is in how to deal with the edges of the board. There are several ways to answer this question: you can treat it as if your board is just a section of an infinite board stretching out in all directions, so if you send out a glider, it will just go on out of the edge and on to infinity. Another way is to treat the squares outside of the board as if they do not exist at all, as if there is a wall around the boundary of the grid. In this universe, a glider will hit the wall and turn into a 2x2 square. There is another way, which is to topologically identify the grid as a torus, by linking the right edge to the left edge, and the top edge to the bottom edge. In this world, a spaceship the leaves the left edge, will fly in seamlessly from the left edge. (like the old asteroids game) This is the way that I have chosen for this current application. I've found that there is more opportunity for life in this kind of universe, though of course this is not quite the "classic game of life" in which you can do crazy things like set up  Turing Machines that operate things like digital clocks and even the game of life itself. In order to mod this torroidal universe into that infinite one, you will have to adjust the count neighbors function, and add methods to dynamically resize the grid based on where the action is. This would be a good project.
 
@@ -129,41 +130,50 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <sc>}</sc>
 </pre>
 <div class="bookmark">./exe/gol/game.js</div><pre class=js>
-
-<kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> gen_display = document.querySelector<sc>(</sc><dbl_quote>"#gen_display"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> play_button = document.querySelector<sc>(</sc><dbl_quote>"#play"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> stop_button = document.querySelector<sc>(</sc><dbl_quote>"#stop"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> step_button = document.querySelector<sc>(</sc><dbl_quote>"#step"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> clear_button = document.querySelector<sc>(</sc><dbl_quote>"#clear"</dbl_quote><sc>)</sc><sc>;</sc>
+<comment Class="js">// calling all the elements from the html document <kw>for</kw> the bottom control bar.
+</comment><comment Class="js">// there they are just &ltdiv&gt's but here we turn them into buttons
+</comment><kw>const</kw> step_button  = document.querySelector<sc>(</sc><dbl_quote>"#step"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> play_button  = document.querySelector<sc>(</sc><dbl_quote>"#play"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> stop_button  = document.querySelector<sc>(</sc><dbl_quote>"#stop"</dbl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> reset_button = document.querySelector<sc>(</sc><dbl_quote>"#reset"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> clear_button = document.querySelector<sc>(</sc><dbl_quote>"#clear"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> gen_display  = document.querySelector<sc>(</sc><dbl_quote>"#gen_display"</dbl_quote><sc>)</sc><sc>;</sc>
 
+<kw>let</kw> paused      = true<sc>;</sc><comment Class="js">// game starts off paused.
+</comment><kw>let</kw> interval    = 100<sc>;</sc> <comment Class="js">// milliseconds per generation
+</comment><kw>let</kw> generations = 0<sc>;</sc>   <comment Class="js">// generation counter, resets when adding <kw>new</kw> pieces
+</comment>
+<comment Class="js">// initialize display
+</comment><kw>const</kw> canvas       = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
-<kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>let</kw> cell_width = 16<sc>;</sc> <comment Class="js">// pixels on the display. will get squeezed to fit left-right
+</comment>
+<comment Class="js">// get url params <kw>for</kw> grid size, or set <kw>default</kw> 40
+</comment><kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 <kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 40<sc>;</sc> <sc>}</sc>
 <kw>var</kw> num_cols = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'cols'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 <kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 40<sc>;</sc> <sc>}</sc>
 
-<kw>let</kw> paused = <kw>false</kw><sc>;</sc>
-<kw>let</kw> cell_width = 16<sc>;</sc>
-<kw>let</kw> grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<comment Class="js">// initialize grids
+</comment><kw>let</kw> grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 <kw>let</kw> temp = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 <kw>let</kw> undo_grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
-<kw>let</kw> interval = 100<sc>;</sc>
-<kw>let</kw> generations = 0<sc>;</sc>
-<kw>let</kw> undo_gen = 0<sc>;</sc>
-
 <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
 	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>
 	temp<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
 	undo_grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
 <sc>}</sc>
 
-canvas.height = grid.length * cell_width<sc>;</sc>
+<comment Class="js">// match graphics context to grid size
+</comment>canvas.height = grid.length * cell_width<sc>;</sc>
 canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
-<kw>const</kw> c = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
-
-<kw>function</kw> next_generation<sc>(</sc><sc>)</sc><sc>{</sc>
+<kw>const</kw> c = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc> 
+<comment Class="js">// <kw>this</kw> c is important<sc>!</sc> it is your messenger to the screen.
+</comment><comment Class="js">// it is similar to the turtle <kw>in</kw> that you give it commands
+</comment><comment Class="js">// to draw things on the screen. Here, rectangles and circles.
+</comment>
+<comment Class="js">// game logic
+</comment><kw>function</kw> next_generation<sc>(</sc><sc>)</sc><sc>{</sc>
 	generations++<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc> <comment Class="js">// make <kw>new</kw> generation
 </comment>		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
@@ -187,19 +197,22 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>        
 		<sc>}</sc>
 	<sc>}</sc>
-	clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
+	<comment Class="js">// <kw>this</kw> <kw>function</kw> is responsible <kw>for</kw> calling its successors
+</comment>	clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-
 step_button.onclick = next_generation<sc>;</sc>
 
-Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
+
+<comment Class="js">// because javascript % is strange
+</comment>Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
 	<kw>return</kw> <sc>(</sc><sc>(</sc><kw>this</kw>%n<sc>)</sc>+n<sc>)</sc>%n<sc>;</sc>
 <sc>}</sc><sc>;</sc>
 
 <kw>function</kw> count_neighbors<sc>(</sc>row, col<sc>)</sc> <sc>{</sc>
-	<kw>let</kw> up = <sc>(</sc>row-1<sc>)</sc>.mod<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+	<comment Class="js">// <kw>this</kw> stuff is to identify the grid as a Torus
+</comment>	<kw>let</kw> up = <sc>(</sc>row-1<sc>)</sc>.mod<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 	<kw>let</kw> down = <sc>(</sc>row+1<sc>)</sc>.mod<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 	<kw>let</kw> left = <sc>(</sc>col-1<sc>)</sc>.mod<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
 	<kw>let</kw> right = <sc>(</sc>col+1<sc>)</sc>.mod<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
@@ -228,28 +241,32 @@ Number.prototype.mod = <kw>function</kw><sc>(</sc>n<sc>)</sc> <sc>{</sc>
 	gen_display.innerHTML = <sc>(</sc><sgl_quote>'00000'</sgl_quote>+generations.toString<sc>(</sc><sc>)</sc><sc>)</sc>.slice<sc>(</sc>-5<sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-<kw>function</kw> print_count<sc>(</sc><sc>)</sc><sc>{</sc>
+<comment Class="js">// not on the page yet
+</comment><kw>function</kw> print_count<sc>(</sc><sc>)</sc><sc>{</sc>
 	live_counter.innerHTML = living<sc>;</sc>
 <sc>}</sc>
 
-<kw>let</kw> cushion = Math.round<sc>(</sc>cell_width/6<sc>)</sc>
+
+<comment Class="js">// <kw>this</kw> cushion creats padding between the squares.
+</comment><kw>let</kw> cushion = Math.round<sc>(</sc>cell_width/6<sc>)</sc>
 cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
-</comment>
-<kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
+</comment><kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
 	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,1<sc>)</sc>"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
 			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-<kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,0.9<sc>)</sc>"</dbl_quote><sc>;</sc>
+<comment Class="js">// the transparent fill is what gives the afterglow effect
+</comment><kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,0.8<sc>)</sc>"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
 			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
 <sc>}</sc>     
 
-<kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc> <sc>{</sc>
+<comment Class="js">// drawing the circles that are alive
+</comment><kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc> <sc>{</sc>
 	c.fillStyle = <dbl_quote>"white"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
@@ -265,14 +282,17 @@ cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
 	<sc>}</sc>
 <sc>}</sc>
 
-<kw>function</kw> init<sc>(</sc><sc>)</sc><sc>{</sc>
+<comment Class="js">// initial condition of the screen
+</comment><kw>function</kw> init<sc>(</sc><sc>)</sc><sc>{</sc>
 	c.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
 	c.fillRect<sc>(</sc>0,0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-<kw>function</kw> clear_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+
+<comment Class="js">// utility functions
+</comment><kw>function</kw> clear_grid<sc>(</sc><sc>)</sc><sc>{</sc>
 	generations = 0<sc>;</sc>
 	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -285,11 +305,9 @@ cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-
 clear_button.onclick = clear_grid<sc>;</sc>
 
 <kw>function</kw> save_grid<sc>(</sc><sc>)</sc><sc>{</sc>
-	undo_gen = generations<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
@@ -298,7 +316,7 @@ clear_button.onclick = clear_grid<sc>;</sc>
 <sc>}</sc>
 
 <kw>function</kw> reset_grid<sc>(</sc><sc>)</sc><sc>{</sc>
-	generations = undo_gen<sc>;</sc>
+	generations = 0<sc>;</sc>
 	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
@@ -309,6 +327,25 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> randomize<sc>(</sc><sc>)</sc><sc>{</sc>
+	stop<sc>(</sc><sc>)</sc><sc>;</sc>
+	generationa = 0<sc>;</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
+			<kw>let</kw> choice<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>Math.random<sc>(</sc><sc>)</sc> &lt 0.2<sc>)</sc>
+				choice = 1<sc>;</sc>
+			<kw>else</kw>
+				choice = 0<sc>;</sc>
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = choice<sc>;</sc>
+			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = choice<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
+	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 reset_button.onclick = reset_grid<sc>;</sc>
@@ -371,6 +408,9 @@ document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
 	<sc>}</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'-'</sgl_quote><sc>)</sc><sc>{</sc>
 		slower<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'?'</sgl_quote><sc>)</sc><sc>{</sc>
+		randomize<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>

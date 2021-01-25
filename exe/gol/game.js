@@ -1,37 +1,46 @@
-
-const canvas = document.querySelector("#canvas");
-const gen_display = document.querySelector("#gen_display");
-const play_button = document.querySelector("#play");
-const stop_button = document.querySelector("#stop");
-const step_button = document.querySelector("#step");
-const clear_button = document.querySelector("#clear");
+// calling all the elements from the html document for the bottom control bar.
+// there they are just <div>'s but here we turn them into buttons
+const step_button  = document.querySelector("#step");
+const play_button  = document.querySelector("#play");
+const stop_button  = document.querySelector("#stop");
 const reset_button = document.querySelector("#reset");
+const clear_button = document.querySelector("#clear");
+const gen_display  = document.querySelector("#gen_display");
 
+let paused      = true;// game starts off paused.
+let interval    = 100; // milliseconds per generation
+let generations = 0;   // generation counter, resets when adding new pieces
+
+// initialize display
+const canvas       = document.querySelector("#canvas");
 const urlParams = new URLSearchParams(window.location.search);
+let cell_width = 16; // pixels on the display. will get squeezed to fit left-right
+
+// get url params for grid size, or set default 40
 var num_rows = parseInt( urlParams.get('rows'));
 if (isNaN(num_rows)) { num_rows = 40; }
 var num_cols = parseInt( urlParams.get('cols'));
 if (isNaN(num_cols)) { num_cols = 40; }
 
-let paused = false;
-let cell_width = 16;
+// initialize grids
 let grid = new Array(num_rows);
 let temp = new Array(num_rows);
 let undo_grid = new Array(num_rows);
-let interval = 100;
-let generations = 0;
-let undo_gen = 0;
-
 for (let i = 0; i < num_rows; i++){
 	grid[i] = new Array(num_cols).fill(0);
 	temp[i] = new Array(num_cols).fill(0);	
 	undo_grid[i] = new Array(num_cols).fill(0);	
 }
 
+// match graphics context to grid size
 canvas.height = grid.length * cell_width;
 canvas.width = grid[0].length * cell_width;
-const c = canvas.getContext("2d");
+const c = canvas.getContext("2d"); 
+// this c is important! it is your messenger to the screen.
+// it is similar to the turtle in that you give it commands
+// to draw things on the screen. Here, rectangles and circles.
 
+// game logic
 function next_generation(){
 	generations++;
 	for (let row = 0; row < grid.length; row++){ // make new generation
@@ -56,18 +65,21 @@ function next_generation(){
 			grid[row][col] = temp[row][col]        
 		}
 	}
+	// this function is responsible for calling its successors
 	clear_transparent();
 	grid_to_canvas();
 	print_generations();
 }
-
 step_button.onclick = next_generation;
 
+
+// because javascript % is strange
 Number.prototype.mod = function(n) {
 	return ((this%n)+n)%n;
 };
 
 function count_neighbors(row, col) {
+	// this stuff is to identify the grid as a Torus
 	let up = (row-1).mod(num_rows);
 	let down = (row+1).mod(num_rows);
 	let left = (col-1).mod(num_cols);
@@ -97,13 +109,15 @@ function print_generations(){
 	gen_display.innerHTML = ('00000'+generations.toString()).slice(-5);
 }
 
+// not on the page yet
 function print_count(){
 	live_counter.innerHTML = living;
 }
 
+
+// this cushion creats padding between the squares.
 let cushion = Math.round(cell_width/6)
 cushion -= cushion%2; // make sure it's even
-
 function clear() {
 	c.fillStyle = "rgba(35,40,50,1)";
 	for (let row = 0; row < grid.length; row++)
@@ -111,13 +125,15 @@ function clear() {
 			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
 }
 
+// the transparent fill is what gives the afterglow effect
 function clear_transparent() {
-	c.fillStyle = "rgba(35,40,50,0.9)";
+	c.fillStyle = "rgba(35,40,50,0.8)";
 	for (let row = 0; row < grid.length; row++)
 		for (let col = 0; col < grid[0].length; col++)
 			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
 }     
 
+// drawing the circles that are alive
 function grid_to_canvas() {
 	c.fillStyle = "white";
 	for (let row = 0; row < grid.length; row++){
@@ -134,6 +150,7 @@ function grid_to_canvas() {
 	}
 }
 
+// initial condition of the screen
 function init(){
 	c.fillStyle = "#123";
 	c.fillRect(0,0, canvas.width, canvas.height);
@@ -141,6 +158,8 @@ function init(){
 	grid_to_canvas();
 }
 
+
+// utility functions
 function clear_grid(){
 	generations = 0;
 	print_generations();
@@ -154,11 +173,9 @@ function clear_grid(){
 	clear();
 	grid_to_canvas();
 }
-
 clear_button.onclick = clear_grid;
 
 function save_grid(){
-	undo_gen = generations;
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			undo_grid[row][col]= grid[row][col];
@@ -167,7 +184,7 @@ function save_grid(){
 }
 
 function reset_grid(){
-	generations = undo_gen;
+	generations = 0;
 	print_generations();
 	stop();
 	for (let row = 0; row < grid.length; row++){
@@ -178,6 +195,25 @@ function reset_grid(){
 	}
 	clear();
 	grid_to_canvas();
+}
+
+function randomize(){
+	stop();
+	generationa = 0;
+	for (let row = 0; row < grid.length; row++){
+		for (let col = 0; col < grid[0].length; col++){
+			let choice;
+			if (Math.random() < 0.2)
+				choice = 1;
+			else
+				choice = 0;
+			grid[row][col] = choice;
+			temp[row][col] = choice;
+		}
+	}
+	clear();
+	grid_to_canvas();
+	save_grid();
 }
 
 reset_button.onclick = reset_grid;
@@ -240,6 +276,9 @@ document.onkeypress = (e) => {
 	}
 	if (e.key === '-'){
 		slower();
+	}
+	if (e.key === '?'){
+		randomize();
 	}
 	grid_to_canvas();
 }

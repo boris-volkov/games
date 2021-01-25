@@ -30,6 +30,7 @@ Additionally, for speed there are also keyboard controls:
 		[s]  stop
 		[x]  clear
 		[r]  reset to last setup
+		[?]  randomize
 
 Oh, and one more important detail: I've altered the game a little here. The trouble is in how to deal with the edges of the board. There are several ways to answer this question: you can treat it as if your board is just a section of an infinite board stretching out in all directions, so if you send out a glider, it will just go on out of the edge and on to infinity. Another way is to treat the squares outside of the board as if they do not exist at all, as if there is a wall around the boundary of the grid. In this universe, a glider will hit the wall and turn into a 2x2 square. There is another way, which is to topologically identify the grid as a torus, by linking the right edge to the left edge, and the top edge to the bottom edge. In this world, a spaceship the leaves the left edge, will fly in seamlessly from the left edge. (like the old asteroids game) This is the way that I have chosen for this current application. I've found that there is more opportunity for life in this kind of universe, though of course this is not quite the "classic game of life" in which you can do crazy things like set up  Turing Machines that operate things like digital clocks and even the game of life itself. In order to mod this torroidal universe into that infinite one, you will have to adjust the count neighbors function, and add methods to dynamically resize the grid based on where the action is. This would be a good project.
 
