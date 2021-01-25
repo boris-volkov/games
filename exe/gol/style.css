@@ -4,10 +4,12 @@ body {
 	display: flex;
 	justify-content: center;
 	background-color: #123;
+	overflow: auto;
 }
 
 
 div.outer{
+	margin-top: 5px;
 	display:flex;
 	flex-direction: column;
 	justify-content: center;
@@ -35,7 +37,7 @@ div.control_bar{
     user-select: none;
 }
 
-.control_bar div:hover {
+.control_bar div:active {
 	background-color: #358;
 }
 
@@ -49,6 +51,5 @@ div.control_bar{
 
 
 canvas{
-	box-sizing: content-box;
 	border: 1px solid rgb(35,40,50);
 }
