@@ -192,7 +192,6 @@ function stop(){
 stop_button.onclick = stop;
 
 function play(){
-	save_grid();
 	if (paused)
 		id = setInterval(next_generation, interval);
 	paused = false;
