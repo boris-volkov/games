@@ -4,7 +4,6 @@ body {
 	display: flex;
 	justify-content: center;
 	background-color: #123;
-	overflow: auto;
 }
 
 
@@ -13,13 +12,14 @@ div.outer{
 	display:flex;
 	flex-direction: column;
 	justify-content: center;
+	overflow: auto;
 }
 
 
 div.control_bar{
 	display: flex;
 	flex-direction: row;
-	align-content: center;
+	align-content: space-between;
 }
 
 .control_bar div {
