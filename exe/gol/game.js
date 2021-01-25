@@ -199,7 +199,8 @@ function reset_grid(){
 
 function randomize(){
 	stop();
-	generationa = 0;
+	generations = 0;
+	print_generations();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			let choice;
