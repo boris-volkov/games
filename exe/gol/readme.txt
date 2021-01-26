@@ -5,7 +5,7 @@ This particular game progresses by the following rules:
     Any live cell with two or three live neighbours lives on to the next generation.
     Any live cell with more than three live neighbours dies, as if by overpopulation.
     Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-oOr, equivalently:
+Or, equivalently:
     Any live cell with two or three live neighbours survives.
     Any dead cell with three live neighbours becomes a live cell.
     All other live cells die in the next generation. Similarly, all other dead cells stay dead.
