@@ -1,0 +1,46 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Ѭ</title>
+		<link href="style.css" rel="stylesheet"/>
+	</head>
+
+	<body>
+		<div class ="outer">
+			<div id="control">
+				<input type="text" id="parens"></input>
+				<div id="button">⊳</div>
+				<div id="clear">⊗</div>
+			</div>
+			<div id="display">
+				<div id="picture">
+					Enter a valid string of brackets above.<br/>
+					For example: [(())()]()<br/>
+					Then press play or ENTER.<br/>
+					Round brackets create column divs,<br/> 
+					Square brackets create row divs<br/>
+					The class definitions assume that you <br/>
+					have your style defined as on the right.<br/>
+				</div>
+				<pre id="html">&ltbody&gt<br/>&lt/body&gt</pre>
+				<pre id="css">
+div {
+  display:flex;
+}
+
+div.r {
+  flex-direction:row;
+}
+
+div.c {
+  flex-direction:column;
+}
+				</pre>
+			</div>
+			<script src="script.js"></script>
+		</div>
+	</body>
+</html>
+

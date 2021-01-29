@@ -1,0 +1,321 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./web/nesting/readme.txt</div><pre class=notes>
+There is a natural correspondence between strings of parentheses and the nesting structures of html pages.
+
+()() is a legal string of parentheses, and corresponds to a layout with two divisions separate from each other.
+
+(()) is another legal arrangement, corresponding to a layout with one division inside of another.
+
+Hn contrast, ())( is not a legal arrangement, and does not correspond to any layout. In general, every opening bracket must be matched by exactly one closing bracket. Every division that is opened must be closed.
+
+With two types of brackets this gets more complex, as ()[] is a legal arrangement, but (][) is not, even though there is a closer for every opener, they also need to be of the same type. ([)] is also illegal since the square bracket opens inside of the round brackets, it must also close within them.
+
+This tool lets you enter strings of brackets, and displays the general page structure that it corresponds to, as well as the properly indented html code which would set up that structure. An "opener bracket" ( or [, corresponds to a division opener &ltdiv&gt and a "closer bracket" ) or ], corresponds to a division closer &lt/div&gt
+
+Again, 
+	opener: ( or [  =  &ltdiv&gt
+	closer: ) or ]  =  &lt/div&gt
+
+() round brackets create column-oriented divisions, and [] square brackets create row-oriented divisions. This is done by the class labels and the corresponding entries in the style sheet. The class names r and c, standing for row and column, are arbitrary, but something like them is needed to link to the stylesheet.
+
+You can use this tool to plan out your page layouts and then copy the html into your own editor to continue the work. 
+</pre>
+<div class="bookmark">./web/nesting/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="utf-8"&gt</kw>
+		<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+		<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv class ="outer"&gt</kw>
+			<kw>&ltdiv id="control"&gt</kw>
+				<kw>&ltinput type="text" id="parens"&gt</kw><kw>&lt/input&gt</kw>
+				<kw>&ltdiv id="button"&gt</kw>⊳<kw>&lt/div&gt</kw>
+				<kw>&ltdiv id="clear"&gt</kw>⊗<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="display"&gt</kw>
+				<kw>&ltdiv id="picture"&gt</kw>
+					Enter a valid string of brackets above.<kw>&ltbr/&gt</kw>
+					For example: [(())()]()<kw>&ltbr/&gt</kw>
+					Then press play or ENTER.<kw>&ltbr/&gt</kw>
+					Round brackets create column divs,<kw>&ltbr/&gt</kw> 
+					Square brackets create row divs<kw>&ltbr/&gt</kw>
+					The class definitions assume that you <kw>&ltbr/&gt</kw>
+					have your style defined as on the right.<kw>&ltbr/&gt</kw>
+				<kw>&lt/div&gt</kw>
+				<kw>&ltpre id="html"&gt</kw>&ltbody&gt<kw>&ltbr/&gt</kw>&lt/body&gt<kw>&lt/pre&gt</kw>
+				<kw>&ltpre id="css"&gt</kw>
+div {
+  display:flex;
+}
+
+div.r {
+  flex-direction:row;
+}
+
+div.c {
+  flex-direction:column;
+}
+				<kw>&lt/pre&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltscript src="script.js"&gt</kw><kw>&lt/script&gt</kw>
+		<kw>&lt/div&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+
+</pre>
+<div class="bookmark">./web/nesting/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	background-color: #123;</css>
+<css>	display:flex;</css>
+<css>	justify-content: center;</css>
+<css>	align-items: center;</css>
+<css>	flex-wrap: wrap;</css>
+<css>	flex-direction: column;</css>
+<css>	font: 12px Courier new;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	justify-content: space-evenly;</css>
+<sc>}</sc>
+<css></css>
+<sc>input {</sc>
+<css>	background-color: #567;</css>
+<css>	padding: 5px;</css>
+<css>	margin: 5px;</css>
+<css>	border-radius: 10px;</css>
+<css>	font: 18px Courier;</css>
+<css>	letter-spacing: 1px;</css>
+<css>	color: coral;</css>
+<css>	border: none;</css>
+<css>	flex:1;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.holder {</sc>
+<css>	background-color: #567;</css>
+<css>	border-color: #678!important;</css>
+<css>	border-style: solid;</css>
+<css>	border-top-color: #556;</css>
+<css>	border-left-color: #456;</css>
+<css>	border-bottom-color: #789;</css>
+<css>	border-right-color: #789;</css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	display: flex;  <comment class="css">/* divs need to declare it too */</comment></css>
+<css>	margin: 10px;  	<comment class="css">/* padding and margin are what */</comment></css>
+<css>	padding: 10px;	<comment class="css">/* give empty divs a "size" */</comment></css>
+<css>	color: #678;</css>
+<css>	flex-direction: column;</css>
+<css>	border-style: solid;</css>
+<css>	border-top-color: #556;</css>
+<css>	border-left-color: #456;</css>
+<css>	border-bottom-color: #789;</css>
+<css>	border-right-color: #789;</css>
+<css>	border-width: 4px;</css>
+<css>	<comment class="css">/*border:none;*/</comment></css>
+<css>	color : coral;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.r{</sc>
+<css>	flex-direction: row;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.c{</sc>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#picture {</sc>
+<css>	background-color: #123;</css>
+<css>	padding:0;</css>
+<css>	border:none;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#button, div#clear{</sc>
+<css>	padding:6px;</css>
+<css>	margin:6px;</css>
+<css>	border : outset;</css>
+<css>	-webkit-user-select: none; <comment class="css">/* Safari */</comment></css>
+<css>	-moz-user-select: none; <comment class="css">/* Firefox */</comment></css>
+<css>	-ms-user-select: none; <comment class="css">/* IE10+/Edge */</comment></css>
+<css>	user-select: none; <comment class="css">/* Standard */</comment></css>
+<sc>}</sc>
+<css></css>
+<sc>div#button:active, div#clear:active{</sc>
+<css>	border: inset;</css>
+<sc>}</sc>
+<css></css>
+<sc>div#control, div#display{</sc>
+<css>	padding:2px;</css>
+<css>	margin:2px;</css>
+<css>	flex-direction: row;</css>
+<css>	border : #345 solid;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<sc>div#display {</sc>
+<css>	border-top: none;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre{</sc>
+<css>	border-radius: 10px;</css>
+<css>	padding: 10px;</css>
+<css>	margin: 5px;</css>
+<css>	line-height : 1.5em;</css>
+<css>	letter-spacing : 2px;</css>
+<css>	white-space: pre-wrap;  <comment class="css">/* to wrap text */</comment></css>
+<css>	word-break: break-all;	<comment class="css">/* so words don't get broken in wrap */</comment></css>
+<css>	background-color: #375;</css>
+<css>	color: yellow;</css>
+<css>	font: 12px Courier new;</css>
+<sc>}</sc>
+<css></css>
+<sc>pre#css{</sc>
+<css>	background-color: #366;</css>
+<css>	color: #eee;</css>
+<sc>}</sc>
+<css></css>
+<sc>.outer {</sc>
+<css>	border:none;</css>
+<css>	padding:0;</css>
+<sc>}</sc>
+</pre>
+<div class="bookmark">./web/nesting/script.js</div><pre class=js>
+
+<kw>const</kw> form         = document.querySelector<sc>(</sc><dbl_quote>"#parens"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> button       = document.querySelector<sc>(</sc><dbl_quote>"#button"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> picture      = document.querySelector<sc>(</sc><dbl_quote>"#picture"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> html_display = document.querySelector<sc>(</sc><dbl_quote>"#html"</dbl_quote><sc>)</sc><sc>;</sc>
+
+
+<comment Class="js">/*
+function get_color(depth){
+    let red = 150 - 12 * depth
+    let green = 150 - 15 * depth
+    let blue = 150 - 18 * depth
+    return red, green, blue;
+}
+*/</comment>
+
+<kw>function</kw> submit_parens<sc>(</sc><sc>)</sc><sc>{</sc>
+	<kw>let</kw> writing_content = <kw>false</kw><sc>;</sc>
+	<kw>let</kw> string = form.value<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>test<sc>(</sc>string<sc>)</sc> === <kw>false</kw><sc>)</sc> <sc>{</sc>
+		reset<sc>(</sc><sc>)</sc><sc>;</sc><sc>;</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+	_of = <sgl_quote>'&ltdiv Class="holder"&gt'</sgl_quote><sc>;</sc>
+	_html = <sgl_quote>'&ltbody&gt&ltbr/&gt'</sgl_quote><sc>;</sc>
+    <kw>let</kw> depth = 0<sc>;</sc>
+    <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt string.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>writing_content && <sgl_quote>'<sc>[</sc><sc>]</sc><sc>(</sc><sc>)</sc>'</sgl_quote>.includes<sc>(</sc>string<sc>[</sc>i<sc>]</sc><sc>)</sc><sc>)</sc><sc>{</sc>
+			writing_content = <kw>false</kw><sc>;</sc>
+			_html += <dbl_quote>"&ltbr/&gt"</dbl_quote><sc>;</sc>
+		<sc>}</sc>
+        <kw>if</kw> <sc>(</sc>string<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>(</sc>'</sgl_quote><sc>)</sc><sc>{</sc>
+            depth += 1<sc>;</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt depth<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+				_of += <sgl_quote>' '</sgl_quote><sc>;</sc>
+				_html += <sgl_quote>'&nbsp&nbsp'</sgl_quote><sc>;</sc>
+			<sc>}</sc>
+            _of += <sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="c"&gt'</sgl_quote> + <sgl_quote>'\n'</sgl_quote><sc>)</sc><sc>;</sc>
+			_html += <sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="c"&gt&ltbr/&gt'</sgl_quote><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>string<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>)</sc>'</sgl_quote><sc>)</sc> <sc>{</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt depth<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+				_of += <sgl_quote>' '</sgl_quote><sc>;</sc>
+				_html += <sgl_quote>'&nbsp&nbsp'</sgl_quote><sc>;</sc>
+			<sc>}</sc>
+            _of += <sc>(</sc><sgl_quote>'&lt/div&gt\n'</sgl_quote><sc>)</sc><sc>;</sc>
+			_html += <sc>(</sc><sgl_quote>'&lt/div&gt&ltbr/&gt'</sgl_quote><sc>)</sc><sc>;</sc>
+            depth -= 1<sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>string<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>[</sc>'</sgl_quote><sc>)</sc> <sc>{</sc>
+			depth += 1
+			<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt depth<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+				_of += <sgl_quote>' '</sgl_quote><sc>;</sc>
+				_html += <sgl_quote>'&nbsp&nbsp'</sgl_quote><sc>;</sc>
+			<sc>}</sc>
+            _of += <sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="r"&gt\n'</sgl_quote><sc>)</sc><sc>;</sc>
+			_html += <sc>(</sc><sgl_quote>'&ltdiv <kw>class</kw>="r"&gt&ltbr/&gt'</sgl_quote><sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <kw>if</kw> <sc>(</sc>string<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>]</sc>'</sgl_quote><sc>)</sc> <sc>{</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt depth<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+				_of += <sgl_quote>' '</sgl_quote><sc>;</sc>
+				_html += <sgl_quote>'&nbsp&nbsp'</sgl_quote><sc>;</sc>
+			<sc>}</sc>
+            _of += <sc>(</sc><sgl_quote>'&lt/div&gt\n'</sgl_quote><sc>)</sc><sc>;</sc>
+			_html += <sc>(</sc><sgl_quote>'&lt/div&gt&ltbr/&gt'</sgl_quote><sc>)</sc><sc>;</sc>
+			depth -= 1<sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc>
+			<kw>if</kw> <sc>(</sc>writing_content<sc>)</sc><sc>{</sc>
+				_html += string<sc>[</sc>i<sc>]</sc><sc>;</sc>
+				_of += string<sc>[</sc>i<sc>]</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc>
+				<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt depth + 1<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+					_html += <sgl_quote>'&nbsp&nbsp'</sgl_quote><sc>;</sc>
+				<sc>}</sc>
+				_of += string<sc>[</sc>i<sc>]</sc><sc>;</sc>
+				_html += <sc>(</sc>string<sc>[</sc>i<sc>]</sc><sc>)</sc>
+				writing_content = true<sc>;</sc><sc>;</sc> 
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+    _of += <sgl_quote>'&lt/div&gt'</sgl_quote><sc>;</sc>
+	_html += <sgl_quote>'&lt/body&gt'</sgl_quote><sc>;</sc>
+	picture.innerHTML = _of<sc>;</sc>
+	html_display.innerHTML = _html<sc>;</sc>
+
+<sc>}</sc>
+
+<kw>function</kw> reset<sc>(</sc><sc>)</sc><sc>{</sc>
+	html_display.innerHTML = <sgl_quote>'?'</sgl_quote>
+	picture.innerHTML = <sgl_quote>'invalid'</sgl_quote><sc>;</sc>
+	<kw>return</kw> <kw>false</kw><sc>;</sc>
+<sc>}</sc>
+
+
+<kw>function</kw> test<sc>(</sc>x<sc>)</sc><sc>{</sc>
+	<kw>let</kw> s = <sc>[</sc><sc>]</sc><sc>;</sc> <comment Class="js">// stack
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i&ltx.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>x<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>(</sc>'</sgl_quote><sc>)</sc>
+			s.push<sc>(</sc><sgl_quote>'<sc>(</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>x<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>)</sc>'</sgl_quote><sc>)</sc>
+			<kw>if</kw> <sc>(</sc>s.pop<sc>(</sc><sc>)</sc> === <sgl_quote>'<sc>(</sc>'</sgl_quote><sc>)</sc>
+				<kw>continue</kw><sc>;</sc>
+			<kw>else</kw>
+				<kw>return</kw> <kw>false</kw><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>x<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>[</sc>'</sgl_quote><sc>)</sc>
+			s.push<sc>(</sc><sgl_quote>'<sc>[</sc>'</sgl_quote><sc>)</sc><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>x<sc>[</sc>i<sc>]</sc> === <sgl_quote>'<sc>]</sc>'</sgl_quote><sc>)</sc>
+			<kw>if</kw> <sc>(</sc>s.pop<sc>(</sc><sc>)</sc> === <sgl_quote>'<sc>[</sc>'</sgl_quote><sc>)</sc>
+				<kw>continue</kw><sc>;</sc>
+			<kw>else</kw>
+				<kw>return</kw> <kw>false</kw><sc>;</sc>
+	<sc>}</sc>
+	<kw>return</kw> <sc>(</sc>s.length === 0<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+button.onclick = submit_parens<sc>;</sc>
+clear.onclick = <sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+	form.value = <sgl_quote>''</sgl_quote><sc>;</sc>
+	picture.innerHTML = <dbl_quote>"Enter a valid string of parenthese above.&ltbr/&gtFor example<sc>:</sc> <sc>(</sc><sc>(</sc><sc>)</sc><sc>)</sc><sc>(</sc><sc>)</sc>&ltbr/&gtThen press play or ENTER&ltbr/&gt"</dbl_quote><sc>;</sc>
+	html_display.innerHTML = <sgl_quote>''</sgl_quote><sc>;</sc>
+<sc>}</sc><sc>;</sc>
+document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <dbl_quote>"Enter"</dbl_quote><sc>)</sc>
+		submit_parens<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>;</sc>
+
+
+            <comment Class="js">//_of += <sc>(</sc>' '*depth + '&ltdiv style="background<sc>:</sc>rgb<sc>{</sc>0<sc>}</sc>"&gt'.format<sc>(</sc>get_color<sc>(</sc>depth<sc>)</sc><sc>)</sc> + '\n'<sc>)</sc>
+</comment></pre>
+</body></html>

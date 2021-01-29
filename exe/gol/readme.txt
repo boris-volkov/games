@@ -21,7 +21,7 @@ this combination, for example:
 		░░●░░░░░░
 		░░░░░░░░░
 
-evolves in a very interesting way. Can you find any other interesting patterns? Click on squares to turn them on. The counter at the bottom right of the board counts how many generations have passed since you last clicked. You can make a generation pass by pressing the leftmost button, or you can play it as an animation with the play button. The square pauses the game, and the back button returns you to your last set up. The final button clears the screen. You can alwalys just refresh the page to reset it as well.
+evolves in a very interesting way. Can you find any other interesting patterns? Click on squares to turn them on/off. The counter at the bottom right of the board counts how many generations have passed since you last clicked. You can make a generation pass by pressing the leftmost button, or you can play it as an animation with the play button. The square pauses the game, and the back button returns you to your last set up. The final button clears the screen. You can alwalys just refresh the page to reset it as well.
 
 Additionally, for speed there are also keyboard controls:
 

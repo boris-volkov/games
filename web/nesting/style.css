@@ -1,0 +1,114 @@
+body {
+	background-color: #123;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	flex-direction: column;
+	font: 12px Courier new;
+}
+
+div {
+	justify-content: space-evenly;
+}
+
+input {
+	background-color: #567;
+	padding: 5px;
+	margin: 5px;
+	border-radius: 10px;
+	font: 18px Courier;
+	letter-spacing: 1px;
+	color: coral;
+	border: none;
+	flex:1;
+}
+
+div.holder {
+	background-color: #567;
+	border-color: #678!important;
+	border-style: solid;
+	border-top-color: #556;
+	border-left-color: #456;
+	border-bottom-color: #789;
+	border-right-color: #789;
+}
+
+div {
+	display: flex;  /* divs need to declare it too */
+	margin: 10px;  	/* padding and margin are what */
+	padding: 10px;	/* give empty divs a "size" */
+	color: #678;
+	flex-direction: column;
+	border-style: solid;
+	border-top-color: #556;
+	border-left-color: #456;
+	border-bottom-color: #789;
+	border-right-color: #789;
+	border-width: 4px;
+	/*border:none;*/
+	color : coral;
+}
+
+div.r{
+	flex-direction: row;
+}
+
+div.c{
+	flex-direction: column;
+}
+
+div#picture {
+	background-color: #123;
+	padding:0;
+	border:none;
+}
+
+div#button, div#clear{
+	padding:6px;
+	margin:6px;
+	border : outset;
+	-webkit-user-select: none; /* Safari */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+/Edge */
+	user-select: none; /* Standard */
+}
+
+div#button:active, div#clear:active{
+	border: inset;
+}
+
+div#control, div#display{
+	padding:2px;
+	margin:2px;
+	flex-direction: row;
+	border : #345 solid;
+}
+
+
+div#display {
+	border-top: none;
+}
+
+pre{
+	border-radius: 10px;
+	padding: 10px;
+	margin: 5px;
+	line-height : 1.5em;
+	letter-spacing : 2px;
+	white-space: pre-wrap;  /* to wrap text */
+	word-break: break-all;	/* so words don't get broken in wrap */
+	background-color: #375;
+	color: yellow;
+	font: 12px Courier new;
+}
+
+pre#css{
+	background-color: #366;
+	color: #eee;
+}
+
+.outer {
+	border:none;
+	padding:0;
+}
