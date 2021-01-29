@@ -6,6 +6,7 @@ const stop_button  = document.querySelector("#stop");
 const reset_button = document.querySelector("#reset");
 const clear_button = document.querySelector("#clear");
 const gen_display  = document.querySelector("#gen_display");
+const random_button = document.querySelector("#randomize");
 
 let paused      = true;// game starts off paused.
 let interval    = 100; // milliseconds per generation
@@ -217,6 +218,7 @@ function randomize(){
 	save_grid();
 }
 
+random_button.onclick = randomize;
 reset_button.onclick = reset_grid;
 
 let id;

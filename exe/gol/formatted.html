@@ -65,6 +65,7 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 					<kw>&ltdiv id="stop"&gt</kw>⊡<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="reset"&gt</kw>≪<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="clear"&gt</kw>⊗<kw>&lt/div&gt</kw>
+					<kw>&ltdiv id="randomize"&gt</kw>?<kw>&lt/div&gt</kw>
 					<kw>&ltdiv id="gen_display"&gt</kw>00000<kw>&lt/div&gt</kw>
 				<kw>&lt/div&gt</kw>
 			<kw>&lt/div&gt</kw>
@@ -138,6 +139,7 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <kw>const</kw> reset_button = document.querySelector<sc>(</sc><dbl_quote>"#reset"</dbl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> clear_button = document.querySelector<sc>(</sc><dbl_quote>"#clear"</dbl_quote><sc>)</sc><sc>;</sc>
 <kw>const</kw> gen_display  = document.querySelector<sc>(</sc><dbl_quote>"#gen_display"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> random_button = document.querySelector<sc>(</sc><dbl_quote>"#randomize"</dbl_quote><sc>)</sc><sc>;</sc>
 
 <kw>let</kw> paused      = true<sc>;</sc><comment Class="js">// game starts off paused.
 </comment><kw>let</kw> interval    = 100<sc>;</sc> <comment Class="js">// milliseconds per generation
@@ -349,6 +351,7 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
+random_button.onclick = randomize<sc>;</sc>
 reset_button.onclick = reset_grid<sc>;</sc>
 
 <kw>let</kw> id<sc>;</sc>
