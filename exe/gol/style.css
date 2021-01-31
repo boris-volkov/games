@@ -29,6 +29,7 @@ div.control_bar{
 	background-color: rgb(35,40,50);
 	flex : 1;
 	color: #678;
+	font-family: Courier new;
 	padding-bottom: 10px;
 	padding-top: 10px;
 	-webkit-touch-callout: none;
