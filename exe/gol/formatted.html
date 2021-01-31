@@ -57,18 +57,20 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 		<kw>&ltlink href="style.css" rel="stylesheet"&gt</kw><kw>&lt/style&gt</kw>
 	<kw>&lt/head&gt</kw>
 	<kw>&ltbody&gt</kw>
-			<kw>&ltdiv class="outer"&gt</kw>
+		<kw>&ltdiv class="control_bar"&gt</kw>
+			<kw>&ltdiv id="step"&gt</kw>next<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="play"&gt</kw>play<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="stop"&gt</kw>stop<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="reset"&gt</kw>reset<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="clear"&gt</kw>clear<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="randomize"&gt</kw>random<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="gen_display"&gt</kw>00000<kw>&lt/div&gt</kw>
+		<kw>&lt/div&gt</kw>
+
+
+		<kw>&ltdiv class="outer"&gt</kw>
 				<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
-				<kw>&ltdiv class="control_bar"&gt</kw>
-					<kw>&ltdiv id="step"&gt</kw>⊵<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="play"&gt</kw>⊳<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="stop"&gt</kw>⊡<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="reset"&gt</kw>≪<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="clear"&gt</kw>⊗<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="randomize"&gt</kw>?<kw>&lt/div&gt</kw>
-					<kw>&ltdiv id="gen_display"&gt</kw>00000<kw>&lt/div&gt</kw>
-				<kw>&lt/div&gt</kw>
-			<kw>&lt/div&gt</kw>
+						<kw>&lt/div&gt</kw>
 			<kw>&ltscript src="./game.js"&gt</kw><kw>&lt/script&gt</kw>
 	<kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
@@ -77,8 +79,6 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <css></css>
 <sc>body {</sc>
 <css>	cursor: crosshair;</css>
-<css>	display: flex;</css>
-<css>	justify-content: center;</css>
 <css>	background-color: #123;</css>
 <sc>}</sc>
 <css></css>
@@ -88,11 +88,16 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <css>	display:flex;</css>
 <css>	flex-direction: column;</css>
 <css>	justify-content: center;</css>
-<css>	overflow: auto;</css>
+<css>	<comment class="css">/*overflow: auto;*/</comment></css>
 <sc>}</sc>
 <css></css>
 <css></css>
 <sc>div.control_bar{</sc>
+<css>	display: block;</css>
+<css>	margin: auto;</css>
+<css>	width: 95vw;</css>
+<css>	position: sticky;</css>
+<css>	top: 0;</css>
 <css>	display: flex;</css>
 <css>	flex-direction: row;</css>
 <css>	align-content: space-between;</css>
@@ -111,10 +116,15 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <css>    -moz-user-select: none;</css>
 <css>    -ms-user-select: none;</css>
 <css>    user-select: none;</css>
+<css>	opacity: 0.8;</css>
 <sc>}</sc>
 <css></css>
 <sc>.control_bar div:active {</sc>
 <css>	background-color: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:hover {</sc>
+<css>	background-color: #245;</css>
 <sc>}</sc>
 <css></css>
 <sc>.control_bar div:first-child{</sc>
@@ -128,6 +138,8 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <css></css>
 <sc>canvas{</sc>
 <css>	border: 1px solid rgb(35,40,50);</css>
+<css>	display: block;</css>
+<css>	margin:auto;</css>
 <sc>}</sc>
 </pre>
 <div class="bookmark">./exe/gol/game.js</div><pre class=js>
@@ -146,23 +158,23 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 </comment><kw>let</kw> generations = 0<sc>;</sc>   <comment Class="js">// generation counter, resets when adding <kw>new</kw> pieces
 </comment>
 <comment Class="js">// initialize display
-</comment><kw>const</kw> canvas       = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
-<kw>let</kw> cell_width = 16<sc>;</sc> <comment Class="js">// pixels on the display. will get squeezed to fit left-right
+</comment><kw>const</kw> canvas    = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>let</kw> cell_width  = 20<sc>;</sc> <comment Class="js">// pixels on the display. will get squeezed to fit left-right
 </comment>
 <comment Class="js">// get url params <kw>for</kw> grid size, or set <kw>default</kw> 40
-</comment><kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
-<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 40<sc>;</sc> <sc>}</sc>
+</comment><kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
+<kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 64<sc>;</sc> <sc>}</sc>
 <kw>var</kw> num_cols = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'cols'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
-<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 40<sc>;</sc> <sc>}</sc>
+<kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_cols<sc>)</sc><sc>)</sc> <sc>{</sc> num_cols = 64<sc>;</sc> <sc>}</sc>
 
 <comment Class="js">// initialize grids
-</comment><kw>let</kw> grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
-<kw>let</kw> temp = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+</comment><kw>let</kw> grid      = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
+<kw>let</kw> temp      = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 <kw>let</kw> undo_grid = <kw>new</kw> Array<sc>(</sc>num_rows<sc>)</sc><sc>;</sc>
 <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
-	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>
-	temp<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
+	grid<sc>[</sc>i<sc>]</sc>      = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>
+	temp<sc>[</sc>i<sc>]</sc>      = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
 	undo_grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc>	
 <sc>}</sc>
 
@@ -191,6 +203,8 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 			<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">// <kw>if</kw> dead
 </comment>				<kw>if</kw> <sc>(</sc>count === 3<sc>)</sc>
 					temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = 1<sc>;</sc>
+				<kw>else</kw> 
+					temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = 0<sc>;</sc>
 			<sc>}</sc>	
 		<sc>}</sc>
 	<sc>}</sc>
@@ -248,24 +262,50 @@ step_button.onclick = next_generation<sc>;</sc>
 	live_counter.innerHTML = living<sc>;</sc>
 <sc>}</sc>
 
+c.strokeStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
+c.lineWidth = 4<sc>;</sc>
 
-<comment Class="js">// <kw>this</kw> cushion creats padding between the squares.
-</comment><kw>let</kw> cushion = Math.round<sc>(</sc>cell_width/6<sc>)</sc>
-cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
-</comment><kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,1<sc>)</sc>"</dbl_quote><sc>;</sc>
-	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
-		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
-			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
+<kw>function</kw> stroke_grid<sc>(</sc><sc>)</sc> <sc>{</sc>
+	
+	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
+		c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+		c.moveTo<sc>(</sc>0, row*cell_width<sc>)</sc><sc>;</sc>
+		c.lineTo<sc>(</sc>canvas.width, row*cell_width<sc>)</sc><sc>;</sc>
+		c.stroke<sc>(</sc><sc>)</sc><sc>;</sc> 
+	<sc>}</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
+		c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+		c.moveTo<sc>(</sc>col*cell_width, 0<sc>)</sc><sc>;</sc>
+		c.lineTo<sc>(</sc>col*cell_width, canvas.height<sc>)</sc><sc>;</sc>
+		c.stroke<sc>(</sc><sc>)</sc><sc>;</sc> 
+	<sc>}</sc>
 <sc>}</sc>
 
+<kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>32,45,55,1<sc>)</sc>"</dbl_quote><sc>;</sc>
+	c.fillRect<sc>(</sc>0, 0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+	stroke_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>let</kw> opacity = 0.7<sc>;</sc><sc>;</sc>
 <comment Class="js">// the transparent fill is what gives the afterglow effect
 </comment><kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
-	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>35,40,50,0.8<sc>)</sc>"</dbl_quote><sc>;</sc>
-	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc>
-		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc>
-			c.fillRect<sc>(</sc>cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion<sc>)</sc><sc>;</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>32,45,55,"</dbl_quote> + opacity + <dbl_quote>"<sc>)</sc>"</dbl_quote><sc>;</sc>
+	c.fillRect<sc>(</sc>0, 0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+	stroke_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>     
+
+<kw>function</kw> raise_opacity<sc>(</sc><sc>)</sc> <sc>{</sc>
+	opacity += 0.05<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>opacity &gt 1<sc>)</sc>
+		opacity = 1<sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> lower_opacity<sc>(</sc><sc>)</sc> <sc>{</sc>
+	opacity -= 0.05<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>opacity &lt0<sc>)</sc>
+		opacity = 0<sc>;</sc>
+<sc>}</sc>
 
 <comment Class="js">// drawing the circles that are alive
 </comment><kw>function</kw> grid_to_canvas<sc>(</sc><sc>)</sc> <sc>{</sc>
@@ -273,11 +313,11 @@ cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> === 1<sc>)</sc><sc>{</sc>
-				c.fillStyle = <dbl_quote>"#fff"</dbl_quote><sc>;</sc>
+				c.fillStyle = <dbl_quote>"#bfc"</dbl_quote><sc>;</sc>
 				c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
 				c.arc<sc>(</sc>Math.round<sc>(</sc>col*cell_width + cell_width/2<sc>)</sc>, 
 					    Math.round<sc>(</sc>row*cell_width + cell_width/2<sc>)</sc>,
-					    Math.round<sc>(</sc>cell_width/4<sc>)</sc>, 0, 2*Math.PI, <kw>false</kw><sc>)</sc><sc>;</sc>
+					    Math.round<sc>(</sc>cell_width/3<sc>)</sc>, 0, 2*Math.PI, <kw>false</kw><sc>)</sc><sc>;</sc>
 				c.fill<sc>(</sc><sc>)</sc><sc>;</sc>
 			<sc>}</sc>
 		<sc>}</sc>
@@ -301,7 +341,6 @@ cushion -= cushion%2<sc>;</sc> <comment Class="js">// make sure it's even
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= 0<sc>;</sc>
-			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc>= 0<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -324,7 +363,6 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
-			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = undo_grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -343,7 +381,6 @@ clear_button.onclick = clear_grid<sc>;</sc>
 			<kw>else</kw>
 				choice = 0<sc>;</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = choice<sc>;</sc>
-			temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> = choice<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -387,7 +424,7 @@ play_button.onclick = play<sc>;</sc>
 	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
 		<kw>return</kw><sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
-	play<sc>(</sc><sc>)</sc>
+	play<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 
@@ -416,6 +453,12 @@ document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'?'</sgl_quote><sc>)</sc><sc>{</sc>
 		randomize<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'<sc>[</sc>'</sgl_quote><sc>)</sc><sc>{</sc>
+		raise_opacity<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'<sc>]</sc>'</sgl_quote><sc>)</sc><sc>{</sc>
+		lower_opacity<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
@@ -429,7 +472,6 @@ canvas.onclick = <sc>(</sc>event<sc>)</sc> =&gt <sc>{</sc>
 	<kw>let</kw> col = Math.floor<sc>(</sc>x/cell_width<sc>)</sc><sc>;</sc>
 	<kw>let</kw> row = Math.floor<sc>(</sc>y/cell_width<sc>)</sc><sc>;</sc>
 	grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> ^= 1<sc>;</sc>
-	temp<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> ^= 1<sc>;</sc>
 	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>

@@ -13,23 +13,23 @@ let interval    = 100; // milliseconds per generation
 let generations = 0;   // generation counter, resets when adding new pieces
 
 // initialize display
-const canvas       = document.querySelector("#canvas");
-const urlParams = new URLSearchParams(window.location.search);
-let cell_width = 16; // pixels on the display. will get squeezed to fit left-right
+const canvas    = document.querySelector("#canvas");
+let cell_width  = 20; // pixels on the display. will get squeezed to fit left-right
 
 // get url params for grid size, or set default 40
+const urlParams = new URLSearchParams(window.location.search);
 var num_rows = parseInt( urlParams.get('rows'));
-if (isNaN(num_rows)) { num_rows = 40; }
+if (isNaN(num_rows)) { num_rows = 64; }
 var num_cols = parseInt( urlParams.get('cols'));
-if (isNaN(num_cols)) { num_cols = 40; }
+if (isNaN(num_cols)) { num_cols = 64; }
 
 // initialize grids
-let grid = new Array(num_rows);
-let temp = new Array(num_rows);
+let grid      = new Array(num_rows);
+let temp      = new Array(num_rows);
 let undo_grid = new Array(num_rows);
 for (let i = 0; i < num_rows; i++){
-	grid[i] = new Array(num_cols).fill(0);
-	temp[i] = new Array(num_cols).fill(0);	
+	grid[i]      = new Array(num_cols).fill(0);
+	temp[i]      = new Array(num_cols).fill(0);	
 	undo_grid[i] = new Array(num_cols).fill(0);	
 }
 
@@ -58,6 +58,8 @@ function next_generation(){
 			} else { // if dead
 				if (count === 3)
 					temp[row][col] = 1;
+				else 
+					temp[row][col] = 0;
 			}	
 		}
 	}
@@ -115,24 +117,50 @@ function print_count(){
 	live_counter.innerHTML = living;
 }
 
+c.strokeStyle = "#123";
+c.lineWidth = 4;
 
-// this cushion creats padding between the squares.
-let cushion = Math.round(cell_width/6)
-cushion -= cushion%2; // make sure it's even
-function clear() {
-	c.fillStyle = "rgba(35,40,50,1)";
-	for (let row = 0; row < grid.length; row++)
-		for (let col = 0; col < grid[0].length; col++)
-			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
+function stroke_grid() {
+	
+	for (let row = 0; row < grid.length; row++){
+		c.beginPath();
+		c.moveTo(0, row*cell_width);
+		c.lineTo(canvas.width, row*cell_width);
+		c.stroke(); 
+	}
+	for (let col = 0; col < grid[0].length; col++){
+		c.beginPath();
+		c.moveTo(col*cell_width, 0);
+		c.lineTo(col*cell_width, canvas.height);
+		c.stroke(); 
+	}
 }
 
+function clear() {
+	c.fillStyle = "rgba(32,45,55,1)";
+	c.fillRect(0, 0, canvas.width, canvas.height);
+	stroke_grid();
+}
+
+let opacity = 0.7;;
 // the transparent fill is what gives the afterglow effect
 function clear_transparent() {
-	c.fillStyle = "rgba(35,40,50,0.8)";
-	for (let row = 0; row < grid.length; row++)
-		for (let col = 0; col < grid[0].length; col++)
-			c.fillRect(cell_width*col + cushion, cell_width*row + cushion, cell_width-2*cushion, cell_width-2*cushion);
+	c.fillStyle = "rgba(32,45,55," + opacity + ")";
+	c.fillRect(0, 0, canvas.width, canvas.height);
+	stroke_grid();
 }     
+
+function raise_opacity() {
+	opacity += 0.05;
+	if (opacity > 1)
+		opacity = 1;
+}
+
+function lower_opacity() {
+	opacity -= 0.05;
+	if (opacity <0)
+		opacity = 0;
+}
 
 // drawing the circles that are alive
 function grid_to_canvas() {
@@ -140,11 +168,11 @@ function grid_to_canvas() {
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			if (grid[row][col] === 1){
-				c.fillStyle = "#fff";
+				c.fillStyle = "#bfc";
 				c.beginPath();
 				c.arc(Math.round(col*cell_width + cell_width/2), 
 					    Math.round(row*cell_width + cell_width/2),
-					    Math.round(cell_width/4), 0, 2*Math.PI, false);
+					    Math.round(cell_width/3), 0, 2*Math.PI, false);
 				c.fill();
 			}
 		}
@@ -168,7 +196,6 @@ function clear_grid(){
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			grid[row][col]= 0;
-			temp[row][col]= 0;
 		}
 	}
 	clear();
@@ -191,7 +218,6 @@ function reset_grid(){
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
 			grid[row][col] = undo_grid[row][col];
-			temp[row][col] = undo_grid[row][col];
 		}
 	}
 	clear();
@@ -210,7 +236,6 @@ function randomize(){
 			else
 				choice = 0;
 			grid[row][col] = choice;
-			temp[row][col] = choice;
 		}
 	}
 	clear();
@@ -254,7 +279,7 @@ function slower(){
 	if (paused)
 		return;
 	stop();
-	play()
+	play();
 }
 
 
@@ -283,6 +308,12 @@ document.onkeypress = (e) => {
 	if (e.key === '?'){
 		randomize();
 	}
+	if (e.key === '['){
+		raise_opacity();
+	}
+	if (e.key === ']'){
+		lower_opacity();
+	}
 	grid_to_canvas();
 }
 
@@ -296,7 +327,6 @@ canvas.onclick = (event) => {
 	let col = Math.floor(x/cell_width);
 	let row = Math.floor(y/cell_width);
 	grid[row][col] ^= 1;
-	temp[row][col] ^= 1;
 	save_grid();
 	clear();
 	grid_to_canvas();
