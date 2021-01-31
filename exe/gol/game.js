@@ -1,11 +1,11 @@
 // calling all the elements from the html document for the bottom control bar.
 // there they are just <div>'s but here we turn them into buttons
-const step_button  = document.querySelector("#step");
-const play_button  = document.querySelector("#play");
-const stop_button  = document.querySelector("#stop");
-const reset_button = document.querySelector("#reset");
-const clear_button = document.querySelector("#clear");
-const gen_display  = document.querySelector("#gen_display");
+const step_button   = document.querySelector("#step");
+const play_button   = document.querySelector("#play");
+const stop_button   = document.querySelector("#stop");
+const reset_button  = document.querySelector("#reset");
+const clear_button  = document.querySelector("#clear");
+const gen_display   = document.querySelector("#gen_display");
 const random_button = document.querySelector("#randomize");
 
 let paused      = true;// game starts off paused.
@@ -14,7 +14,7 @@ let generations = 0;   // generation counter, resets when adding new pieces
 
 // initialize display
 const canvas    = document.querySelector("#canvas");
-let cell_width  = 20; // pixels on the display. will get squeezed to fit left-right
+let cell_width  = 20; // pixels on the display
 
 // get url params for grid size, or set default 40
 const urlParams = new URLSearchParams(window.location.search);
@@ -24,14 +24,12 @@ var num_cols = parseInt( urlParams.get('cols'));
 if (isNaN(num_cols)) { num_cols = 64; }
 
 // initialize grids
-let grid      = new Array(num_rows);
-let temp      = new Array(num_rows);
-let undo_grid = new Array(num_rows);
+let grid = new Array(num_rows);
 for (let i = 0; i < num_rows; i++){
-	grid[i]      = new Array(num_cols).fill(0);
-	temp[i]      = new Array(num_cols).fill(0);	
-	undo_grid[i] = new Array(num_cols).fill(0);	
-}
+	grid[i] = new Array(num_cols);
+	for (let j = 0; j < num_cols; j++)
+		grid[i][j] = new Array(3).fill(0); // current, temp, undo
+} // storing relevant things closer in memory
 
 // match graphics context to grid size
 canvas.height = grid.length * cell_width;
@@ -47,25 +45,25 @@ function next_generation(){
 	for (let row = 0; row < grid.length; row++){ // make new generation
 		for (let col = 0; col < grid[0].length; col++){
 			count = count_neighbors(row, col);
-			if (grid[row][col] === 1){ // alive
+			if (grid[row][col][0] === 1){ // alive
 				if (count < 2)
-					temp[row][col] = 0;
+					grid[row][col][1] = 0;
 				else if (count <= 3)
-					temp[row][col] = 1;
+					grid[row][col][1] = 1;
 				else 
-					temp[row][col] = 0;
+					grid[row][col][1] = 0;
 
 			} else { // if dead
 				if (count === 3)
-					temp[row][col] = 1;
+					grid[row][col][1] = 1;
 				else 
-					temp[row][col] = 0;
+					grid[row][col][1] = 0;
 			}	
 		}
 	}
-	for (let row = 0; row < grid.length; row++){ // write temp grid over main grid
+	for (let row = 0; row < grid.length; row++){ // write temp to current state
 		for (let col = 0; col < grid[0].length; col++){
-			grid[row][col] = temp[row][col]        
+			grid[row][col][0] = grid[row][col][1];        
 		}
 	}
 	// this function is responsible for calling its successors
@@ -75,35 +73,21 @@ function next_generation(){
 }
 step_button.onclick = next_generation;
 
-
-// because javascript % is strange
-Number.prototype.mod = function(n) {
-	return ((this%n)+n)%n;
-};
-
 function count_neighbors(row, col) {
 	// this stuff is to identify the grid as a Torus
-	let up = (row-1).mod(num_rows);
-	let down = (row+1).mod(num_rows);
-	let left = (col-1).mod(num_cols);
-	let right = (col+1).mod(num_cols);
+	let up    = (row === 0) ? num_rows-1 : row - 1;
+	let down  = (row === num_rows-1) ? 0 : row + 1;
+	let left  = (col === 0) ? num_cols-1 : col - 1;
+	let right = (col === num_cols-1) ? 0 : col + 1;
 	let count = 0;
-	if (grid[up][right] === 1)
-		count++;
-	if (grid[up][col] === 1)
-		count++;
-	if (grid[up][left] === 1)
-		count++;
-	if (grid[row][right] === 1)
-		count++;
-	if (grid[row][left] === 1)
-		count++;
-	if (grid[down][col] === 1)
-		count++;
-	if (grid[down][right] === 1)
-		count++;
-	if (grid[down][left] === 1)
-		count++;
+	if (grid[up][right][0]   === 1)	count++;
+	if (grid[up][col][0]     === 1) count++;
+	if (grid[up][left][0]    === 1) count++;
+	if (grid[row][right][0]  === 1) count++;
+	if (grid[row][left][0]   === 1) count++;
+	if (grid[down][col][0]   === 1) count++;
+	if (grid[down][right][0] === 1) count++;
+	if (grid[down][left][0]  === 1) count++;
 
 	return count;
 }
@@ -121,7 +105,6 @@ c.strokeStyle = "#123";
 c.lineWidth = 4;
 
 function stroke_grid() {
-	
 	for (let row = 0; row < grid.length; row++){
 		c.beginPath();
 		c.moveTo(0, row*cell_width);
@@ -142,12 +125,17 @@ function clear() {
 	stroke_grid();
 }
 
-let opacity = 0.7;;
+let opacity = 0.7;
+let trail_mode = true;
 // the transparent fill is what gives the afterglow effect
 function clear_transparent() {
-	c.fillStyle = "rgba(32,45,55," + opacity + ")";
+	if (trail_mode)
+		c.fillStyle = "rgba(32,45,55," + opacity + ")";
+	else
+		c.fillStyle = "#123";
 	c.fillRect(0, 0, canvas.width, canvas.height);
-	stroke_grid();
+	if (num_rows < 200 && num_cols < 200) // for performance
+		stroke_grid();
 }     
 
 function raise_opacity() {
@@ -164,11 +152,10 @@ function lower_opacity() {
 
 // drawing the circles that are alive
 function grid_to_canvas() {
-	c.fillStyle = "white";
+	c.fillStyle = "#bfc";
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			if (grid[row][col] === 1){
-				c.fillStyle = "#bfc";
+			if (grid[row][col][0] === 1){
 				c.beginPath();
 				c.arc(Math.round(col*cell_width + cell_width/2), 
 					    Math.round(row*cell_width + cell_width/2),
@@ -195,7 +182,7 @@ function clear_grid(){
 	stop();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			grid[row][col]= 0;
+			grid[row][col][0]= 0;
 		}
 	}
 	clear();
@@ -206,7 +193,7 @@ clear_button.onclick = clear_grid;
 function save_grid(){
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			undo_grid[row][col]= grid[row][col];
+			grid[row][col][2] = grid[row][col][0];
 		}
 	}
 }
@@ -217,7 +204,7 @@ function reset_grid(){
 	stop();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			grid[row][col] = undo_grid[row][col];
+			grid[row][col][0] = grid[row][col][2];
 		}
 	}
 	clear();
@@ -235,7 +222,7 @@ function randomize(){
 				choice = 1;
 			else
 				choice = 0;
-			grid[row][col] = choice;
+			grid[row][col][0] = choice;
 		}
 	}
 	clear();
@@ -326,7 +313,7 @@ canvas.onclick = (event) => {
 	let y = (event.clientY-bb.top)*(canvas.height/bb.height);
 	let col = Math.floor(x/cell_width);
 	let row = Math.floor(y/cell_width);
-	grid[row][col] ^= 1;
+	grid[row][col][0] ^= 1;
 	save_grid();
 	clear();
 	grid_to_canvas();
