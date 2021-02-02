@@ -157,10 +157,11 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <kw>let</kw> paused      = true<sc>;</sc><comment Class="js">// game starts off paused.
 </comment><kw>let</kw> interval    = 100<sc>;</sc> <comment Class="js">// milliseconds per generation
 </comment><kw>let</kw> generations = 0<sc>;</sc>   <comment Class="js">// generation counter, resets when adding <kw>new</kw> pieces
-</comment>
+</comment><kw>let</kw> trail = 1<sc>;</sc>
+
 <comment Class="js">// initialize display
 </comment><kw>const</kw> canvas    = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>let</kw> cell_width  = 20<sc>;</sc> <comment Class="js">// pixels on the display
+<kw>let</kw> cell_width  = 16<sc>;</sc> <comment Class="js">// pixels on the display
 </comment>
 <comment Class="js">// get url params <kw>for</kw> grid size, or set <kw>default</kw> 40
 </comment><kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
@@ -174,8 +175,9 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 <kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt num_rows<sc>;</sc> i++<sc>)</sc><sc>{</sc>
 	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt num_cols<sc>;</sc> j++<sc>)</sc>
-		grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>3<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc> <comment Class="js">// current, temp, undo
-</comment><sc>}</sc> <comment Class="js">// storing relevant things closer <kw>in</kw> memory
+		grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = <kw>new</kw> Uint8Array<sc>(</sc>4<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc> 
+		<comment Class="js">// current, temp, undo, neighbor count
+</comment><sc>}</sc> <comment Class="js">// storing relevant things closer <kw>in</kw> memory <kw>for</kw> performance
 </comment>
 <comment Class="js">// match graphics context to grid size
 </comment>canvas.height = grid.length * cell_width<sc>;</sc>
@@ -188,9 +190,14 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 <comment Class="js">// game logic
 </comment><kw>function</kw> next_generation<sc>(</sc><sc>)</sc><sc>{</sc>
 	generations++<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>trail<sc>)</sc>
+		clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw>
+		clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	count_neighbors<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc> <comment Class="js">// make <kw>new</kw> generation
 </comment>		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
-			count = count_neighbors<sc>(</sc>row, col<sc>)</sc><sc>;</sc>
+			count = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc><sc>;</sc>
 			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> === 1<sc>)</sc><sc>{</sc> <comment Class="js">// alive
 </comment>				<kw>if</kw> <sc>(</sc>count &lt 2<sc>)</sc>
 					grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>1<sc>]</sc> = 0<sc>;</sc>
@@ -207,35 +214,44 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 			<sc>}</sc>	
 		<sc>}</sc>
 	<sc>}</sc>
+	c.fillStyle = <dbl_quote>"#bfc"</dbl_quote><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc> <comment Class="js">// write temp to current state
 </comment>		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
-			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>1<sc>]</sc><sc>;</sc>        
-		<sc>}</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>1<sc>]</sc> === 1<sc>)</sc><sc>{</sc>
+				<comment Class="js">// instead of iterating again to call grid to canvas, we already
+</comment>				<comment Class="js">// know which squares to light up here.
+</comment>				c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
+				c.arc<sc>(</sc>Math.round<sc>(</sc>col*cell_width + cell_width/2<sc>)</sc>, 
+					    Math.round<sc>(</sc>row*cell_width + cell_width/2<sc>)</sc>,
+					    Math.round<sc>(</sc>cell_width/3<sc>)</sc>, 0, 2*Math.PI, <kw>false</kw><sc>)</sc><sc>;</sc>
+				c.fill<sc>(</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc> = 0<sc>;</sc> <comment Class="js">// reset neighbor count <kw>for</kw> next time
+</comment>		<sc>}</sc>
 	<sc>}</sc>
-	<comment Class="js">// <kw>this</kw> <kw>function</kw> is responsible <kw>for</kw> calling its successors
-</comment>	clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
-	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 step_button.onclick = next_generation<sc>;</sc>
 
-<kw>function</kw> count_neighbors<sc>(</sc>row, col<sc>)</sc> <sc>{</sc>
-	<comment Class="js">// <kw>this</kw> stuff is to identify the grid as a Torus
-</comment>	<kw>let</kw> up    = <sc>(</sc>row === 0<sc>)</sc> ? num_rows-1 <sc>:</sc> row - 1<sc>;</sc>
-	<kw>let</kw> down  = <sc>(</sc>row === num_rows-1<sc>)</sc> ? 0 <sc>:</sc> row + 1<sc>;</sc>
-	<kw>let</kw> left  = <sc>(</sc>col === 0<sc>)</sc> ? num_cols-1 <sc>:</sc> col - 1<sc>;</sc>
-	<kw>let</kw> right = <sc>(</sc>col === num_cols-1<sc>)</sc> ? 0 <sc>:</sc> col + 1<sc>;</sc>
-	<kw>let</kw> count = 0<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>up<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>0<sc>]</sc>   === 1<sc>)</sc>	count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>up<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc>     === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>up<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>0<sc>]</sc>    === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>0<sc>]</sc>  === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>0<sc>]</sc>   === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>down<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc>   === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>down<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>0<sc>]</sc> === 1<sc>)</sc> count++<sc>;</sc>
-	<kw>if</kw> <sc>(</sc>grid<sc>[</sc>down<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>0<sc>]</sc>  === 1<sc>)</sc> count++<sc>;</sc>
-
-	<kw>return</kw> count<sc>;</sc>
+<kw>function</kw> count_neighbors<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt num_rows<sc>;</sc> row++<sc>)</sc><sc>{</sc>
+		<kw>let</kw> up    = <sc>(</sc>row === 0<sc>)</sc> ? num_rows-1 <sc>:</sc> row - 1<sc>;</sc>
+		<kw>let</kw> down  = <sc>(</sc>row === num_rows-1<sc>)</sc> ? 0 <sc>:</sc> row + 1<sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt num_cols<sc>;</sc> col++<sc>)</sc><sc>{</sc>
+			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> == 0<sc>)</sc> <comment Class="js">// only <kw>do</kw> the work <kw>for</kw> living cells
+</comment>				<kw>continue</kw><sc>;</sc>
+			<kw>let</kw> left  = <sc>(</sc>col === 0<sc>)</sc> ? num_cols-1 <sc>:</sc> col - 1<sc>;</sc>
+			<kw>let</kw> right = <sc>(</sc>col === num_cols-1<sc>)</sc> ? 0 <sc>:</sc> col + 1<sc>;</sc>
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>    ++ 
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>   ++ 
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc> ++
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>++
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc> ++
+		<sc>}</sc>
+	<sc>}</sc>
 <sc>}</sc>
 
 <kw>function</kw> print_generations<sc>(</sc><sc>)</sc><sc>{</sc>
@@ -268,19 +284,19 @@ c.lineWidth = 4<sc>;</sc>
 <kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
 	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>32,45,55,1<sc>)</sc>"</dbl_quote><sc>;</sc>
 	c.fillRect<sc>(</sc>0, 0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
-	stroke_grid<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>num_rows &lt 256 && num_cols &lt 256<sc>)</sc> <comment Class="js">// <kw>for</kw> performance
+</comment>		stroke_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-<kw>let</kw> opacity = 0.7<sc>;</sc>
-<kw>let</kw> trail_mode = true<sc>;</sc>
 <comment Class="js">// the transparent fill is what gives the afterglow effect
-</comment><kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
-	<kw>if</kw> <sc>(</sc>trail_mode<sc>)</sc>
-		c.fillStyle = <dbl_quote>"rgba<sc>(</sc>32,45,55,"</dbl_quote> + opacity + <dbl_quote>"<sc>)</sc>"</dbl_quote><sc>;</sc>
-	<kw>else</kw>
-		c.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
+</comment><comment Class="js">// <kw>this</kw> is suprisingly the main bottleneck <kw>for</kw> the whole program
+</comment><comment Class="js">// <kw>this</kw> may be a good candidate <kw>for</kw> web workers to fill the canvas
+</comment><comment Class="js">// <kw>in</kw> tiles?
+</comment><kw>let</kw> opacity = 0.7<sc>;</sc>
+<kw>function</kw> clear_transparent<sc>(</sc><sc>)</sc> <sc>{</sc>
+	c.fillStyle = <dbl_quote>"rgba<sc>(</sc>32,45,55,"</dbl_quote> + opacity + <dbl_quote>"<sc>)</sc>"</dbl_quote><sc>;</sc>
 	c.fillRect<sc>(</sc>0, 0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
-	<kw>if</kw> <sc>(</sc>num_rows &lt 200 && num_cols &lt 200<sc>)</sc> <comment Class="js">// <kw>for</kw> performance
+	<kw>if</kw> <sc>(</sc>num_rows &lt 256 && num_cols &lt 256<sc>)</sc> <comment Class="js">// <kw>for</kw> performance
 </comment>		stroke_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>     
 
@@ -317,7 +333,6 @@ c.lineWidth = 4<sc>;</sc>
 	c.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
 	c.fillRect<sc>(</sc>0,0, canvas.width, canvas.height<sc>)</sc><sc>;</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
-	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 
@@ -332,7 +347,6 @@ c.lineWidth = 4<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
-	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 clear_button.onclick = clear_grid<sc>;</sc>
 
@@ -350,7 +364,8 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
-			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>2<sc>]</sc><sc>;</sc>
+			<comment Class="js">// write undo slot into the current gen slot
+</comment>			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>2<sc>]</sc><sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -363,19 +378,16 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
-			<kw>let</kw> choice<sc>;</sc>
 			<kw>if</kw> <sc>(</sc>Math.random<sc>(</sc><sc>)</sc> &lt 0.2<sc>)</sc>
-				choice = 1<sc>;</sc>
+				grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = 1<sc>;</sc>
 			<kw>else</kw>
-				choice = 0<sc>;</sc>
-			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = choice<sc>;</sc>
+				grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = 0<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-
 random_button.onclick = randomize<sc>;</sc>
 reset_button.onclick = reset_grid<sc>;</sc>
 
@@ -385,7 +397,6 @@ reset_button.onclick = reset_grid<sc>;</sc>
 		clearInterval<sc>(</sc>id<sc>)</sc><sc>;</sc>
 	paused = true<sc>;</sc>
 <sc>}</sc>
-
 stop_button.onclick = stop<sc>;</sc>
 
 <kw>function</kw> play<sc>(</sc><sc>)</sc><sc>{</sc>
@@ -393,7 +404,6 @@ stop_button.onclick = stop<sc>;</sc>
 		id = setInterval<sc>(</sc>next_generation, interval<sc>)</sc><sc>;</sc>
 	paused = <kw>false</kw><sc>;</sc>
 <sc>}</sc>
-
 play_button.onclick = play<sc>;</sc>
 
 <kw>function</kw> faster<sc>(</sc><sc>)</sc><sc>{</sc>
@@ -406,7 +416,6 @@ play_button.onclick = play<sc>;</sc>
 	play<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
-
 <kw>function</kw> slower<sc>(</sc><sc>)</sc><sc>{</sc>
 	interval += 5<sc>;</sc>
 	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
@@ -414,7 +423,6 @@ play_button.onclick = play<sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
 	play<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-
 
 document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'s'</sgl_quote><sc>)</sc><sc>{</sc>
@@ -447,6 +455,9 @@ document.onkeypress = <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
 	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'<sc>]</sc>'</sgl_quote><sc>)</sc><sc>{</sc>
 		lower_opacity<sc>(</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
+	<kw>if</kw> <sc>(</sc>e.key === <sgl_quote>'t'</sgl_quote><sc>)</sc><sc>{</sc>
+		trail ^= 1<sc>;</sc> <comment Class="js">// toggle 0 &lt-&gt 1
+</comment>	<sc>}</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 

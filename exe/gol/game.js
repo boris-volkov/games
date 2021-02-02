@@ -11,10 +11,11 @@ const random_button = document.querySelector("#randomize");
 let paused      = true;// game starts off paused.
 let interval    = 100; // milliseconds per generation
 let generations = 0;   // generation counter, resets when adding new pieces
+let trail = 1;
 
 // initialize display
 const canvas    = document.querySelector("#canvas");
-let cell_width  = 20; // pixels on the display
+let cell_width  = 16; // pixels on the display
 
 // get url params for grid size, or set default 40
 const urlParams = new URLSearchParams(window.location.search);
@@ -28,8 +29,9 @@ let grid = new Array(num_rows);
 for (let i = 0; i < num_rows; i++){
 	grid[i] = new Array(num_cols);
 	for (let j = 0; j < num_cols; j++)
-		grid[i][j] = new Array(3).fill(0); // current, temp, undo
-} // storing relevant things closer in memory
+		grid[i][j] = new Uint8Array(4).fill(0); 
+		// current, temp, undo, neighbor count
+} // storing relevant things closer in memory for performance
 
 // match graphics context to grid size
 canvas.height = grid.length * cell_width;
@@ -42,9 +44,14 @@ const c = canvas.getContext("2d");
 // game logic
 function next_generation(){
 	generations++;
+	if (trail)
+		clear_transparent();
+	else
+		clear();
+	count_neighbors();
 	for (let row = 0; row < grid.length; row++){ // make new generation
 		for (let col = 0; col < grid[0].length; col++){
-			count = count_neighbors(row, col);
+			count = grid[row][col][3];
 			if (grid[row][col][0] === 1){ // alive
 				if (count < 2)
 					grid[row][col][1] = 0;
@@ -61,35 +68,44 @@ function next_generation(){
 			}	
 		}
 	}
+	c.fillStyle = "#bfc";
 	for (let row = 0; row < grid.length; row++){ // write temp to current state
 		for (let col = 0; col < grid[0].length; col++){
-			grid[row][col][0] = grid[row][col][1];        
+			if (grid[row][col][0] = grid[row][col][1] === 1){
+				// instead of iterating again to call grid to canvas, we already
+				// know which squares to light up here.
+				c.beginPath();
+				c.arc(Math.round(col*cell_width + cell_width/2), 
+					    Math.round(row*cell_width + cell_width/2),
+					    Math.round(cell_width/3), 0, 2*Math.PI, false);
+				c.fill();
+			}
+			grid[row][col][3] = 0; // reset neighbor count for next time
 		}
 	}
-	// this function is responsible for calling its successors
-	clear_transparent();
-	grid_to_canvas();
 	print_generations();
 }
 step_button.onclick = next_generation;
 
-function count_neighbors(row, col) {
-	// this stuff is to identify the grid as a Torus
-	let up    = (row === 0) ? num_rows-1 : row - 1;
-	let down  = (row === num_rows-1) ? 0 : row + 1;
-	let left  = (col === 0) ? num_cols-1 : col - 1;
-	let right = (col === num_cols-1) ? 0 : col + 1;
-	let count = 0;
-	if (grid[up][right][0]   === 1)	count++;
-	if (grid[up][col][0]     === 1) count++;
-	if (grid[up][left][0]    === 1) count++;
-	if (grid[row][right][0]  === 1) count++;
-	if (grid[row][left][0]   === 1) count++;
-	if (grid[down][col][0]   === 1) count++;
-	if (grid[down][right][0] === 1) count++;
-	if (grid[down][left][0]  === 1) count++;
-
-	return count;
+function count_neighbors() {
+	for (let row = 0; row < num_rows; row++){
+		let up    = (row === 0) ? num_rows-1 : row - 1;
+		let down  = (row === num_rows-1) ? 0 : row + 1;
+		for (let col = 0; col < num_cols; col++){
+			if (grid[row][col][0] == 0) // only do the work for living cells
+				continue;
+			let left  = (col === 0) ? num_cols-1 : col - 1;
+			let right = (col === num_cols-1) ? 0 : col + 1;
+			grid[up][right][3]  ++
+			grid[up][col][3]    ++ 
+			grid[up][left][3]   ++ 
+			grid[row][right][3] ++
+			grid[row][left][3]  ++
+			grid[down][col][3]  ++
+			grid[down][right][3]++
+			grid[down][left][3] ++
+		}
+	}
 }
 
 function print_generations(){
@@ -122,19 +138,19 @@ function stroke_grid() {
 function clear() {
 	c.fillStyle = "rgba(32,45,55,1)";
 	c.fillRect(0, 0, canvas.width, canvas.height);
-	stroke_grid();
+	if (num_rows < 256 && num_cols < 256) // for performance
+		stroke_grid();
 }
 
-let opacity = 0.7;
-let trail_mode = true;
 // the transparent fill is what gives the afterglow effect
+// this is suprisingly the main bottleneck for the whole program
+// this may be a good candidate for web workers to fill the canvas
+// in tiles?
+let opacity = 0.7;
 function clear_transparent() {
-	if (trail_mode)
-		c.fillStyle = "rgba(32,45,55," + opacity + ")";
-	else
-		c.fillStyle = "#123";
+	c.fillStyle = "rgba(32,45,55," + opacity + ")";
 	c.fillRect(0, 0, canvas.width, canvas.height);
-	if (num_rows < 200 && num_cols < 200) // for performance
+	if (num_rows < 256 && num_cols < 256) // for performance
 		stroke_grid();
 }     
 
@@ -171,7 +187,6 @@ function init(){
 	c.fillStyle = "#123";
 	c.fillRect(0,0, canvas.width, canvas.height);
 	clear();
-	grid_to_canvas();
 }
 
 
@@ -186,7 +201,6 @@ function clear_grid(){
 		}
 	}
 	clear();
-	grid_to_canvas();
 }
 clear_button.onclick = clear_grid;
 
@@ -204,6 +218,7 @@ function reset_grid(){
 	stop();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
+			// write undo slot into the current gen slot
 			grid[row][col][0] = grid[row][col][2];
 		}
 	}
@@ -217,19 +232,16 @@ function randomize(){
 	print_generations();
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
-			let choice;
 			if (Math.random() < 0.2)
-				choice = 1;
+				grid[row][col][0] = 1;
 			else
-				choice = 0;
-			grid[row][col][0] = choice;
+				grid[row][col][0] = 0;
 		}
 	}
 	clear();
 	grid_to_canvas();
 	save_grid();
 }
-
 random_button.onclick = randomize;
 reset_button.onclick = reset_grid;
 
@@ -239,7 +251,6 @@ function stop(){
 		clearInterval(id);
 	paused = true;
 }
-
 stop_button.onclick = stop;
 
 function play(){
@@ -247,7 +258,6 @@ function play(){
 		id = setInterval(next_generation, interval);
 	paused = false;
 }
-
 play_button.onclick = play;
 
 function faster(){
@@ -260,7 +270,6 @@ function faster(){
 	play();
 }
 
-
 function slower(){
 	interval += 5;
 	if (paused)
@@ -268,7 +277,6 @@ function slower(){
 	stop();
 	play();
 }
-
 
 document.onkeypress = (e) => {
 	if (e.key === 's'){
@@ -300,6 +308,9 @@ document.onkeypress = (e) => {
 	}
 	if (e.key === ']'){
 		lower_opacity();
+	}
+	if (e.key === 't'){
+		trail ^= 1; // toggle 0 <-> 1
 	}
 	grid_to_canvas();
 }

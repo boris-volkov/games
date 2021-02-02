@@ -1,0 +1,208 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/mandelbrot/mandelbrot.js</div><pre class=js>
+<kw>class</kw> Tile <sc>{</sc>
+	constructor<sc>(</sc>x, y, width, height<sc>)</sc> <sc>{</sc>
+		<kw>this</kw>.x = x<sc>;</sc>
+		<kw>this</kw>.y = y<sc>;</sc>
+		<kw>this</kw>.width = width<sc>;</sc>
+		<kw>this</kw>.height = height<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>static</kw> *tiles<sc>(</sc>width, height, numRows, numCols<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> colunmWidth = Math.ceil<sc>(</sc>width/numCols<sc>)</sc><sc>;</sc>
+		<kw>let</kw> rowHeight = Math.ceil<sc>(</sc>height/numRows<sc>)</sc><sc>;</sc>
+
+		<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt numRows<sc>;</sc> row++<sc>)</sc> <sc>{</sc>
+			<kw>let</kw> tileHeight = <sc>(</sc>row &lt numRows-1<sc>)</sc>
+				? rowHeight
+				<sc>:</sc>height - rowHeight * <sc>(</sc>numRows-1<sc>)</sc><sc>;</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt numCols<sc>;</sc> col++<sc>)</sc> <sc>{</sc>
+				<kw>let</kw> tileWidth = <sc>(</sc>col &lt numCols-1<sc>)</sc>
+					? columWidth
+					<sc>:</sc> width - columWidth * <sc>(</sc>numCols-1<sc>)</sc><sc>;</sc>
+				<kw>yield</kw> <kw>new</kw> Tile<sc>(</sc>col*columWidth, row*rowHeight,
+					tileWidth, tileHeight<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>class</kw> WorkerPool <sc>{</sc>
+	constructor<sc>(</sc>numWorkers, workerSource<sc>)</sc> <sc>[</sc>
+		<kw>this</kw>.idleWorkers = <sc>[</sc><sc>]</sc><sc>;</sc>
+		<kw>this</kw>.workQueue = <sc>[</sc><sc>]</sc><sc>;</sc>
+		<kw>this</kw>.workerMap = <kw>new</kw> Map<sc>(</sc><sc>)</sc><sc>;</sc> <comment Class="js">// map workers to res/rej
+</comment>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt numWorkers<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+			<kw>let</kw> worker = <kw>new</kw> Worker<sc>(</sc>workerSource<sc>)</sc><sc>;</sc>
+			worker.onmessage = message =&gt <sc>{</sc>
+				<kw>this</kw>._workerDone<sc>(</sc>worker, <kw>null</kw>, message.data<sc>)</sc><sc>;</sc>
+			<sc>}</sc><sc>;</sc>
+			worker.onerror = error =&gt <sc>{</sc>
+				<kw>this</kw>._workerDone<sc>(</sc>worker, error, <kw>null</kw><sc>)</sc><sc>;</sc>
+			<sc>}</sc><sc>;</sc>
+			<kw>this</kw>.idleWorkers<sc>[</sc>i<sc>]</sc> = worker<sc>;</sc>
+		<sc>}</sc>
+
+	<comment Class="js">// internal method called when a worker finishes
+</comment>	_workerDone<sc>(</sc>worker, error, response<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> <sc>[</sc>resolver, rejector<sc>]</sc> = <kw>this</kw>.workerMap.get<sc>(</sc>worker<sc>)</sc><sc>;</sc>
+		<kw>this</kw>.workerMap.<kw>delete</kw><sc>(</sc>worker<sc>)</sc><sc>;</sc>
+		<comment Class="js">// <kw>if</kw> there is no work to <kw>do</kw>, put idle
+</comment>		<comment Class="js">// otherwise assign work
+</comment>		<kw>if</kw> <sc>(</sc><kw>this</kw>.workQueue.length === 0<sc>)</sc> <sc>{</sc>
+			<kw>this</kw>.idleWorkers.push<sc>(</sc>worker<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc>
+			<kw>let</kw> <sc>[</sc>work, resolver, rejector<sc>]</sc> = <kw>this</kw>.workQueue.shift<sc>(</sc><sc>)</sc>
+			<kw>this</kw>.workerMap.set<sc>(</sc>worker, <sc>[</sc>resolver, rejector<sc>]</sc><sc>)</sc><sc>;</sc>
+			worker.postMessage<sc>(</sc>work<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		error === <kw>null</kw> ? resolver<sc>(</sc>response<sc>)</sc> <sc>:</sc> rejector<sc>(</sc>error<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	addWork<sc>(</sc>work<sc>)</sc> <sc>{</sc>
+		<kw>return</kw> <kw>new</kw> Promise<sc>(</sc> <sc>(</sc>resolve, reject<sc>)</sc> =&gt <sc>{</sc>
+			<kw>if</kw> <sc>(</sc><kw>this</kw>.idleWorkers.length &gt 0<sc>)</sc> <sc>{</sc>
+				<kw>let</kw> worker = <kw>this</kw>.idleWorkers.pop<sc>(</sc><sc>)</sc><sc>;</sc>
+				<kw>this</kw>.workerMap.set<sc>(</sc>worker, <sc>[</sc>resolve, reject<sc>]</sc><sc>)</sc><sc>;</sc>
+				worker.postMessage<sc>(</sc>work<sc>)</sc><sc>;</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc>
+				<kw>this</kw>.workQueue.push<sc>(</sc><sc>[</sc>work, resolve, reject<sc>]</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>class</kw> PageState <sc>{</sc>
+	<comment Class="js">// the <kw>static</kw> methods don't refer to any "<kw>this</kw>"
+</comment>	<kw>static</kw> initialState<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>let</kw> s = <kw>new</kw> PageState<sc>(</sc><sc>)</sc><sc>;</sc>
+		s.cx = -0.5<sc>;</sc>
+		s.cy = 0<sc>;</sc>
+		s.perPixel = 3/window.innerHeight<sc>;</sc>
+		s.maxIterations = 500<sc>;</sc>
+		<kw>return</kw> s<sc>;</sc>
+	<sc>}</sc>
+
+	<kw>static</kw> fromURL<sc>(</sc>url<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> s = <kw>new</kw> PageState<sc>(</sc><sc>)</sc><sc>;</sc>
+		<kw>let</kw> u = <kw>new</kw> URL<sc>(</sc>url<sc>)</sc><sc>;</sc>
+		s.cx = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"cx"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		s.cy = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"cy"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		s.perPixel = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"pp"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		s.maxIterations = parseInt<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"it"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		<kw>return</kw> <sc>(</sc>isNaN<sc>(</sc>s.cx<sc>)</sc> || isNaN<sc>(</sc>s.cy<sc>)</sc> || isNaN<sc>(</sc>s.perPixel<sc>)</sc>
+			|| <sc>(</sc>isNaN<sc>(</sc>s.maxIterations<sc>)</sc><sc>)</sc>
+			? <kw>null</kw>
+			<sc>:</sc> s<sc>;</sc>
+	<sc>}</sc>
+
+	toURL<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>let</kw> u = <kw>new</kw> URL<sc>(</sc>window.location<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"cx"</dbl_quote>, <kw>this</kw>.cx<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"cy"</dbl_quote>, <kw>this</kw>.cy<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"pp"</dbl_quote>, <kw>this</kw>.perPixel<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"it"</dbl_quote>, <kw>this</kw>.maxIterations<sc>)</sc><sc>;</sc>
+		<kw>return</kw> u.href<sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+
+<comment Class="js">// these control the parallelism
+</comment><kw>const</kw> ROWS = 3<sc>;</sc>
+<kw>const</kw> COLS = 4<sc>;</sc>
+<kw>const</kw> NUMWORKERS = navigator.hardwareConcurrency || 2<sc>;</sc>
+
+<kw>class</kw> MandelbrotCanvas <sc>{</sc>
+	constructor<sc>(</sc>canvas<sc>)</sc> <sc>{</sc>
+		<kw>this</kw>.canvas = canvas<sc>;</sc>
+		<kw>this</kw>.context = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
+		<kw>this</kw>.workerPool = <kw>new</kw> WorkerPool<sc>(</sc>NUMWORKERS, <dbl_quote>"worker.js"</dbl_quote><sc>)</sc><sc>;</sc>
+
+		<kw>this</kw>.tiles = <kw>null</kw><sc>;</sc>
+		<kw>this</kw>.pendingRender = <kw>null</kw><sc>;</sc>
+		<kw>this</kw>.wantsRerender = <kw>false</kw><sc>;</sc>
+		<kw>this</kw>.resizeTimer = <kw>null</kw><sc>;</sc>
+		<kw>this</kw>.colorTable = <kw>null</kw><sc>;</sc>
+
+		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, e =&gt <kw>this</kw>.handlePointer<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
+		window.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, e =&gt <kw>this</kw>.handleKey<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
+		window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, e =&gt <kw>this</kw>.handleResize<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
+		window.addEventListener<sc>(</sc><dbl_quote>"popstate"</dbl_quote>, e =&gt <kw>this</kw>.steState<sc>(</sc> e.state, <kw>false</kw><sc>)</sc><sc>)</sc><sc>;</sc>
+
+		<kw>this</kw>.state = 
+			PageState.fromURL<sc>(</sc>window.location<sc>)</sc> || PageState.initializeState<sc>(</sc><sc>)</sc><sc>;</sc>
+
+		history.replaceState<sc>(</sc><kw>this</kw>.state, <dbl_quote>""</dbl_quote>, <kw>this</kw>.state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+
+		<kw>this</kw>.setSize<sc>(</sc><sc>)</sc><sc>;</sc>
+
+		<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	setSize<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>this</kw>.width = <kw>this</kw>.canvas.width = window.innerWidth<sc>;</sc>
+		<kw>this</kw>.height = <kw>this</kw>.canvas.height = window.innerHeight<sc>;</sc>
+		<kw>this</kw>.tiles = <sc>[</sc>...Tile.tiles<sc>(</sc><kw>this</kw>.width, <kw>this</kw>.height, ROWS, COLS<sc>)</sc><sc>]</sc>
+	<sc>}</sc>
+
+	setState<sc>(</sc>f, save=true<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc><kw>typeof</kw> f === <dbl_quote>"<kw>function</kw>"</dbl_quote><sc>)</sc> <sc>{</sc>
+			f<sc>(</sc><kw>this</kw>.state<sc>)</sc><sc>;</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc>
+			<kw>for</kw><sc>(</sc><kw>let</kw> property <kw>in</kw> f<sc>)</sc> <sc>{</sc>
+				<kw>this</kw>.state<sc>[</sc>property<sc>]</sc> = f<sc>[</sc>property<sc>]</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+
+		<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
+
+		<kw>if</kw> <sc>(</sc>save<sc>)</sc> <sc>{</sc>
+			history.pushState<sc>(</sc><kw>this</kw>.state, <dbl_quote>""</dbl_quote>, <kw>this</kw>.state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+
+
+
+
+
+
+</pre>
+<div class="bookmark">./exe/mandelbrot/worker.js</div><pre class=js>
+onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
+	<kw>const</kw> <sc>{</sc>title, x0, y0, perPixel, maxIterations<sc>}</sc> = message.data<sc>;</sc>
+	<kw>const</kw> <sc>{</sc>width, height<sc>}</sc> = tile<sc>;</sc>
+
+	<kw>const</kw> imageData = <kw>new</kw> ImageData<sc>(</sc>width, height<sc>)</sc><sc>;</sc>
+	<kw>const</kw> iterations = <kw>new</kw> Uint32Array<sc>(</sc>imageData.data.buffer<sc>)</sc><sc>;</sc>
+	<comment Class="js">// typed array treats each pixel as a single integer instead of 
+</comment>	<comment Class="js">// 4 separate bytes. These will be mapped to colors <kw>in</kw> parent thread
+</comment>
+	<kw>let</kw> index = 0<sc>;</sc> <comment Class="js">// to go pixel by pixel <kw>in</kw> the iterations array
+</comment>	<kw>let</kw> max = 0<sc>;</sc> 
+	<kw>let</kw> min = maxIterations<sc>;</sc>
+	<comment Class="js">// stepping throught the image and the graph <kw>in</kw> same loop.
+</comment>	<comment Class="js">// row and col are the pixel coordinates
+</comment>	<comment Class="js">// x and y are the actual complex number
+</comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0, y = y0<sc>;</sc> row &lt height <sc>;</sc>row++, y+= perPixel<sc>)</sc><sc>{</sc>
+		<kw>for</kw> <kw>let</kw> col = 0, x = x0<sc>;</sc> col &lt width<sc>;</sc> col++, x += perPixel<sc>)</sc> <sc>{</sc>
+			<kw>let</kw> n<sc>;</sc>
+			<kw>let</kw> r = x, i = y<sc>;</sc> <comment Class="js">// real and imaginary
+</comment>			<comment Class="js">// inner loop iterates over each pixel to see <kw>if</kw> it escapes
+</comment>			<kw>for</kw> <sc>(</sc>n = 0<sc>;</sc> n &lt maxIterations<sc>;</sc> n++<sc>)</sc><sc>{</sc>
+				<kw>let</kw> rr = r*r, ii = i*i<sc>;</sc>
+				<kw>if</kw> <sc>(</sc>rr + ii &gt 4<sc>)</sc><sc>{</sc>
+					<kw>break</kw><sc>;</sc>
+				<sc>}</sc>
+				i = 2*r*i + y<sc>;</sc>
+				r = rr - ii + x<sc>;</sc>
+			<sc>}</sc>
+			iterations<sc>[</sc>index++<sc>]</sc> = n<sc>;</sc> <comment Class="js">// remember # iterations per pixel
+</comment>			<kw>if</kw> <sc>(</sc>n &gt max<sc>)</sc> max = n<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>n &lt min<sc>)</sc> min = n<sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+	postMessage<sc>(</sc><sc>{</sc>tile, imageData, min, max<sc>}</sc>, <sc>[</sc>imageDage.data.buffer<sc>]</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+</pre>
+</body></html>
