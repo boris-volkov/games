@@ -1,5 +1,5 @@
 onmessage = function(message) {
-	const {title, x0, y0, perPixel, maxIterations} = message.data;
+	const {tile, x0, y0, perPixel, maxIterations} = message.data;
 	const {width, height} = tile;
 
 	const imageData = new ImageData(width, height);
@@ -14,7 +14,7 @@ onmessage = function(message) {
 	// row and col are the pixel coordinates
 	// x and y are the actual complex number
 	for (let row = 0, y = y0; row < height ;row++, y+= perPixel){
-		for let col = 0, x = x0; col < width; col++, x += perPixel) {
+		for (let col = 0, x = x0; col < width; col++, x += perPixel) {
 			let n;
 			let r = x, i = y; // real and imaginary
 			// inner loop iterates over each pixel to see if it escapes
@@ -31,5 +31,5 @@ onmessage = function(message) {
 			if (n < min) min = n;
 		}
 	}
-	postMessage({tile, imageData, min, max}, [imageDage.data.buffer]);
+	postMessage({tile, imageData, min, max}, [imageData.data.buffer]);
 }

@@ -163,7 +163,7 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 </comment><kw>const</kw> canvas    = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
 <kw>let</kw> cell_width  = 16<sc>;</sc> <comment Class="js">// pixels on the display
 </comment>
-<comment Class="js">// get url params <kw>for</kw> grid size, or set <kw>default</kw> 40
+<comment Class="js">// get url params <kw>for</kw> grid size, or set <kw>default</kw> 64
 </comment><kw>const</kw> urlParams = <kw>new</kw> URLSearchParams<sc>(</sc>window.location.search<sc>)</sc><sc>;</sc>
 <kw>var</kw> num_rows = parseInt<sc>(</sc> urlParams.get<sc>(</sc><sgl_quote>'rows'</sgl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 <kw>if</kw> <sc>(</sc>isNaN<sc>(</sc>num_rows<sc>)</sc><sc>)</sc> <sc>{</sc> num_rows = 64<sc>;</sc> <sc>}</sc>
@@ -176,7 +176,7 @@ Okay, that's all you need to know. Now have fun with it. As always, the code is 
 	grid<sc>[</sc>i<sc>]</sc> = <kw>new</kw> Array<sc>(</sc>num_cols<sc>)</sc><sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> j = 0<sc>;</sc> j &lt num_cols<sc>;</sc> j++<sc>)</sc>
 		grid<sc>[</sc>i<sc>]</sc><sc>[</sc>j<sc>]</sc> = <kw>new</kw> Uint8Array<sc>(</sc>4<sc>)</sc>.fill<sc>(</sc>0<sc>)</sc><sc>;</sc> 
-		<comment Class="js">// current, temp, undo, neighbor count
+		<comment Class="js">// 4 entries<sc>:</sc> current, temp, undo, neighbor count
 </comment><sc>}</sc> <comment Class="js">// storing relevant things closer <kw>in</kw> memory <kw>for</kw> performance
 </comment>
 <comment Class="js">// match graphics context to grid size
@@ -190,6 +190,7 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 <comment Class="js">// game logic
 </comment><kw>function</kw> next_generation<sc>(</sc><sc>)</sc><sc>{</sc>
 	generations++<sc>;</sc>
+	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>if</kw> <sc>(</sc>trail<sc>)</sc>
 		clear_transparent<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>else</kw>
@@ -218,8 +219,7 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc> <comment Class="js">// write temp to current state
 </comment>		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			<kw>if</kw> <sc>(</sc>grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>1<sc>]</sc> === 1<sc>)</sc><sc>{</sc>
-				<comment Class="js">// instead of iterating again to call grid to canvas, we already
-</comment>				<comment Class="js">// know which squares to light up here.
+				<comment Class="js">// light up the living cells
 </comment>				c.beginPath<sc>(</sc><sc>)</sc><sc>;</sc>
 				c.arc<sc>(</sc>Math.round<sc>(</sc>col*cell_width + cell_width/2<sc>)</sc>, 
 					    Math.round<sc>(</sc>row*cell_width + cell_width/2<sc>)</sc>,
@@ -227,9 +227,9 @@ canvas.width = grid<sc>[</sc>0<sc>]</sc>.length * cell_width<sc>;</sc>
 				c.fill<sc>(</sc><sc>)</sc><sc>;</sc>
 			<sc>}</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc> = 0<sc>;</sc> <comment Class="js">// reset neighbor count <kw>for</kw> next time
+</comment>			<comment Class="js">// there's probably a better place to <kw>do</kw> <kw>this</kw>
 </comment>		<sc>}</sc>
 	<sc>}</sc>
-	print_generations<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 step_button.onclick = next_generation<sc>;</sc>
 
@@ -242,14 +242,14 @@ step_button.onclick = next_generation<sc>;</sc>
 </comment>				<kw>continue</kw><sc>;</sc>
 			<kw>let</kw> left  = <sc>(</sc>col === 0<sc>)</sc> ? num_cols-1 <sc>:</sc> col - 1<sc>;</sc>
 			<kw>let</kw> right = <sc>(</sc>col === num_cols-1<sc>)</sc> ? 0 <sc>:</sc> col + 1<sc>;</sc>
-			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
-			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>    ++ 
-			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>   ++ 
-			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc> ++
-			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
-			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++
-			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>++
-			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc> ++
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>   ++<sc>;</sc>
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++<sc>;</sc>
+			grid<sc>[</sc>up<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>    ++<sc>;</sc>
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++<sc>;</sc>
+			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc> ++<sc>;</sc>
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>left<sc>]</sc><sc>[</sc>3<sc>]</sc> ++<sc>;</sc>
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>3<sc>]</sc>  ++<sc>;</sc>
+			grid<sc>[</sc>down<sc>]</sc><sc>[</sc>right<sc>]</sc><sc>[</sc>3<sc>]</sc>++<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 <sc>}</sc>
@@ -350,7 +350,8 @@ c.lineWidth = 4<sc>;</sc>
 <sc>}</sc>
 clear_button.onclick = clear_grid<sc>;</sc>
 
-<kw>function</kw> save_grid<sc>(</sc><sc>)</sc><sc>{</sc>
+<comment Class="js">// state you <kw>return</kw> to <kw>in</kw> reset
+</comment><kw>function</kw> save_grid<sc>(</sc><sc>)</sc><sc>{</sc>
 	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt grid.length<sc>;</sc> row++<sc>)</sc><sc>{</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt grid<sc>[</sc>0<sc>]</sc>.length<sc>;</sc> col++<sc>)</sc><sc>{</sc>
 			grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>2<sc>]</sc> = grid<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>[</sc>0<sc>]</sc><sc>;</sc>
@@ -371,6 +372,7 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	clear<sc>(</sc><sc>)</sc><sc>;</sc>
 	grid_to_canvas<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
+reset_button.onclick = reset_grid<sc>;</sc>
 
 <kw>function</kw> randomize<sc>(</sc><sc>)</sc><sc>{</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>
@@ -389,7 +391,6 @@ clear_button.onclick = clear_grid<sc>;</sc>
 	save_grid<sc>(</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 random_button.onclick = randomize<sc>;</sc>
-reset_button.onclick = reset_grid<sc>;</sc>
 
 <kw>let</kw> id<sc>;</sc>
 <kw>function</kw> stop<sc>(</sc><sc>)</sc><sc>{</sc>
@@ -407,9 +408,9 @@ stop_button.onclick = stop<sc>;</sc>
 play_button.onclick = play<sc>;</sc>
 
 <kw>function</kw> faster<sc>(</sc><sc>)</sc><sc>{</sc>
-	<kw>if</kw> <sc>(</sc>interval &lt= 5<sc>)</sc>
-		<kw>return</kw><sc>;</sc>
-	interval -= 5<sc>;</sc>
+	<kw>if</kw> <sc>(</sc>interval &lt= 5<sc>)</sc><comment Class="js">// 200 fps max?
+</comment>		<kw>return</kw><sc>;</sc><comment Class="js">// not sure what the limit should be yet
+</comment>	interval -= 5<sc>;</sc>
 	<kw>if</kw> <sc>(</sc>paused<sc>)</sc>
 		<kw>return</kw><sc>;</sc>
 	stop<sc>(</sc><sc>)</sc><sc>;</sc>

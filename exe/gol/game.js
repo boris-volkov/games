@@ -17,7 +17,7 @@ let trail = 1;
 const canvas    = document.querySelector("#canvas");
 let cell_width  = 16; // pixels on the display
 
-// get url params for grid size, or set default 40
+// get url params for grid size, or set default 64
 const urlParams = new URLSearchParams(window.location.search);
 var num_rows = parseInt( urlParams.get('rows'));
 if (isNaN(num_rows)) { num_rows = 64; }
@@ -30,7 +30,7 @@ for (let i = 0; i < num_rows; i++){
 	grid[i] = new Array(num_cols);
 	for (let j = 0; j < num_cols; j++)
 		grid[i][j] = new Uint8Array(4).fill(0); 
-		// current, temp, undo, neighbor count
+		// 4 entries: current, temp, undo, neighbor count
 } // storing relevant things closer in memory for performance
 
 // match graphics context to grid size
@@ -44,6 +44,7 @@ const c = canvas.getContext("2d");
 // game logic
 function next_generation(){
 	generations++;
+	print_generations();
 	if (trail)
 		clear_transparent();
 	else
@@ -72,8 +73,7 @@ function next_generation(){
 	for (let row = 0; row < grid.length; row++){ // write temp to current state
 		for (let col = 0; col < grid[0].length; col++){
 			if (grid[row][col][0] = grid[row][col][1] === 1){
-				// instead of iterating again to call grid to canvas, we already
-				// know which squares to light up here.
+				// light up the living cells
 				c.beginPath();
 				c.arc(Math.round(col*cell_width + cell_width/2), 
 					    Math.round(row*cell_width + cell_width/2),
@@ -81,9 +81,9 @@ function next_generation(){
 				c.fill();
 			}
 			grid[row][col][3] = 0; // reset neighbor count for next time
+			// there's probably a better place to do this
 		}
 	}
-	print_generations();
 }
 step_button.onclick = next_generation;
 
@@ -96,14 +96,14 @@ function count_neighbors() {
 				continue;
 			let left  = (col === 0) ? num_cols-1 : col - 1;
 			let right = (col === num_cols-1) ? 0 : col + 1;
-			grid[up][right][3]  ++
-			grid[up][col][3]    ++ 
-			grid[up][left][3]   ++ 
-			grid[row][right][3] ++
-			grid[row][left][3]  ++
-			grid[down][col][3]  ++
-			grid[down][right][3]++
-			grid[down][left][3] ++
+			grid[up][left][3]   ++;
+			grid[up][right][3]  ++;
+			grid[up][col][3]    ++;
+			grid[row][left][3]  ++;
+			grid[row][right][3] ++;
+			grid[down][left][3] ++;
+			grid[down][col][3]  ++;
+			grid[down][right][3]++;
 		}
 	}
 }
@@ -204,6 +204,7 @@ function clear_grid(){
 }
 clear_button.onclick = clear_grid;
 
+// state you return to in reset
 function save_grid(){
 	for (let row = 0; row < grid.length; row++){
 		for (let col = 0; col < grid[0].length; col++){
@@ -225,6 +226,7 @@ function reset_grid(){
 	clear();
 	grid_to_canvas();
 }
+reset_button.onclick = reset_grid;
 
 function randomize(){
 	stop();
@@ -243,7 +245,6 @@ function randomize(){
 	save_grid();
 }
 random_button.onclick = randomize;
-reset_button.onclick = reset_grid;
 
 let id;
 function stop(){
@@ -261,8 +262,8 @@ function play(){
 play_button.onclick = play;
 
 function faster(){
-	if (interval <= 5)
-		return;
+	if (interval <= 5)// 200 fps max?
+		return;// not sure what the limit should be yet
 	interval -= 5;
 	if (paused)
 		return;

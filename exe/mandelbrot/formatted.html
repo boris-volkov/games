@@ -1,4 +1,27 @@
-<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/mandelbrot/mandelbrot.js</div><pre class=js>
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/mandelbrot/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml lang="en"&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltmeta charset="utf-8"&gt</kw>
+		<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
+<kw>&ltstyle&gt</kw>
+body {
+	background-color : #012;
+	display: flex;
+	justify-content: center;
+}
+<kw>&lt/style&gt</kw>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltscript src="mandelbrot.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./exe/mandelbrot/mandelbrot.js</div><pre class=js>
+
+
 <kw>class</kw> Tile <sc>{</sc>
 	constructor<sc>(</sc>x, y, width, height<sc>)</sc> <sc>{</sc>
 		<kw>this</kw>.x = x<sc>;</sc>
@@ -8,7 +31,7 @@
 	<sc>}</sc>
 
 	<kw>static</kw> *tiles<sc>(</sc>width, height, numRows, numCols<sc>)</sc> <sc>{</sc>
-		<kw>let</kw> colunmWidth = Math.ceil<sc>(</sc>width/numCols<sc>)</sc><sc>;</sc>
+		<kw>let</kw> columnWidth = Math.ceil<sc>(</sc>width/numCols<sc>)</sc><sc>;</sc>
 		<kw>let</kw> rowHeight = Math.ceil<sc>(</sc>height/numRows<sc>)</sc><sc>;</sc>
 
 		<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0<sc>;</sc> row &lt numRows<sc>;</sc> row++<sc>)</sc> <sc>{</sc>
@@ -17,9 +40,9 @@
 				<sc>:</sc>height - rowHeight * <sc>(</sc>numRows-1<sc>)</sc><sc>;</sc>
 			<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0<sc>;</sc> col &lt numCols<sc>;</sc> col++<sc>)</sc> <sc>{</sc>
 				<kw>let</kw> tileWidth = <sc>(</sc>col &lt numCols-1<sc>)</sc>
-					? columWidth
-					<sc>:</sc> width - columWidth * <sc>(</sc>numCols-1<sc>)</sc><sc>;</sc>
-				<kw>yield</kw> <kw>new</kw> Tile<sc>(</sc>col*columWidth, row*rowHeight,
+					? columnWidth
+					<sc>:</sc> width - columnWidth * <sc>(</sc>numCols-1<sc>)</sc><sc>;</sc>
+				<kw>yield</kw> <kw>new</kw> Tile<sc>(</sc>col*columnWidth, row*rowHeight,
 					tileWidth, tileHeight<sc>)</sc><sc>;</sc>
 			<sc>}</sc>
 		<sc>}</sc>
@@ -27,7 +50,7 @@
 <sc>}</sc>
 
 <kw>class</kw> WorkerPool <sc>{</sc>
-	constructor<sc>(</sc>numWorkers, workerSource<sc>)</sc> <sc>[</sc>
+	constructor<sc>(</sc>numWorkers, workerSource<sc>)</sc> <sc>{</sc>
 		<kw>this</kw>.idleWorkers = <sc>[</sc><sc>]</sc><sc>;</sc>
 		<kw>this</kw>.workQueue = <sc>[</sc><sc>]</sc><sc>;</sc>
 		<kw>this</kw>.workerMap = <kw>new</kw> Map<sc>(</sc><sc>)</sc><sc>;</sc> <comment Class="js">// map workers to res/rej
@@ -42,6 +65,7 @@
 			<sc>}</sc><sc>;</sc>
 			<kw>this</kw>.idleWorkers<sc>[</sc>i<sc>]</sc> = worker<sc>;</sc>
 		<sc>}</sc>
+	<sc>}</sc>
 
 	<comment Class="js">// internal method called when a worker finishes
 </comment>	_workerDone<sc>(</sc>worker, error, response<sc>)</sc> <sc>{</sc>
@@ -74,7 +98,7 @@
 
 <kw>class</kw> PageState <sc>{</sc>
 	<comment Class="js">// the <kw>static</kw> methods don't refer to any "<kw>this</kw>"
-</comment>	<kw>static</kw> initialState<sc>(</sc><sc>)</sc> <sc>{</sc>
+</comment>	<kw>static</kw> initializeState<sc>(</sc><sc>)</sc> <sc>{</sc>
 		<kw>let</kw> s = <kw>new</kw> PageState<sc>(</sc><sc>)</sc><sc>;</sc>
 		s.cx = -0.5<sc>;</sc>
 		s.cy = 0<sc>;</sc>
@@ -90,10 +114,11 @@
 		s.cy = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"cy"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 		s.perPixel = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"pp"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 		s.maxIterations = parseInt<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"it"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
-		<kw>return</kw> <sc>(</sc>isNaN<sc>(</sc>s.cx<sc>)</sc> || isNaN<sc>(</sc>s.cy<sc>)</sc> || isNaN<sc>(</sc>s.perPixel<sc>)</sc>
+		<kw>return</kw> <sc>(</sc>isNaN<sc>(</sc>s.cx<sc>)</sc><sc>)</sc> || <sc>(</sc>isNaN<sc>(</sc>s.cy<sc>)</sc><sc>)</sc> || <sc>(</sc>isNaN<sc>(</sc>s.perPixel<sc>)</sc><sc>)</sc>
 			|| <sc>(</sc>isNaN<sc>(</sc>s.maxIterations<sc>)</sc><sc>)</sc>
 			? <kw>null</kw>
 			<sc>:</sc> s<sc>;</sc>
+		
 	<sc>}</sc>
 
 	toURL<sc>(</sc><sc>)</sc> <sc>{</sc>
@@ -161,16 +186,186 @@
 		<sc>}</sc>
 	<sc>}</sc>
 
+	color<sc>(</sc>iterations, maxIterations<sc>)</sc> <sc>{</sc>
+		<kw>let</kw> alpha = 255<sc>;</sc>
+		<kw>let</kw> blue  = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations + maxIterations/3<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
+		<kw>let</kw> red = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations + 2*maxIterations/3<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
+		<kw>let</kw> green   = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
 
+		<comment Class="js">//blue = Math.round<sc>(</sc>50*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 200<sc>)</sc>
+</comment>		<comment Class="js">//green = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 125<sc>)</sc>
+</comment>		<comment Class="js">//red = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 125<sc>)</sc>
+</comment>		<comment Class="js">//scale values to 0-255 range and <kw>return</kw> like <kw>this</kw><sc>:</sc>
+</comment>		<kw>return</kw> <sc>(</sc><sc>(</sc>alpha&lt&lt24<sc>)</sc> + <sc>(</sc>blue&lt&lt16<sc>)</sc> + <sc>(</sc>green&lt&lt8<sc>)</sc> + <sc>(</sc>red<sc>)</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
 
+	<comment Class="js">//<kw>for</kw> just changing pallate
+</comment>	static_render<sc>(</sc><sc>)</sc><sc>{</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
 
+	render<sc>(</sc><sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc> <kw>this</kw>.pendingRender<sc>)</sc> <sc>{</sc>
+			<kw>this</kw>.wantsRerender = true<sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
 
+		<kw>let</kw> <sc>{</sc>cx, cy, perPixel, maxIterations<sc>}</sc> = <kw>this</kw>.state<sc>;</sc>
+		<kw>let</kw> x0 = cx - perPixel*<kw>this</kw>.width/2<sc>;</sc>
+		<kw>let</kw> y0 = cy - perPixel*<kw>this</kw>.height/2<sc>;</sc>
 
+		<kw>let</kw> promises = <kw>this</kw>.tiles.map<sc>(</sc> tile =&gt <kw>this</kw>.workerPool.addWork<sc>(</sc><sc>{</sc>
+			tile<sc>:</sc> tile,
+			x0<sc>:</sc> x0 + tile.x * perPixel,
+			y0<sc>:</sc> y0 + tile.y * perPixel,
+			perPixel<sc>:</sc> perPixel,
+			maxIterations<sc>:</sc> maxIterations
+		<sc>}</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 
+		<kw>this</kw>.pendingRender = Promise.all<sc>(</sc>promises<sc>)</sc>.then<sc>(</sc>responses =&gt <sc>{</sc>
+			<kw>let</kw> min = maxIterations<sc>;</sc>
+			<kw>let</kw> max = 0<sc>;</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+				<kw>if</kw> <sc>(</sc>r.min &lt min<sc>)</sc> min = r.min<sc>;</sc>
+				<kw>if</kw> <sc>(</sc>r.max &gt max<sc>)</sc> max = r.max<sc>;</sc>
+			<sc>}</sc>
+
+			<comment Class="js">// every iteration count from 0-maxIterations has its own color
+</comment>			<kw>if</kw> <sc>(</sc><sc>!</sc><kw>this</kw>.colorTable || <kw>this</kw>.colorTable.length <sc>!</sc>== maxIterations+1<sc>)</sc><sc>{</sc>
+				<kw>this</kw>.colorTable = <kw>new</kw> Uint32Array<sc>(</sc>maxIterations+1<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+
+			<kw>if</kw> <sc>(</sc>min === max<sc>)</sc> <sc>{</sc> <comment Class="js">// 
+</comment>				<kw>if</kw> <sc>(</sc>min === maxIterations<sc>)</sc> <sc>{</sc>
+					<kw>this</kw>.colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
+				<sc>}</sc> <kw>else</kw> <sc>{</sc>
+					<kw>this</kw>.colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">//TODO change <kw>this</kw><sc>!</sc> transparency is slow and it looks bad too
+</comment>				<kw>let</kw> maxlog = Math.log<sc>(</sc>1+max-min<sc>)</sc><sc>;</sc>
+				console.log<sc>(</sc>min, max<sc>)</sc><sc>;</sc>
+				<kw>for</kw> <sc>(</sc><kw>let</kw> i = min<sc>;</sc> i &lt max<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+					<kw>this</kw>.colorTable<sc>[</sc>i<sc>]</sc> = <kw>this</kw>.color<sc>(</sc>i, maxIterations<sc>)</sc><sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc>
+
+			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+				<kw>let</kw> iterations = <kw>new</kw> Uint32Array<sc>(</sc>r.imageData.data.buffer<sc>)</sc><sc>;</sc>
+				<kw>for</kw> <sc>(</sc><kw>let</kw> i= 0<sc>;</sc> i &lt iterations.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+					iterations<sc>[</sc>i<sc>]</sc> = <kw>this</kw>.colorTable<sc>[</sc>iterations<sc>[</sc>i<sc>]</sc><sc>]</sc><sc>;</sc>
+				<sc>}</sc>
+			<sc>}</sc>
+			<kw>this</kw>.canvas.style.transform = <dbl_quote>""</dbl_quote><sc>;</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+				<kw>this</kw>.context.putImageData<sc>(</sc>r.imageData, r.tile.x, r.tile.y<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>)</sc>
+		.<kw>catch</kw><sc>(</sc><sc>(</sc>reason<sc>)</sc> =&gt <sc>{</sc>
+			console.error<sc>(</sc><dbl_quote>"promise rejected <kw>in</kw> render<sc>(</sc><sc>)</sc><sc>:</sc>"</dbl_quote>, reason<sc>)</sc><sc>;</sc>
+		<sc>}</sc><sc>)</sc>
+		.<kw>finally</kw><sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+			<kw>this</kw>.pendingRender = <kw>null</kw><sc>;</sc>
+			<kw>if</kw> <sc>(</sc><kw>this</kw>.wantsRerender<sc>)</sc> <sc>{</sc>
+				<kw>this</kw>.wantsRerender = <kw>false</kw><sc>;</sc>
+				<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	handleResize<sc>(</sc>event<sc>)</sc> <sc>{</sc>
+		<kw>if</kw> <sc>(</sc><kw>this</kw>.resizeTimer<sc>)</sc> clearTimeout<sc>(</sc><kw>this</kw>.resizeTimer<sc>)</sc><sc>;</sc>
+		<kw>this</kw>.resizeTimer = setTimeout<sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+			<kw>this</kw>.resizeTimer = <kw>null</kw><sc>;</sc>
+			<kw>this</kw>.setSize<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>, 50<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+
+	handleKey<sc>(</sc>event<sc>)</sc> <sc>{</sc>
+		<kw>switch</kw> <sc>(</sc>event.key<sc>)</sc> <sc>{</sc>
+			<kw>case</kw> <dbl_quote>"Escape"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>PageState.initializeState<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"+"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
+					s.maxIterations = Math.round<sc>(</sc>s.maxIterations *1.5<sc>)</sc><sc>;</sc>
+				<sc>}</sc><sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"-"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
+					s.maxIterations = Math.round<sc>(</sc>s.maxIterations/1.5<sc>)</sc><sc>;</sc>
+					<kw>if</kw><sc>(</sc> s.maxIterations &lt 1<sc>)</sc> s.maxIterations = 1<sc>;</sc>
+				<sc>}</sc><sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"o"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt s.perPixel *= 2<sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"ArrowUp"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cy -= <kw>this</kw>.height/10 * s.perPixel<sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"ArrowDown"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cy += <kw>this</kw>.height/10 * s.perPixel<sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"ArrowLeft"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cx -= <kw>this</kw>.width/10 * s.perPixel<sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+			<kw>case</kw> <dbl_quote>"ArrowRight"</dbl_quote><sc>:</sc>
+				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cx += <kw>this</kw>.width/10 * s.perPixel<sc>)</sc><sc>;</sc>
+				<kw>break</kw><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	handlePointer<sc>(</sc>event<sc>)</sc> <sc>{</sc>
+		<kw>const</kw> x0 = event.clientX, y0 = event.clientY, t0 = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+		
+		<kw>const</kw> pointerMoveHandler = event =&gt <sc>{</sc>
+			<kw>let</kw> dx = event.clientX-x0<sc>;</sc>
+			<kw>let</kw> dy = event.clientY-y0<sc>;</sc> 
+			<kw>let</kw> dt = Date.now<sc>(</sc><sc>)</sc> - t0<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>dx &gt 10 || dy &gt 10 || dt &gt 500<sc>)</sc><sc>{</sc>
+				<kw>this</kw>.canvas.style.transform = <sgl_quote>'translate<sc>(</sc>$<sc>{</sc>dx<sc>}</sc>px, $<sc>{</sc>dy<sc>}</sc>px<sc>)</sc>'</sgl_quote><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>;</sc>
+
+		<kw>const</kw> pointerUpHandler = event =&gt <sc>{</sc>
+			<kw>this</kw>.canvas.removeEventListener<sc>(</sc><dbl_quote>"pointermove"</dbl_quote>, pointerMoveHandler<sc>)</sc><sc>;</sc>
+			<kw>this</kw>.canvas.removeEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, pointerUpHandler<sc>)</sc><sc>;</sc>
+
+			<kw>const</kw> dx = event.clientX-x0, dy = event.clientY-y0, dt=Date.now<sc>(</sc><sc>)</sc>-t0<sc>;</sc>
+			<kw>const</kw> <sc>{</sc>cx, cy, perPixel<sc>}</sc> = <kw>this</kw>.state<sc>;</sc>
+
+			<kw>if</kw> <sc>(</sc>dy &gt 10 || dy &gt 10 || dt &gt 500<sc>)</sc> <sc>{</sc>
+				<kw>this</kw>.setState<sc>(</sc><sc>{</sc>cx<sc>:</sc>cx - dx*perPixel, cy<sc>:</sc> cy - dy*perPixel<sc>}</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc>
+				<kw>let</kw> cdx = x0 - <kw>this</kw>.width/2<sc>;</sc>
+				<kw>let</kw> cdy = y0 - <kw>this</kw>.height/2<sc>;</sc>
+
+				<kw>this</kw>.canvas.style.transform = 
+					<sgl_quote>'translate<sc>(</sc>$<sc>{</sc>-cdx*2<sc>}</sc>px, $<sc>{</sc>-cdy*2<sc>}</sc>px<sc>)</sc> scale<sc>(</sc>2<sc>)</sc>'</sgl_quote><sc>;</sc>
+
+				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
+					s.cx += cdx*s.perPixel<sc>;</sc>
+					s.cy += cdy*s.perPixel<sc>;</sc>
+					s.perPixel /= 2<sc>;</sc>
+				<sc>}</sc><sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc><sc>;</sc>
+
+		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointermove"</dbl_quote>, pointerMoveHandler<sc>)</sc><sc>;</sc>
+		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, pointerUpHandler<sc>)</sc><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>let</kw> canvas = document.createElement<sc>(</sc><dbl_quote>"canvas"</dbl_quote><sc>)</sc><sc>;</sc>
+document.body.append<sc>(</sc>canvas<sc>)</sc><sc>;</sc>
+document.body.style = <dbl_quote>"margin<sc>:</sc>0"</dbl_quote><sc>;</sc>
+canvas.style.width = <dbl_quote>"90%"</dbl_quote><sc>;</sc>
+canvas.style.height = <dbl_quote>"90%"</dbl_quote><sc>;</sc>
+<kw>new</kw> MandelbrotCanvas<sc>(</sc>canvas<sc>)</sc><sc>;</sc>
 </pre>
 <div class="bookmark">./exe/mandelbrot/worker.js</div><pre class=js>
 onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
-	<kw>const</kw> <sc>{</sc>title, x0, y0, perPixel, maxIterations<sc>}</sc> = message.data<sc>;</sc>
+	<kw>const</kw> <sc>{</sc>tile, x0, y0, perPixel, maxIterations<sc>}</sc> = message.data<sc>;</sc>
 	<kw>const</kw> <sc>{</sc>width, height<sc>}</sc> = tile<sc>;</sc>
 
 	<kw>const</kw> imageData = <kw>new</kw> ImageData<sc>(</sc>width, height<sc>)</sc><sc>;</sc>
@@ -185,7 +380,7 @@ onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
 </comment>	<comment Class="js">// row and col are the pixel coordinates
 </comment>	<comment Class="js">// x and y are the actual complex number
 </comment>	<kw>for</kw> <sc>(</sc><kw>let</kw> row = 0, y = y0<sc>;</sc> row &lt height <sc>;</sc>row++, y+= perPixel<sc>)</sc><sc>{</sc>
-		<kw>for</kw> <kw>let</kw> col = 0, x = x0<sc>;</sc> col &lt width<sc>;</sc> col++, x += perPixel<sc>)</sc> <sc>{</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> col = 0, x = x0<sc>;</sc> col &lt width<sc>;</sc> col++, x += perPixel<sc>)</sc> <sc>{</sc>
 			<kw>let</kw> n<sc>;</sc>
 			<kw>let</kw> r = x, i = y<sc>;</sc> <comment Class="js">// real and imaginary
 </comment>			<comment Class="js">// inner loop iterates over each pixel to see <kw>if</kw> it escapes
@@ -202,7 +397,7 @@ onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
 			<kw>if</kw> <sc>(</sc>n &lt min<sc>)</sc> min = n<sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
-	postMessage<sc>(</sc><sc>{</sc>tile, imageData, min, max<sc>}</sc>, <sc>[</sc>imageDage.data.buffer<sc>]</sc><sc>)</sc><sc>;</sc>
+	postMessage<sc>(</sc><sc>{</sc>tile, imageData, min, max<sc>}</sc>, <sc>[</sc>imageData.data.buffer<sc>]</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 </pre>
 </body></html>
