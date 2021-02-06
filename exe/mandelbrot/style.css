@@ -1,0 +1,63 @@
+
+body {
+	background-color : #123;
+}
+
+div.control_bar{
+	margin: auto;
+	width: 95vw;
+	position: sticky;
+	top: 0;
+	display: flex;
+	flex-direction: row;
+	align-content: stretch;
+}
+
+.control_bar div {
+	text-align : center;
+	background-color: rgb(35,40,50);
+	flex : 1;
+	color: #678;
+	color: coral;
+	font-family: Courier new;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	opacity: 0.8;
+}
+
+.control_bar div:active {
+	background-color: #358;
+}
+
+.control_bar div:hover {
+	background-color: #245;
+}
+
+.control_bar div:first-child{
+	border-bottom-left-radius: 20px;
+}
+
+.control_bar div:last-child{
+	border-bottom-right-radius: 20px;
+}
+
+
+
+.canvas_holder {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+	border-radius: 10px;	
+	background-color: #012;
+}
+
+canvas {
+	width: 90vw;
+	height: 90vh;
+}

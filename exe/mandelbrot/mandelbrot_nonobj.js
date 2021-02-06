@@ -125,9 +125,12 @@ class MandelbrotCanvas {
 		this.resizeTimer = null;
 		this.colorTable = null;
 
+		this.upButton = document.querySelector("#up");
+		this.upButton.addEventListener("click", this.up);
+
 		this.canvas.addEventListener("pointerdown", e => this.handlePointer(e));
 		window.addEventListener("keydown", e => this.handleKey(e));
-//		window.addEventListener("resize", e => this.handleResize(e));
+		window.addEventListener("resize", e => this.handleResize(e));
 		window.addEventListener("popstate", e => this.setState( e.state, false));
 
 		this.state = 
