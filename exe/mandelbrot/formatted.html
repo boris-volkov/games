@@ -1,26 +1,128 @@
-<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/mandelbrot/main.html</div><pre class=html>
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./exe/mandelbrot/readme.txt</div><pre class=notes>
+It's a strange miracle that this thing exists at all, and perhaps still stranger that anyone found it, but here it is, for us to enjoy. Click anywhere on the picture to zoom in, and you will see that you can somehow ... &lti&gtjust keep zooming&lt/i&gt. Really, try it!
+
+I say it is a miracle because its discovery is rooted in the unlikely answer of "what is the square root of negative one?" Even after a suitable answer to that question was formalized in mathematics, it still took hundreds of years of human development to get to the point that we can display this image and explore it. It could technically be drawn with a box of crayons and A LOT of time, but it really took the development of an electronic computer in order to render it in any reasonable span of time.
+
+This object is called the Mandelbrot set, named after the famous fractal mathematician Benoit B. Mandelbrot (if you asked him what the B. stands for, he would answer: "Bennoit B. Mandelbrot", and if you aksed him what THAT B stood for... well... what do you think?) This picture behaves in just the same way, no matter how far you zoom into it, you keep seeing more copies of the same thing. Well, not the &lti&gtsame&lt/i&gt thing, but rather, variations on several themes: depending on where you look, you will find spirals, structures that look like trees, flowers, rivers, galaxies, bad hair days... all sorts of natural-looking formations of seemingly infinite variety. 
+
+You would think that a graph of such complexity would be the result of an equally complicated looking equation, but in fact it is produced by the rather tame quadratic equation of a complex variable: 
+
+	f(z) = z² + c
+
+Only nine symbols...
+
+How does it work? Every point c on the complex plane is colored based on how quickly the sequence produced by the recursive iteration of this function diverges when starting at z = 0. I refer you to the excellent wikipedia article about it if you would like a more detailed description. The mathematics required is accessible to the modern high-schooler, and even younger, if you are ambitious! (Algebra2 standard, topics: complex numbers, function composition). 
+
+As a math teacher, a question you are frequently asked is "but when will I ever use this in &lti&gtreal life&lt/i&gt?" The most honest answer I can give them is "probably never"... but... "not everything you learn in school is meant to be useful. Some of it is just interesting and beautiful and makes you enjoy your life a little more. And that's okay." Some of the most important things in life have no particular use. What is the &lti&gtuse&lt/i&gt of music, for example, or of a soccer game? These are just things we enjoy, without bothering much about their use. Wouldn't a person be missing the point if they said that the use of a soccer game is "to exercise" or "to fulfill some evolutionary goal"? It would take all the magic out. And this graph seems to me like magic. This graph is one of my favorite examples of something in math that need not be useful in order to be interesting. People all over the world have marveled at the detail of it, the dazzling colors and shapes. 
+
+The code for this current interface is largely based on that provided in the O'Reilly book, but is pretty heavily modified in order to unwrap the mandelbrot object class into a set of global parameters, so as to be more easily spoken to by the html buttons, which are here implemented as simple &ltdiv&gt's with click-listeners. The same book is where I got the technique of dividing the work among web-workers in order to invoke multiple cores simultaneously and speed up the work. 
+
+I also got creative with the colors, and Tim Bell helped me with the function definitions. The design is a sine wave that first oscilates quickly, and then slows down. This gives this graph the outside is kind of "pillowy" 
+</pre>
+<div class="bookmark">./exe/mandelbrot/main.html</div><pre class=html>
 <kw>&lt!doctype html&gt</kw>
 
 <kw>&lthtml lang="en"&gt</kw>
 	<kw>&lthead&gt</kw>
 		<kw>&ltmeta charset="utf-8"&gt</kw>
 		<kw>&lttitle&gt</kw>Ѭ<kw>&lt/title&gt</kw>
-<kw>&ltstyle&gt</kw>
-body {
-	background-color : #012;
-	display: flex;
-	justify-content: center;
-}
-<kw>&lt/style&gt</kw>
+		<kw>&ltlink rel="stylesheet" href="style.css"&gt</kw><kw>&lt/link&gt</kw>
 	<kw>&lt/head&gt</kw>
 
 	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv class="control_bar"&gt</kw>
+			<kw>&ltdiv id="left"&gt</kw>left<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="up"&gt</kw>up<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="down"&gt</kw>down<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="right"&gt</kw>right<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="minus"&gt</kw>color-<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="plus"&gt</kw>color+<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="out"&gt</kw>out<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="reset"&gt</kw>reset<kw>&lt/div&gt</kw>
+
+		<kw>&lt/div&gt</kw>
+
+		<kw>&ltdiv class="canvas_holder"&gt</kw>
+			<kw>&ltcanvas id="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
+		<kw>&lt/div&gt</kw>
 		<kw>&ltscript src="mandelbrot.js"&gt</kw><kw>&lt/script&gt</kw>
 	<kw>&lt/body&gt</kw>
 <kw>&lt/html&gt</kw>
 </pre>
+<div class="bookmark">./exe/mandelbrot/style.css</div><pre class=css>
+<css></css>
+<sc>body {</sc>
+<css>	background-color : #123;</css>
+<sc>}</sc>
+<css></css>
+<sc>div.control_bar{</sc>
+<css>	margin: auto;</css>
+<css>	width: 95vw;</css>
+<css>	position: sticky;</css>
+<css>	top: 0;</css>
+<css>	display: flex;</css>
+<css>	flex-direction: row;</css>
+<css>	align-content: stretch;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div {</sc>
+<css>	text-align : center;</css>
+<css>	background-color: rgb(35,40,50);</css>
+<css>	flex : 1;</css>
+<css>	color: #678;</css>
+<css>	color: coral;</css>
+<css>	font-family: Courier new;</css>
+<css>	padding-bottom: 10px;</css>
+<css>	padding-top: 10px;</css>
+<css>	-webkit-touch-callout: none;</css>
+<css>    -webkit-user-select: none;</css>
+<css>    -khtml-user-select: none;</css>
+<css>    -moz-user-select: none;</css>
+<css>    -ms-user-select: none;</css>
+<css>    user-select: none;</css>
+<css>	opacity: 0.8;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:active {</sc>
+<css>	background-color: #358;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:hover {</sc>
+<css>	background-color: #245;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:first-child{</sc>
+<css>	border-bottom-left-radius: 20px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.control_bar div:last-child{</sc>
+<css>	border-bottom-right-radius: 20px;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css></css>
+<sc>.canvas_holder {</sc>
+<css>	display: flex;</css>
+<css>	justify-content: center;</css>
+<css>	padding: 20px;</css>
+<css>	border-radius: 10px;	</css>
+<css>	background-color: #012;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	width: 90vw;</css>
+<css>	height: 90vh;</css>
+<sc>}</sc>
+</pre>
 <div class="bookmark">./exe/mandelbrot/mandelbrot.js</div><pre class=js>
-
 
 <kw>class</kw> Tile <sc>{</sc>
 	constructor<sc>(</sc>x, y, width, height<sc>)</sc> <sc>{</sc>
@@ -97,12 +199,11 @@ body {
 <sc>}</sc>
 
 <kw>class</kw> PageState <sc>{</sc>
-	<comment Class="js">// the <kw>static</kw> methods don't refer to any "<kw>this</kw>"
-</comment>	<kw>static</kw> initializeState<sc>(</sc><sc>)</sc> <sc>{</sc>
+	<kw>static</kw> initializeState<sc>(</sc><sc>)</sc> <sc>{</sc>
 		<kw>let</kw> s = <kw>new</kw> PageState<sc>(</sc><sc>)</sc><sc>;</sc>
 		s.cx = -0.5<sc>;</sc>
 		s.cy = 0<sc>;</sc>
-		s.perPixel = 3/window.innerHeight<sc>;</sc>
+		s.perPixel = 3/window.innerHeight*2<sc>;</sc>
 		s.maxIterations = 500<sc>;</sc>
 		<kw>return</kw> s<sc>;</sc>
 	<sc>}</sc>
@@ -137,231 +238,246 @@ body {
 <kw>const</kw> COLS = 4<sc>;</sc>
 <kw>const</kw> NUMWORKERS = navigator.hardwareConcurrency || 2<sc>;</sc>
 
-<kw>class</kw> MandelbrotCanvas <sc>{</sc>
-	constructor<sc>(</sc>canvas<sc>)</sc> <sc>{</sc>
-		<kw>this</kw>.canvas = canvas<sc>;</sc>
-		<kw>this</kw>.context = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
-		<kw>this</kw>.workerPool = <kw>new</kw> WorkerPool<sc>(</sc>NUMWORKERS, <dbl_quote>"worker.js"</dbl_quote><sc>)</sc><sc>;</sc>
+<comment Class="js">// initialization <sc>(</sc>used to be constructor<sc>)</sc>
+</comment><kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>"#canvas"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> context = canvas.getContext<sc>(</sc><dbl_quote>"2d"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>let</kw> workerPool = <kw>new</kw> WorkerPool<sc>(</sc>NUMWORKERS, <dbl_quote>"worker.js"</dbl_quote><sc>)</sc><sc>;</sc>
 
-		<kw>this</kw>.tiles = <kw>null</kw><sc>;</sc>
-		<kw>this</kw>.pendingRender = <kw>null</kw><sc>;</sc>
-		<kw>this</kw>.wantsRerender = <kw>false</kw><sc>;</sc>
-		<kw>this</kw>.resizeTimer = <kw>null</kw><sc>;</sc>
-		<kw>this</kw>.colorTable = <kw>null</kw><sc>;</sc>
+<kw>let</kw> tiles = <kw>null</kw><sc>;</sc>
+<kw>let</kw> pendingRender = <kw>null</kw><sc>;</sc>
+<kw>let</kw> wantsRerender = <kw>false</kw><sc>;</sc>
+<kw>let</kw> resizeTimer = <kw>null</kw><sc>;</sc>
+<kw>let</kw> colorTable = <kw>null</kw><sc>;</sc>
+<kw>let</kw> width = canvas.width = window.innerWidth<sc>;</sc>
+<kw>let</kw> height = canvas.height = window.innerHeight<sc>;</sc>
 
-		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, e =&gt <kw>this</kw>.handlePointer<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
-		window.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, e =&gt <kw>this</kw>.handleKey<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
-		window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, e =&gt <kw>this</kw>.handleResize<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
-		window.addEventListener<sc>(</sc><dbl_quote>"popstate"</dbl_quote>, e =&gt <kw>this</kw>.steState<sc>(</sc> e.state, <kw>false</kw><sc>)</sc><sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"keydown"</dbl_quote>, e =&gt handleKey<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"resize"</dbl_quote>, e =&gt handleResize<sc>(</sc>e<sc>)</sc><sc>)</sc><sc>;</sc>
+window.addEventListener<sc>(</sc><dbl_quote>"popstate"</dbl_quote>, e =&gt setState<sc>(</sc> e.state, <kw>false</kw><sc>)</sc><sc>)</sc><sc>;</sc>
 
-		<kw>this</kw>.state = 
-			PageState.fromURL<sc>(</sc>window.location<sc>)</sc> || PageState.initializeState<sc>(</sc><sc>)</sc><sc>;</sc>
+<kw>let</kw> state = PageState.fromURL<sc>(</sc>window.location<sc>)</sc> || PageState.initializeState<sc>(</sc><sc>)</sc><sc>;</sc>
+console.log<sc>(</sc>state<sc>)</sc><sc>;</sc>
+history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc> <comment Class="js">// probably don't want <kw>this</kw>
+</comment>
+<kw>function</kw> setSize<sc>(</sc><sc>)</sc><sc>{</sc>
+	width = canvas.width<sc>;</sc>
+	height = canvas.height<sc>;</sc>
+	tiles = <sc>[</sc>...Tile.tiles<sc>(</sc>width, height, ROWS, COLS<sc>)</sc><sc>]</sc>
+	console.log<sc>(</sc><dbl_quote>"tiles"</dbl_quote>, tiles<sc>)</sc>
+<sc>}</sc>
 
-		history.replaceState<sc>(</sc><kw>this</kw>.state, <dbl_quote>""</dbl_quote>, <kw>this</kw>.state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 
-		<kw>this</kw>.setSize<sc>(</sc><sc>)</sc><sc>;</sc>
 
-		<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>
-
-	setSize<sc>(</sc><sc>)</sc> <sc>{</sc>
-		<kw>this</kw>.width = <kw>this</kw>.canvas.width = window.innerWidth<sc>;</sc>
-		<kw>this</kw>.height = <kw>this</kw>.canvas.height = window.innerHeight<sc>;</sc>
-		<kw>this</kw>.tiles = <sc>[</sc>...Tile.tiles<sc>(</sc><kw>this</kw>.width, <kw>this</kw>.height, ROWS, COLS<sc>)</sc><sc>]</sc>
-	<sc>}</sc>
-
-	setState<sc>(</sc>f, save=true<sc>)</sc> <sc>{</sc>
-		<kw>if</kw> <sc>(</sc><kw>typeof</kw> f === <dbl_quote>"<kw>function</kw>"</dbl_quote><sc>)</sc> <sc>{</sc>
-			f<sc>(</sc><kw>this</kw>.state<sc>)</sc><sc>;</sc>
-		<sc>}</sc> <kw>else</kw> <sc>{</sc>
-			<kw>for</kw><sc>(</sc><kw>let</kw> property <kw>in</kw> f<sc>)</sc> <sc>{</sc>
-				<kw>this</kw>.state<sc>[</sc>property<sc>]</sc> = f<sc>[</sc>property<sc>]</sc><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc>
-
-		<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
-
-		<kw>if</kw> <sc>(</sc>save<sc>)</sc> <sc>{</sc>
-			history.pushState<sc>(</sc><kw>this</kw>.state, <dbl_quote>""</dbl_quote>, <kw>this</kw>.state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<kw>function</kw> setState<sc>(</sc>f, save=true<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc><kw>typeof</kw> f === <dbl_quote>"<kw>function</kw>"</dbl_quote><sc>)</sc> <sc>{</sc>
+		f<sc>(</sc>state<sc>)</sc><sc>;</sc>
+	<sc>}</sc> <kw>else</kw> <sc>{</sc>
+		<kw>for</kw><sc>(</sc><kw>let</kw> property <kw>in</kw> f<sc>)</sc> <sc>{</sc>
+			state<sc>[</sc>property<sc>]</sc> = f<sc>[</sc>property<sc>]</sc><sc>;</sc>
 		<sc>}</sc>
 	<sc>}</sc>
 
-	color<sc>(</sc>iterations, maxIterations<sc>)</sc> <sc>{</sc>
-		<kw>let</kw> alpha = 255<sc>;</sc>
-		<kw>let</kw> blue  = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations + maxIterations/3<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
-		<kw>let</kw> red = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations + 2*maxIterations/3<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
-		<kw>let</kw> green   = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>2*Math.PI*<sc>(</sc>iterations<sc>)</sc>/maxIterations<sc>)</sc> + 125<sc>)</sc><sc>;</sc>
+	render<sc>(</sc><sc>)</sc><sc>;</sc>
 
-		<comment Class="js">//blue = Math.round<sc>(</sc>50*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 200<sc>)</sc>
-</comment>		<comment Class="js">//green = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 125<sc>)</sc>
-</comment>		<comment Class="js">//red = Math.round<sc>(</sc>125*Math.sin<sc>(</sc>maxIterations/iterations<sc>)</sc> + 125<sc>)</sc>
-</comment>		<comment Class="js">//scale values to 0-255 range and <kw>return</kw> like <kw>this</kw><sc>:</sc>
-</comment>		<kw>return</kw> <sc>(</sc><sc>(</sc>alpha&lt&lt24<sc>)</sc> + <sc>(</sc>blue&lt&lt16<sc>)</sc> + <sc>(</sc>green&lt&lt8<sc>)</sc> + <sc>(</sc>red<sc>)</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>
-
-	<comment Class="js">//<kw>for</kw> just changing pallate
-</comment>	static_render<sc>(</sc><sc>)</sc><sc>{</sc>
-		<kw>return</kw><sc>;</sc>
-	<sc>}</sc>
-
-	render<sc>(</sc><sc>)</sc> <sc>{</sc>
-		<kw>if</kw> <sc>(</sc> <kw>this</kw>.pendingRender<sc>)</sc> <sc>{</sc>
-			<kw>this</kw>.wantsRerender = true<sc>;</sc>
-			<kw>return</kw><sc>;</sc>
-		<sc>}</sc>
-
-		<kw>let</kw> <sc>{</sc>cx, cy, perPixel, maxIterations<sc>}</sc> = <kw>this</kw>.state<sc>;</sc>
-		<kw>let</kw> x0 = cx - perPixel*<kw>this</kw>.width/2<sc>;</sc>
-		<kw>let</kw> y0 = cy - perPixel*<kw>this</kw>.height/2<sc>;</sc>
-
-		<kw>let</kw> promises = <kw>this</kw>.tiles.map<sc>(</sc> tile =&gt <kw>this</kw>.workerPool.addWork<sc>(</sc><sc>{</sc>
-			tile<sc>:</sc> tile,
-			x0<sc>:</sc> x0 + tile.x * perPixel,
-			y0<sc>:</sc> y0 + tile.y * perPixel,
-			perPixel<sc>:</sc> perPixel,
-			maxIterations<sc>:</sc> maxIterations
-		<sc>}</sc><sc>)</sc><sc>)</sc><sc>;</sc>
-
-		<kw>this</kw>.pendingRender = Promise.all<sc>(</sc>promises<sc>)</sc>.then<sc>(</sc>responses =&gt <sc>{</sc>
-			<kw>let</kw> min = maxIterations<sc>;</sc>
-			<kw>let</kw> max = 0<sc>;</sc>
-			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
-				<kw>if</kw> <sc>(</sc>r.min &lt min<sc>)</sc> min = r.min<sc>;</sc>
-				<kw>if</kw> <sc>(</sc>r.max &gt max<sc>)</sc> max = r.max<sc>;</sc>
-			<sc>}</sc>
-
-			<comment Class="js">// every iteration count from 0-maxIterations has its own color
-</comment>			<kw>if</kw> <sc>(</sc><sc>!</sc><kw>this</kw>.colorTable || <kw>this</kw>.colorTable.length <sc>!</sc>== maxIterations+1<sc>)</sc><sc>{</sc>
-				<kw>this</kw>.colorTable = <kw>new</kw> Uint32Array<sc>(</sc>maxIterations+1<sc>)</sc><sc>;</sc>
-			<sc>}</sc>
-
-			<kw>if</kw> <sc>(</sc>min === max<sc>)</sc> <sc>{</sc> <comment Class="js">// 
-</comment>				<kw>if</kw> <sc>(</sc>min === maxIterations<sc>)</sc> <sc>{</sc>
-					<kw>this</kw>.colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
-				<sc>}</sc> <kw>else</kw> <sc>{</sc>
-					<kw>this</kw>.colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
-				<sc>}</sc>
-			<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">//TODO change <kw>this</kw><sc>!</sc> transparency is slow and it looks bad too
-</comment>				<kw>let</kw> maxlog = Math.log<sc>(</sc>1+max-min<sc>)</sc><sc>;</sc>
-				console.log<sc>(</sc>min, max<sc>)</sc><sc>;</sc>
-				<kw>for</kw> <sc>(</sc><kw>let</kw> i = min<sc>;</sc> i &lt max<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-					<kw>this</kw>.colorTable<sc>[</sc>i<sc>]</sc> = <kw>this</kw>.color<sc>(</sc>i, maxIterations<sc>)</sc><sc>;</sc>
-				<sc>}</sc>
-			<sc>}</sc>
-
-			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
-				<kw>let</kw> iterations = <kw>new</kw> Uint32Array<sc>(</sc>r.imageData.data.buffer<sc>)</sc><sc>;</sc>
-				<kw>for</kw> <sc>(</sc><kw>let</kw> i= 0<sc>;</sc> i &lt iterations.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-					iterations<sc>[</sc>i<sc>]</sc> = <kw>this</kw>.colorTable<sc>[</sc>iterations<sc>[</sc>i<sc>]</sc><sc>]</sc><sc>;</sc>
-				<sc>}</sc>
-			<sc>}</sc>
-			<kw>this</kw>.canvas.style.transform = <dbl_quote>""</dbl_quote><sc>;</sc>
-			<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
-				<kw>this</kw>.context.putImageData<sc>(</sc>r.imageData, r.tile.x, r.tile.y<sc>)</sc><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc><sc>)</sc>
-		.<kw>catch</kw><sc>(</sc><sc>(</sc>reason<sc>)</sc> =&gt <sc>{</sc>
-			console.error<sc>(</sc><dbl_quote>"promise rejected <kw>in</kw> render<sc>(</sc><sc>)</sc><sc>:</sc>"</dbl_quote>, reason<sc>)</sc><sc>;</sc>
-		<sc>}</sc><sc>)</sc>
-		.<kw>finally</kw><sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
-			<kw>this</kw>.pendingRender = <kw>null</kw><sc>;</sc>
-			<kw>if</kw> <sc>(</sc><kw>this</kw>.wantsRerender<sc>)</sc> <sc>{</sc>
-				<kw>this</kw>.wantsRerender = <kw>false</kw><sc>;</sc>
-				<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>
-
-	handleResize<sc>(</sc>event<sc>)</sc> <sc>{</sc>
-		<kw>if</kw> <sc>(</sc><kw>this</kw>.resizeTimer<sc>)</sc> clearTimeout<sc>(</sc><kw>this</kw>.resizeTimer<sc>)</sc><sc>;</sc>
-		<kw>this</kw>.resizeTimer = setTimeout<sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
-			<kw>this</kw>.resizeTimer = <kw>null</kw><sc>;</sc>
-			<kw>this</kw>.setSize<sc>(</sc><sc>)</sc><sc>;</sc>
-			<kw>this</kw>.render<sc>(</sc><sc>)</sc><sc>;</sc>
-		<sc>}</sc>, 50<sc>)</sc><sc>;</sc>
-	<sc>}</sc>
-
-	handleKey<sc>(</sc>event<sc>)</sc> <sc>{</sc>
-		<kw>switch</kw> <sc>(</sc>event.key<sc>)</sc> <sc>{</sc>
-			<kw>case</kw> <dbl_quote>"Escape"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>PageState.initializeState<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"+"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
-					s.maxIterations = Math.round<sc>(</sc>s.maxIterations *1.5<sc>)</sc><sc>;</sc>
-				<sc>}</sc><sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"-"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
-					s.maxIterations = Math.round<sc>(</sc>s.maxIterations/1.5<sc>)</sc><sc>;</sc>
-					<kw>if</kw><sc>(</sc> s.maxIterations &lt 1<sc>)</sc> s.maxIterations = 1<sc>;</sc>
-				<sc>}</sc><sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"o"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt s.perPixel *= 2<sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"ArrowUp"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cy -= <kw>this</kw>.height/10 * s.perPixel<sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"ArrowDown"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cy += <kw>this</kw>.height/10 * s.perPixel<sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"ArrowLeft"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cx -= <kw>this</kw>.width/10 * s.perPixel<sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-			<kw>case</kw> <dbl_quote>"ArrowRight"</dbl_quote><sc>:</sc>
-				<kw>this</kw>.setState<sc>(</sc>s =&gt s.cx += <kw>this</kw>.width/10 * s.perPixel<sc>)</sc><sc>;</sc>
-				<kw>break</kw><sc>;</sc>
-		<sc>}</sc>
-	<sc>}</sc>
-
-	handlePointer<sc>(</sc>event<sc>)</sc> <sc>{</sc>
-		<kw>const</kw> x0 = event.clientX, y0 = event.clientY, t0 = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
-		
-		<kw>const</kw> pointerMoveHandler = event =&gt <sc>{</sc>
-			<kw>let</kw> dx = event.clientX-x0<sc>;</sc>
-			<kw>let</kw> dy = event.clientY-y0<sc>;</sc> 
-			<kw>let</kw> dt = Date.now<sc>(</sc><sc>)</sc> - t0<sc>;</sc>
-			<kw>if</kw> <sc>(</sc>dx &gt 10 || dy &gt 10 || dt &gt 500<sc>)</sc><sc>{</sc>
-				<kw>this</kw>.canvas.style.transform = <sgl_quote>'translate<sc>(</sc>$<sc>{</sc>dx<sc>}</sc>px, $<sc>{</sc>dy<sc>}</sc>px<sc>)</sc>'</sgl_quote><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc><sc>;</sc>
-
-		<kw>const</kw> pointerUpHandler = event =&gt <sc>{</sc>
-			<kw>this</kw>.canvas.removeEventListener<sc>(</sc><dbl_quote>"pointermove"</dbl_quote>, pointerMoveHandler<sc>)</sc><sc>;</sc>
-			<kw>this</kw>.canvas.removeEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, pointerUpHandler<sc>)</sc><sc>;</sc>
-
-			<kw>const</kw> dx = event.clientX-x0, dy = event.clientY-y0, dt=Date.now<sc>(</sc><sc>)</sc>-t0<sc>;</sc>
-			<kw>const</kw> <sc>{</sc>cx, cy, perPixel<sc>}</sc> = <kw>this</kw>.state<sc>;</sc>
-
-			<kw>if</kw> <sc>(</sc>dy &gt 10 || dy &gt 10 || dt &gt 500<sc>)</sc> <sc>{</sc>
-				<kw>this</kw>.setState<sc>(</sc><sc>{</sc>cx<sc>:</sc>cx - dx*perPixel, cy<sc>:</sc> cy - dy*perPixel<sc>}</sc><sc>)</sc><sc>;</sc>
-			<sc>}</sc> <kw>else</kw> <sc>{</sc>
-				<kw>let</kw> cdx = x0 - <kw>this</kw>.width/2<sc>;</sc>
-				<kw>let</kw> cdy = y0 - <kw>this</kw>.height/2<sc>;</sc>
-
-				<kw>this</kw>.canvas.style.transform = 
-					<sgl_quote>'translate<sc>(</sc>$<sc>{</sc>-cdx*2<sc>}</sc>px, $<sc>{</sc>-cdy*2<sc>}</sc>px<sc>)</sc> scale<sc>(</sc>2<sc>)</sc>'</sgl_quote><sc>;</sc>
-
-				<kw>this</kw>.setState<sc>(</sc>s =&gt <sc>{</sc>
-					s.cx += cdx*s.perPixel<sc>;</sc>
-					s.cy += cdy*s.perPixel<sc>;</sc>
-					s.perPixel /= 2<sc>;</sc>
-				<sc>}</sc><sc>)</sc><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc><sc>;</sc>
-
-		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointermove"</dbl_quote>, pointerMoveHandler<sc>)</sc><sc>;</sc>
-		<kw>this</kw>.canvas.addEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, pointerUpHandler<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>save<sc>)</sc> <sc>{</sc>
+		history.pushState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
 <sc>}</sc>
 
-<kw>let</kw> canvas = document.createElement<sc>(</sc><dbl_quote>"canvas"</dbl_quote><sc>)</sc><sc>;</sc>
-document.body.append<sc>(</sc>canvas<sc>)</sc><sc>;</sc>
-document.body.style = <dbl_quote>"margin<sc>:</sc>0"</dbl_quote><sc>;</sc>
-canvas.style.width = <dbl_quote>"90%"</dbl_quote><sc>;</sc>
-canvas.style.height = <dbl_quote>"90%"</dbl_quote><sc>;</sc>
-<kw>new</kw> MandelbrotCanvas<sc>(</sc>canvas<sc>)</sc><sc>;</sc>
+<kw>function</kw> color<sc>(</sc>iterations<sc>)</sc> <sc>{</sc>
+	<kw>let</kw> alpha = 255<sc>;</sc>
+	<kw>let</kw> blue   = Math.round<sc>(</sc>75*Math.sin<sc>(</sc>iterations**0.4  + 2*Math.PI/3<sc>)</sc> + 175<sc>)</sc>
+	<kw>let</kw> green  = Math.round<sc>(</sc>75*Math.sin<sc>(</sc>iterations**0.4  - 2*Math.PI/3<sc>)</sc> + 75<sc>)</sc>
+	<kw>let</kw> red    = Math.round<sc>(</sc>-125*Math.sin<sc>(</sc>iterations**0.4   <sc>)</sc> + 125<sc>)</sc>
+	<comment Class="js">//scale values to 0-255 range and <kw>return</kw> like <kw>this</kw><sc>:</sc>
+</comment>	<kw>return</kw> <sc>(</sc><sc>(</sc>alpha&lt&lt24<sc>)</sc> + <sc>(</sc>blue&lt&lt16<sc>)</sc> + <sc>(</sc>green&lt&lt8<sc>)</sc> + <sc>(</sc>red<sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> render<sc>(</sc><sc>)</sc><sc>{</sc>
+	console.log<sc>(</sc>workerPool<sc>)</sc><sc>;</sc>
+	<kw>if</kw> <sc>(</sc>pendingRender<sc>)</sc> <sc>{</sc>
+		wantsRerender = true<sc>;</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+
+	<kw>let</kw> <sc>{</sc>cx, cy, perPixel, maxIterations<sc>}</sc> = state<sc>;</sc>
+	<kw>let</kw> x0 = cx - perPixel*width/2<sc>;</sc>
+	<kw>let</kw> y0 = cy - perPixel*height/2<sc>;</sc>
+
+	<kw>let</kw> promises = tiles.map<sc>(</sc> tile =&gt workerPool.addWork<sc>(</sc><sc>{</sc>
+		tile<sc>:</sc> tile,
+		x0<sc>:</sc> x0 + tile.x * perPixel,
+		y0<sc>:</sc> y0 + tile.y * perPixel,
+		perPixel<sc>:</sc> perPixel,
+		maxIterations<sc>:</sc> maxIterations
+	<sc>}</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+
+	pendingRender = Promise.all<sc>(</sc>promises<sc>)</sc>.then<sc>(</sc>responses =&gt <sc>{</sc>
+		<kw>let</kw> min = maxIterations<sc>;</sc>
+		<kw>let</kw> max = 0<sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+			<kw>if</kw> <sc>(</sc>r.min &lt min<sc>)</sc> min = r.min<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>r.max &gt max<sc>)</sc> max = r.max<sc>;</sc>
+		<sc>}</sc>
+
+		<comment Class="js">// every iteration count from 0-maxIterations has its own color
+</comment>		<kw>if</kw> <sc>(</sc><sc>!</sc>colorTable || colorTable.length <sc>!</sc>== maxIterations+1<sc>)</sc><sc>{</sc>
+			colorTable = <kw>new</kw> Uint32Array<sc>(</sc>maxIterations+1<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>min === max<sc>)</sc> <sc>{</sc> <comment Class="js">// 
+</comment>			<kw>if</kw> <sc>(</sc>min === maxIterations<sc>)</sc> <sc>{</sc>
+				colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
+			<sc>}</sc> <kw>else</kw> <sc>{</sc>
+				colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">//TODO change <kw>this</kw><sc>!</sc> transparency is slow and it looks bad too
+</comment>			<kw>for</kw> <sc>(</sc><kw>let</kw> i = min<sc>;</sc> i &lt max<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+				colorTable<sc>[</sc>i<sc>]</sc> = color<sc>(</sc>i<sc>)</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+		
+
+		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+			<kw>let</kw> iterations = <kw>new</kw> Uint32Array<sc>(</sc>r.imageData.data.buffer<sc>)</sc><sc>;</sc>
+			<kw>for</kw> <sc>(</sc><kw>let</kw> i= 0<sc>;</sc> i &lt iterations.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
+				iterations<sc>[</sc>i<sc>]</sc> = colorTable<sc>[</sc>iterations<sc>[</sc>i<sc>]</sc><sc>]</sc><sc>;</sc>
+			<sc>}</sc>
+		<sc>}</sc>
+		canvas.style.transform = <dbl_quote>""</dbl_quote><sc>;</sc>
+		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
+			context.putImageData<sc>(</sc>r.imageData, r.tile.x, r.tile.y<sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>)</sc>
+	.<kw>catch</kw><sc>(</sc><sc>(</sc>reason<sc>)</sc> =&gt <sc>{</sc>
+		console.error<sc>(</sc><dbl_quote>"promise rejected <kw>in</kw> render<sc>(</sc><sc>)</sc><sc>:</sc>"</dbl_quote>, reason<sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>)</sc>
+	.<kw>finally</kw><sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+		pendingRender = <kw>null</kw><sc>;</sc>
+		<kw>if</kw> <sc>(</sc>wantsRerender<sc>)</sc> <sc>{</sc>
+			wantsRerender = <kw>false</kw><sc>;</sc>
+			render<sc>(</sc><sc>)</sc><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> handleResize<sc>(</sc>event<sc>)</sc> <sc>{</sc>
+	<kw>if</kw> <sc>(</sc>resizeTimer<sc>)</sc> clearTimeout<sc>(</sc>resizeTimer<sc>)</sc><sc>;</sc>
+		resizeTimer = setTimeout<sc>(</sc><sc>(</sc><sc>)</sc> =&gt <sc>{</sc>
+		resizeTimer = <kw>null</kw><sc>;</sc>
+		setSize<sc>(</sc><sc>)</sc><sc>;</sc>
+		render<sc>(</sc><sc>)</sc><sc>;</sc>
+	<sc>}</sc>, 50<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> handleKey<sc>(</sc>event<sc>)</sc> <sc>{</sc>
+	<kw>switch</kw> <sc>(</sc>event.key<sc>)</sc> <sc>{</sc>
+		<kw>case</kw> <dbl_quote>"Escape"</dbl_quote><sc>:</sc>
+			reset<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"+"</dbl_quote><sc>:</sc>
+			iter_up<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"-"</dbl_quote><sc>:</sc>
+			iter_down<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"o"</dbl_quote><sc>:</sc>
+			out<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"ArrowUp"</dbl_quote><sc>:</sc>
+			event.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+			up<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"ArrowDown"</dbl_quote><sc>:</sc>
+			event.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+			down<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"ArrowLeft"</dbl_quote><sc>:</sc>
+			left<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+		<kw>case</kw> <dbl_quote>"ArrowRight"</dbl_quote><sc>:</sc>
+			right<sc>(</sc><sc>)</sc><sc>;</sc>
+			<kw>break</kw><sc>;</sc>
+	<sc>}</sc>
+<sc>}</sc>
+
+<kw>const</kw> reset_button = document.querySelector<sc>(</sc><dbl_quote>"#reset"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>function</kw> reset<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>PageState.initializeState<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+reset_button.onclick = reset<sc>;</sc>
+
+<kw>const</kw> iter_down_button = document.querySelector<sc>(</sc><dbl_quote>"#minus"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> iter_up_button = document.querySelector<sc>(</sc><dbl_quote>"#plus"</dbl_quote><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> iter_down<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt <sc>{</sc>
+		s.maxIterations = Math.round<sc>(</sc>s.maxIterations/1.5<sc>)</sc><sc>;</sc>
+		<kw>if</kw><sc>(</sc> s.maxIterations &lt 1<sc>)</sc> s.maxIterations = 1<sc>;</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+iter_down_button.onclick = iter_down<sc>;</sc>
+
+<kw>function</kw> iter_up<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt <sc>{</sc>
+		s.maxIterations = Math.round<sc>(</sc>s.maxIterations *1.5<sc>)</sc><sc>;</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+iter_up_button.onclick = iter_up<sc>;</sc>
+
+
+<kw>const</kw> up_button = document.querySelector<sc>(</sc><dbl_quote>"#up"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> down_button = document.querySelector<sc>(</sc><dbl_quote>"#down"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> left_button = document.querySelector<sc>(</sc><dbl_quote>"#left"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> right_button = document.querySelector<sc>(</sc><dbl_quote>"#right"</dbl_quote><sc>)</sc><sc>;</sc>
+<kw>const</kw> out_button = document.querySelector<sc>(</sc><dbl_quote>"#out"</dbl_quote><sc>)</sc><sc>;</sc>
+
+<kw>function</kw> up<sc>(</sc><sc>)</sc><sc>{</sc>	
+	setState<sc>(</sc>s =&gt s.cy -= height/10 * s.perPixel<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+up_button.onclick = up<sc>;</sc>
+
+<kw>function</kw> down<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt s.cy += height/10 * s.perPixel<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+down_button.onclick = down<sc>;</sc>
+
+<kw>function</kw> left<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt s.cx -= width/10 * s.perPixel<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+left_button.onclick = left<sc>;</sc>
+
+<kw>function</kw> right<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt s.cx += width/10 * s.perPixel<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+right_button.onclick = right<sc>;</sc>
+
+<kw>function</kw> out<sc>(</sc><sc>)</sc> <sc>{</sc>
+	setState<sc>(</sc>s =&gt s.perPixel *= 2<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+out_button.onclick = out<sc>;</sc>
+
+canvas.addEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, event =&gt <sc>{</sc>
+	bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
+	<kw>let</kw> x0 = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
+	<kw>let</kw> y0 = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>
+	t0 = Date.now<sc>(</sc><sc>)</sc><sc>;</sc>
+
+	<kw>let</kw> <sc>{</sc>cx, cy, perPixel<sc>}</sc> = state<sc>;</sc>
+
+	<kw>let</kw> cdx = x0 - width/2<sc>;</sc>
+	<kw>let</kw> cdy = y0 - height/2<sc>;</sc>
+
+	canvas.style.transform = <sgl_quote>'translate<sc>(</sc>$<sc>{</sc>-cdx*2<sc>}</sc>px, $<sc>{</sc>-cdy*2<sc>}</sc>px<sc>)</sc> scale<sc>(</sc>2<sc>)</sc>'</sgl_quote><sc>;</sc>
+
+	setState<sc>(</sc>s =&gt <sc>{</sc>
+		s.cx += cdx*s.perPixel<sc>;</sc>
+		s.cy += cdy*s.perPixel<sc>;</sc>
+		s.perPixel /= 2<sc>;</sc>
+	<sc>}</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+setSize<sc>(</sc><sc>)</sc><sc>;</sc>
+render<sc>(</sc><sc>)</sc><sc>;</sc>
 </pre>
 <div class="bookmark">./exe/mandelbrot/worker.js</div><pre class=js>
 onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
