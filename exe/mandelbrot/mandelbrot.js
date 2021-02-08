@@ -241,7 +241,7 @@ function handleResize(event) {
 		resizeTimer = null;
 		setSize();
 		render();
-	}, 50);
+	}, 10);
 }
 
 function handleKey(event) {

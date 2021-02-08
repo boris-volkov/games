@@ -40,11 +40,11 @@ div.control_bar{
 }
 
 .control_bar div:first-child{
-	border-bottom-left-radius: 20px;
+	border-top-left-radius: 20px;
 }
 
 .control_bar div:last-child{
-	border-bottom-right-radius: 20px;
+	border-top-right-radius: 20px;
 }
 
 
