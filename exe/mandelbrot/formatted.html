@@ -101,10 +101,12 @@ I also got creative with the colors, and Tim Bell helped me with the function de
 <css></css>
 <sc>.control_bar div:first-child{</sc>
 <css>	border-top-left-radius: 20px;</css>
+<css>	border-bottom-left-radius: 20px;</css>
 <sc>}</sc>
 <css></css>
 <sc>.control_bar div:last-child{</sc>
 <css>	border-top-right-radius: 20px;</css>
+<css>	border-bottom-right-radius: 20px;</css>
 <sc>}</sc>
 <css></css>
 <css></css>
@@ -113,7 +115,7 @@ I also got creative with the colors, and Tim Bell helped me with the function de
 <css>	display: flex;</css>
 <css>	justify-content: center;</css>
 <css>	padding: 20px;</css>
-<css>	border-radius: 10px;	</css>
+<css>	border-radius: 30px;	</css>
 <css>	background-color: #013;</css>
 <sc>}</sc>
 <css></css>
@@ -499,7 +501,7 @@ onmessage = <kw>function</kw><sc>(</sc>message<sc>)</sc> <sc>{</sc>
 </comment>			<comment Class="js">// inner loop iterates over each pixel to see <kw>if</kw> it escapes
 </comment>			<kw>for</kw> <sc>(</sc>n = 0<sc>;</sc> n &lt maxIterations<sc>;</sc> n++<sc>)</sc><sc>{</sc>
 				<kw>let</kw> rr = r*r, ii = i*i<sc>;</sc>
-				<kw>if</kw> <sc>(</sc>rr + ii &gt 4<sc>)</sc><sc>{</sc>
+				<kw>if</kw> <sc>(</sc>rr + ii &gt 8<sc>)</sc><sc>{</sc>
 					<kw>break</kw><sc>;</sc>
 				<sc>}</sc>
 				i = 2*r*i + y<sc>;</sc>

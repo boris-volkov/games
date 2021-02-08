@@ -20,7 +20,7 @@ onmessage = function(message) {
 			// inner loop iterates over each pixel to see if it escapes
 			for (n = 0; n < maxIterations; n++){
 				let rr = r*r, ii = i*i;
-				if (rr + ii > 4){
+				if (rr + ii > 8){
 					break;
 				}
 				i = 2*r*i + y;
