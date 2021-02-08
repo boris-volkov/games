@@ -131,14 +131,12 @@ window.addEventListener("resize", e => handleResize(e));
 window.addEventListener("popstate", e => setState( e.state, false));
 
 let state = PageState.fromURL(window.location) || PageState.initializeState();
-console.log(state);
 history.replaceState(state, "", state.toURL()); // probably don't want this
 
 function setSize(){
 	width = canvas.width;
 	height = canvas.height;
 	tiles = [...Tile.tiles(width, height, ROWS, COLS)]
-	console.log("tiles", tiles)
 }
 
 
@@ -169,7 +167,6 @@ function color(iterations) {
 }
 
 function render(){
-	console.log(workerPool);
 	if (pendingRender) {
 		wantsRerender = true;
 		return;
