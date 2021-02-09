@@ -38,12 +38,10 @@ The code for this current interface is largely based on that provided in the O'R
 
 	<kw>&ltbody&gt</kw>
 		<kw>&ltdiv class="control_bar"&gt</kw>
-			<kw>&ltdiv id="left"&gt</kw>left<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="up"&gt</kw>up<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="down"&gt</kw>down<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="right"&gt</kw>right<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="minus"&gt</kw>color-<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="plus"&gt</kw>color+<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="left"&gt</kw>[←]left<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="up"&gt</kw>[↑]up<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="down"&gt</kw>[↓]down<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="right"&gt</kw>[→]right<kw>&lt/div&gt</kw>
 			<kw>&ltdiv id="out"&gt</kw>out<kw>&lt/div&gt</kw>
 			<kw>&ltdiv id="reset"&gt</kw>reset<kw>&lt/div&gt</kw>
 
@@ -205,6 +203,7 @@ The code for this current interface is largely based on that provided in the O'R
 		s.cx = -0.5<sc>;</sc>
 		s.cy = 0<sc>;</sc>
 		s.perPixel = 3/window.innerHeight*2<sc>;</sc>
+		s.magnification = 0<sc>;</sc>
 		s.maxIterations = 500<sc>;</sc>
 		<kw>return</kw> s<sc>;</sc>
 	<sc>}</sc>
@@ -225,10 +224,11 @@ The code for this current interface is largely based on that provided in the O'R
 
 	toURL<sc>(</sc><sc>)</sc> <sc>{</sc>
 		<kw>let</kw> u = <kw>new</kw> URL<sc>(</sc>window.location<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"mag"</dbl_quote>, <kw>this</kw>.magnification<sc>)</sc><sc>;</sc>
+		u.searchParams.set<sc>(</sc><dbl_quote>"it"</dbl_quote>, <kw>this</kw>.maxIterations<sc>)</sc><sc>;</sc>
 		u.searchParams.set<sc>(</sc><dbl_quote>"cx"</dbl_quote>, <kw>this</kw>.cx<sc>)</sc><sc>;</sc>
 		u.searchParams.set<sc>(</sc><dbl_quote>"cy"</dbl_quote>, <kw>this</kw>.cy<sc>)</sc><sc>;</sc>
 		u.searchParams.set<sc>(</sc><dbl_quote>"pp"</dbl_quote>, <kw>this</kw>.perPixel<sc>)</sc><sc>;</sc>
-		u.searchParams.set<sc>(</sc><dbl_quote>"it"</dbl_quote>, <kw>this</kw>.maxIterations<sc>)</sc><sc>;</sc>
 		<kw>return</kw> u.href<sc>;</sc>
 	<sc>}</sc>
 <sc>}</sc>
@@ -278,6 +278,7 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 
 	render<sc>(</sc><sc>)</sc><sc>;</sc>
 
+	document.body.style.cursor = <dbl_quote>"wait"</dbl_quote><sc>;</sc>
 	<kw>if</kw> <sc>(</sc>save<sc>)</sc> <sc>{</sc>
 		history.pushState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc>
@@ -293,10 +294,12 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 <sc>}</sc>
 
 <kw>function</kw> render<sc>(</sc><sc>)</sc><sc>{</sc>
+	
 	<kw>if</kw> <sc>(</sc>pendingRender<sc>)</sc> <sc>{</sc>
 		wantsRerender = true<sc>;</sc>
 		<kw>return</kw><sc>;</sc>
 	<sc>}</sc>
+
 
 	<kw>let</kw> <sc>{</sc>cx, cy, perPixel, maxIterations<sc>}</sc> = state<sc>;</sc>
 	<kw>let</kw> x0 = cx - perPixel*width/2<sc>;</sc>
@@ -342,6 +345,7 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 			<sc>}</sc>
 		<sc>}</sc>
 		canvas.style.transform = <dbl_quote>""</dbl_quote><sc>;</sc>
+		document.body.style.cursor = <dbl_quote>"crosshair"</dbl_quote><sc>;</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
 			context.putImageData<sc>(</sc>r.imageData, r.tile.x, r.tile.y<sc>)</sc><sc>;</sc>
 		<sc>}</sc>
@@ -364,7 +368,7 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 		resizeTimer = <kw>null</kw><sc>;</sc>
 		setSize<sc>(</sc><sc>)</sc><sc>;</sc>
 		render<sc>(</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>, 10<sc>)</sc><sc>;</sc>
+	<sc>}</sc>, 1<sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
 <kw>function</kw> handleKey<sc>(</sc>event<sc>)</sc> <sc>{</sc>
@@ -404,8 +408,6 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 <sc>}</sc>
 reset_button.onclick = reset<sc>;</sc>
 
-<kw>const</kw> iter_down_button = document.querySelector<sc>(</sc><dbl_quote>"#minus"</dbl_quote><sc>)</sc><sc>;</sc>
-<kw>const</kw> iter_up_button = document.querySelector<sc>(</sc><dbl_quote>"#plus"</dbl_quote><sc>)</sc><sc>;</sc>
 
 <kw>function</kw> iter_down<sc>(</sc><sc>)</sc> <sc>{</sc>
 	setState<sc>(</sc>s =&gt <sc>{</sc>
@@ -413,14 +415,12 @@ reset_button.onclick = reset<sc>;</sc>
 		<kw>if</kw><sc>(</sc> s.maxIterations &lt 1<sc>)</sc> s.maxIterations = 1<sc>;</sc>
 	<sc>}</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-iter_down_button.onclick = iter_down<sc>;</sc>
 
 <kw>function</kw> iter_up<sc>(</sc><sc>)</sc> <sc>{</sc>
 	setState<sc>(</sc>s =&gt <sc>{</sc>
 		s.maxIterations = Math.round<sc>(</sc>s.maxIterations *1.5<sc>)</sc><sc>;</sc>
 	<sc>}</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
-iter_up_button.onclick = iter_up<sc>;</sc>
 
 
 <kw>const</kw> up_button = document.querySelector<sc>(</sc><dbl_quote>"#up"</dbl_quote><sc>)</sc><sc>;</sc>
@@ -467,10 +467,14 @@ canvas.addEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, event =&gt 
 
 	canvas.style.transform = <sgl_quote>'translate<sc>(</sc>$<sc>{</sc>-cdx*2<sc>}</sc>px, $<sc>{</sc>-cdy*2<sc>}</sc>px<sc>)</sc> scale<sc>(</sc>2<sc>)</sc>'</sgl_quote><sc>;</sc>
 
+	
+
 	setState<sc>(</sc>s =&gt <sc>{</sc>
 		s.cx += cdx*s.perPixel<sc>;</sc>
 		s.cy += cdy*s.perPixel<sc>;</sc>
 		s.perPixel /= 2<sc>;</sc>
+		s.magnification += 1<sc>;</sc>
+		s.maxIterations = Math.round<sc>(</sc>500*<sc>(</sc>1.5<sc>)</sc>**<sc>(</sc>s.magnification/5<sc>)</sc><sc>)</sc><sc>;</sc>
 	<sc>}</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc><sc>)</sc><sc>;</sc>
 

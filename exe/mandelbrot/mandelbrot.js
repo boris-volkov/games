@@ -79,6 +79,7 @@ class PageState {
 		s.cx = -0.5;
 		s.cy = 0;
 		s.perPixel = 3/window.innerHeight*2;
+		s.magnification = 0;
 		s.maxIterations = 500;
 		return s;
 	}
@@ -99,10 +100,11 @@ class PageState {
 
 	toURL() {
 		let u = new URL(window.location);
+		u.searchParams.set("mag", this.magnification);
+		u.searchParams.set("it", this.maxIterations);
 		u.searchParams.set("cx", this.cx);
 		u.searchParams.set("cy", this.cy);
 		u.searchParams.set("pp", this.perPixel);
-		u.searchParams.set("it", this.maxIterations);
 		return u.href;
 	}
 }
@@ -152,6 +154,7 @@ function setState(f, save=true) {
 
 	render();
 
+	document.body.style.cursor = "wait";
 	if (save) {
 		history.pushState(state, "", state.toURL());
 	}
@@ -167,10 +170,12 @@ function color(iterations) {
 }
 
 function render(){
+	
 	if (pendingRender) {
 		wantsRerender = true;
 		return;
 	}
+
 
 	let {cx, cy, perPixel, maxIterations} = state;
 	let x0 = cx - perPixel*width/2;
@@ -216,6 +221,7 @@ function render(){
 			}
 		}
 		canvas.style.transform = "";
+		document.body.style.cursor = "crosshair";
 		for (let r of responses) {
 			context.putImageData(r.imageData, r.tile.x, r.tile.y);
 		}
@@ -238,7 +244,7 @@ function handleResize(event) {
 		resizeTimer = null;
 		setSize();
 		render();
-	}, 10);
+	}, 1);
 }
 
 function handleKey(event) {
@@ -278,8 +284,6 @@ function reset() {
 }
 reset_button.onclick = reset;
 
-const iter_down_button = document.querySelector("#minus");
-const iter_up_button = document.querySelector("#plus");
 
 function iter_down() {
 	setState(s => {
@@ -287,14 +291,12 @@ function iter_down() {
 		if( s.maxIterations < 1) s.maxIterations = 1;
 	});
 }
-iter_down_button.onclick = iter_down;
 
 function iter_up() {
 	setState(s => {
 		s.maxIterations = Math.round(s.maxIterations *1.5);
 	});
 }
-iter_up_button.onclick = iter_up;
 
 
 const up_button = document.querySelector("#up");
@@ -341,10 +343,14 @@ canvas.addEventListener("pointerup", event => {
 
 	canvas.style.transform = 'translate(${-cdx*2}px, ${-cdy*2}px) scale(2)';
 
+	
+
 	setState(s => {
 		s.cx += cdx*s.perPixel;
 		s.cy += cdy*s.perPixel;
 		s.perPixel /= 2;
+		s.magnification += 1;
+		s.maxIterations = Math.round(500*(1.5)**(s.magnification/5));
 	});
 });
 
