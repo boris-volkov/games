@@ -38,12 +38,12 @@ The code for this current interface is largely based on that provided in the O'R
 
 	<kw>&ltbody&gt</kw>
 		<kw>&ltdiv class="control_bar"&gt</kw>
-			<kw>&ltdiv id="left"&gt</kw>[←]left<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="up"&gt</kw>[↑]up<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="down"&gt</kw>[↓]down<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="right"&gt</kw>[→]right<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="out"&gt</kw>out<kw>&lt/div&gt</kw>
-			<kw>&ltdiv id="reset"&gt</kw>reset<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="left"&gt</kw>[←]:left<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="up"&gt</kw>[↑]:up<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="down"&gt</kw>[↓]:down<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="right"&gt</kw>[→]:right<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="out"&gt</kw>[o]:out<kw>&lt/div&gt</kw>
+			<kw>&ltdiv id="reset"&gt</kw>[esc]:reset<kw>&lt/div&gt</kw>
 
 		<kw>&lt/div&gt</kw>
 
@@ -293,6 +293,11 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 </comment>	<kw>return</kw> <sc>(</sc><sc>(</sc>alpha&lt&lt24<sc>)</sc> + <sc>(</sc>blue&lt&lt16<sc>)</sc> + <sc>(</sc>green&lt&lt8<sc>)</sc> + <sc>(</sc>red<sc>)</sc><sc>)</sc><sc>;</sc>
 <sc>}</sc>
 
+colorTable = <kw>new</kw> Uint32Array<sc>(</sc>13000<sc>)</sc>
+<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt colorTable.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+	colorTable<sc>[</sc>i<sc>]</sc> = color<sc>(</sc>i<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
 <kw>function</kw> render<sc>(</sc><sc>)</sc><sc>{</sc>
 	
 	<kw>if</kw> <sc>(</sc>pendingRender<sc>)</sc> <sc>{</sc>
@@ -315,33 +320,39 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 
 	pendingRender = Promise.all<sc>(</sc>promises<sc>)</sc>.then<sc>(</sc>responses =&gt <sc>{</sc>
 		<kw>let</kw> min = maxIterations<sc>;</sc>
+		
 		<kw>let</kw> max = 0<sc>;</sc>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
 			<kw>if</kw> <sc>(</sc>r.min &lt min<sc>)</sc> min = r.min<sc>;</sc>
 			<kw>if</kw> <sc>(</sc>r.max &gt max<sc>)</sc> max = r.max<sc>;</sc>
 		<sc>}</sc>
 
-		<comment Class="js">// every iteration count from 0-maxIterations has its own color
-</comment>		<kw>if</kw> <sc>(</sc><sc>!</sc>colorTable || colorTable.length <sc>!</sc>== maxIterations+1<sc>)</sc><sc>{</sc>
-			colorTable = <kw>new</kw> Uint32Array<sc>(</sc>maxIterations+1<sc>)</sc><sc>;</sc>
-		<sc>}</sc>
-		<kw>if</kw> <sc>(</sc>min === max<sc>)</sc> <sc>{</sc> <comment Class="js">// 
-</comment>			<kw>if</kw> <sc>(</sc>min === maxIterations<sc>)</sc> <sc>{</sc>
-				colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
-			<sc>}</sc> <kw>else</kw> <sc>{</sc>
-				colorTable<sc>[</sc>min<sc>]</sc> = 0xFF000000<sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc> <kw>else</kw> <sc>{</sc> <comment Class="js">//TODO change <kw>this</kw><sc>!</sc> transparency is slow and it looks bad too
-</comment>			<kw>for</kw> <sc>(</sc><kw>let</kw> i = min<sc>;</sc> i &lt max<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-				colorTable<sc>[</sc>i<sc>]</sc> = color<sc>(</sc>i<sc>)</sc><sc>;</sc>
-			<sc>}</sc>
-		<sc>}</sc>
+<comment Class="js">/*
+		// every iteration count from 0-maxIterations has its own color
+		if (!colorTable || colorTable.length !== maxIterations+1){
+			colorTable = new Uint32Array(maxIterations+1);
+		}
+		if (min === max) { // 
+			if (min === maxIterations) {
+				colorTable[min] = 0xFF000000;
+			} else {
+				colorTable[min] = 0xFF000000;
+			}
+		} else { //TODO change this! transparency is slow and it looks bad too
+			for (let i = min; i &lt max; i++) {
+				colorTable[i] = color(i);
+			}
+		}
 		
-
+*/</comment>
 		<kw>for</kw> <sc>(</sc><kw>let</kw> r of responses<sc>)</sc> <sc>{</sc>
 			<kw>let</kw> iterations = <kw>new</kw> Uint32Array<sc>(</sc>r.imageData.data.buffer<sc>)</sc><sc>;</sc>
 			<kw>for</kw> <sc>(</sc><kw>let</kw> i= 0<sc>;</sc> i &lt iterations.length<sc>;</sc> i++<sc>)</sc> <sc>{</sc>
-				iterations<sc>[</sc>i<sc>]</sc> = colorTable<sc>[</sc>iterations<sc>[</sc>i<sc>]</sc><sc>]</sc><sc>;</sc>
+				<kw>if</kw> <sc>(</sc>iterations<sc>[</sc>i<sc>]</sc> === max<sc>)</sc><sc>{</sc>
+					iterations<sc>[</sc>i<sc>]</sc> = 0xFF000000<sc>;</sc>
+					<kw>continue</kw><sc>;</sc>
+				<sc>}</sc>
+				iterations<sc>[</sc>i<sc>]</sc> = colorTable<sc>[</sc>iterations<sc>[</sc>i<sc>]</sc>%colorTable.length<sc>]</sc><sc>;</sc>
 			<sc>}</sc>
 		<sc>}</sc>
 		canvas.style.transform = <dbl_quote>""</dbl_quote><sc>;</sc>

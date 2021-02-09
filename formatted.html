@@ -967,7 +967,7 @@ reset_colors<sc>(</sc><sc>)</sc><sc>;</sc>
 				<sc>]</sc><sc>;</sc>
 <comment Class="js">// TODO pull from properties of command map rather than actually writing <kw>this</kw> list
 </comment>
-program_list = <sc>[</sc><dbl_quote>"quest"</dbl_quote>, <dbl_quote>"princess"</dbl_quote>, <dbl_quote>"fifteen"</dbl_quote>, <dbl_quote>"sixteen"</dbl_quote>, <dbl_quote>"game"</dbl_quote>, <dbl_quote>"territory"</dbl_quote><sc>]</sc>
+program_list = <sc>[</sc><dbl_quote>"quest"</dbl_quote>, <dbl_quote>"princess"</dbl_quote>, <dbl_quote>"fifteen"</dbl_quote>, <dbl_quote>"sixteen"</dbl_quote>, <dbl_quote>"game"</dbl_quote>, <dbl_quote>"territory"</dbl_quote>, <dbl_quote>"life"</dbl_quote>, <dbl_quote>"mandelbrot"</dbl_quote><sc>]</sc>
 
 <comment Class="js">// put these <kw>in</kw> a <kw>function</kw> map
 </comment><kw>function</kw> execute_command<sc>(</sc>buffer<sc>)</sc> <sc>{</sc>
@@ -994,6 +994,8 @@ program_list = <sc>[</sc><dbl_quote>"quest"</dbl_quote>, <dbl_quote>"princess"</
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"phase"</dbl_quote><sc>)</sc>		<sc>{</sc>terminal_mode = <kw>false</kw><sc>;</sc>display=true<sc>;</sc>text_hidden=true<sc>;</sc><sc>}</sc>
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"text"</dbl_quote><sc>)</sc>			enter_text_mode<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"fifteen"</dbl_quote><sc>)</sc>		fifteen<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"life"</dbl_quote><sc>)</sc>			life<sc>(</sc><sc>)</sc><sc>;</sc>
+	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"mandelbrot"</dbl_quote><sc>)</sc>   mandelbrot<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"territory"</dbl_quote><sc>)</sc>    territory<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"refresh"</dbl_quote><sc>)</sc>		location.reload<sc>(</sc><sc>)</sc><sc>;</sc>
 	<kw>else</kw> <kw>if</kw> <sc>(</sc>command == <dbl_quote>"rmps1"</dbl_quote><sc>)</sc>			ps1 = <dbl_quote>""</dbl_quote><sc>;</sc>
@@ -1003,13 +1005,16 @@ program_list = <sc>[</sc><dbl_quote>"quest"</dbl_quote>, <dbl_quote>"princess"</
 
 <comment Class="js">//----------------------------------------------------------------------------------Out-links
 </comment>
-<kw>function</kw> quest<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/quest/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
-<kw>function</kw> princess<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/princess/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
-<kw>function</kw> sixteen<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/sixteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
-<kw>function</kw> fifteen<sc>(</sc><sc>)</sc>	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/fifteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
-<kw>function</kw> game<sc>(</sc><sc>)</sc> 	<sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/game/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
-<kw>function</kw> territory<sc>(</sc><sc>)</sc><sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/territory/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
-<kw>function</kw> visual<sc>(</sc><sc>)</sc>   <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./visual.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> quest<sc>(</sc><sc>)</sc>	 <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/quest/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> princess<sc>(</sc><sc>)</sc>	 <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/princess/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> sixteen<sc>(</sc><sc>)</sc>	 <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/sixteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> fifteen<sc>(</sc><sc>)</sc>	 <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/fifteen/main.html'</sgl_quote><sc>)</sc><sc>;</sc><sc>}</sc>
+<kw>function</kw> game<sc>(</sc><sc>)</sc> 	 <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/game/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> territory<sc>(</sc><sc>)</sc> <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/territory/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> life<sc>(</sc><sc>)</sc>      <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/gol/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> mandelbrot<sc>(</sc><sc>)</sc><sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./exe/mandelbrot/main.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+<kw>function</kw> visual<sc>(</sc><sc>)</sc>    <sc>{</sc>location.assign<sc>(</sc><sgl_quote>'./visual.html'</sgl_quote><sc>)</sc><sc>;</sc> <sc>}</sc>
+
 
 <kw>var</kw> cursor_backup<sc>;</sc>
 <kw>var</kw> b_grid<sc>;</sc> <comment Class="js">//backup grid

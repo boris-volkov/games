@@ -169,6 +169,11 @@ function color(iterations) {
 	return ((alpha<<24) + (blue<<16) + (green<<8) + (red));
 }
 
+colorTable = new Uint32Array(13000)
+for (let i = 0; i < colorTable.length; i++){
+	colorTable[i] = color(i);
+}
+
 function render(){
 	
 	if (pendingRender) {
@@ -191,12 +196,14 @@ function render(){
 
 	pendingRender = Promise.all(promises).then(responses => {
 		let min = maxIterations;
+		
 		let max = 0;
 		for (let r of responses) {
 			if (r.min < min) min = r.min;
 			if (r.max > max) max = r.max;
 		}
 
+/*
 		// every iteration count from 0-maxIterations has its own color
 		if (!colorTable || colorTable.length !== maxIterations+1){
 			colorTable = new Uint32Array(maxIterations+1);
@@ -213,11 +220,15 @@ function render(){
 			}
 		}
 		
-
+*/
 		for (let r of responses) {
 			let iterations = new Uint32Array(r.imageData.data.buffer);
 			for (let i= 0; i < iterations.length; i++) {
-				iterations[i] = colorTable[iterations[i]];
+				if (iterations[i] === max){
+					iterations[i] = 0xFF000000;
+					continue;
+				}
+				iterations[i] = colorTable[iterations[i]%colorTable.length];
 			}
 		}
 		canvas.style.transform = "";

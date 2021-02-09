@@ -448,7 +448,7 @@ command_list = ["about", "cat", "clear", "codes", "echo",
 				];
 // TODO pull from properties of command map rather than actually writing this list
 
-program_list = ["quest", "princess", "fifteen", "sixteen", "game", "territory"]
+program_list = ["quest", "princess", "fifteen", "sixteen", "game", "territory", "life", "mandelbrot"]
 
 // put these in a function map
 function execute_command(buffer) {
@@ -475,6 +475,8 @@ function execute_command(buffer) {
 	else if (command == "phase")		{terminal_mode = false;display=true;text_hidden=true;}
 	else if (command == "text")			enter_text_mode();
 	else if (command == "fifteen")		fifteen();
+	else if (command == "life")			life();
+	else if (command == "mandelbrot")   mandelbrot();
 	else if (command == "territory")    territory();
 	else if (command == "refresh")		location.reload();
 	else if (command == "rmps1")			ps1 = "";
@@ -484,13 +486,16 @@ function execute_command(buffer) {
 
 //----------------------------------------------------------------------------------Out-links
 
-function quest()	{location.assign('./exe/quest/main.html');}
-function princess()	{location.assign('./exe/princess/main.html');}
-function sixteen()	{location.assign('./exe/sixteen/main.html');}
-function fifteen()	{location.assign('./exe/fifteen/main.html');}
-function game() 	{location.assign('./exe/game/main.html'); }
-function territory(){location.assign('./exe/territory/main.html'); }
-function visual()   {location.assign('./visual.html'); }
+function quest()	 {location.assign('./exe/quest/main.html');}
+function princess()	 {location.assign('./exe/princess/main.html');}
+function sixteen()	 {location.assign('./exe/sixteen/main.html');}
+function fifteen()	 {location.assign('./exe/fifteen/main.html');}
+function game() 	 {location.assign('./exe/game/main.html'); }
+function territory() {location.assign('./exe/territory/main.html'); }
+function life()      {location.assign('./exe/gol/main.html'); }
+function mandelbrot(){location.assign('./exe/mandelbrot/main.html'); }
+function visual()    {location.assign('./visual.html'); }
+
 
 var cursor_backup;
 var b_grid; //backup grid
