@@ -212,6 +212,7 @@ The code for this current interface is largely based on that provided in the O'R
 		<kw>let</kw> s = <kw>new</kw> PageState<sc>(</sc><sc>)</sc><sc>;</sc>
 		<kw>let</kw> u = <kw>new</kw> URL<sc>(</sc>url<sc>)</sc><sc>;</sc>
 		s.cx = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"cx"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
+		s.magnification = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"mag"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 		s.cy = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"cy"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 		s.perPixel = parseFloat<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"pp"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
 		s.maxIterations = parseInt<sc>(</sc>u.searchParams.get<sc>(</sc><dbl_quote>"it"</dbl_quote><sc>)</sc><sc>)</sc><sc>;</sc>
@@ -465,7 +466,7 @@ right_button.onclick = right<sc>;</sc>
 <sc>}</sc>
 out_button.onclick = out<sc>;</sc>
 
-canvas.addEventListener<sc>(</sc><dbl_quote>"pointerup"</dbl_quote>, event =&gt <sc>{</sc>
+canvas.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, event =&gt <sc>{</sc>
 	bb = canvas.getBoundingClientRect<sc>(</sc><sc>)</sc><sc>;</sc> 
 	<kw>let</kw> x0 = <sc>(</sc>event.clientX-bb.left<sc>)</sc>*<sc>(</sc>canvas.width/bb.width<sc>)</sc><sc>;</sc>
 	<kw>let</kw> y0 = <sc>(</sc>event.clientY-bb.top<sc>)</sc>*<sc>(</sc>canvas.height/bb.height<sc>)</sc><sc>;</sc>

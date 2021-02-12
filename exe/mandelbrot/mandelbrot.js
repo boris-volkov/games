@@ -88,6 +88,7 @@ class PageState {
 		let s = new PageState();
 		let u = new URL(url);
 		s.cx = parseFloat(u.searchParams.get("cx"));
+		s.magnification = parseFloat(u.searchParams.get("mag"));
 		s.cy = parseFloat(u.searchParams.get("cy"));
 		s.perPixel = parseFloat(u.searchParams.get("pp"));
 		s.maxIterations = parseInt(u.searchParams.get("it"));
@@ -341,7 +342,7 @@ function out() {
 }
 out_button.onclick = out;
 
-canvas.addEventListener("pointerup", event => {
+canvas.addEventListener("pointerdown", event => {
 	bb = canvas.getBoundingClientRect(); 
 	let x0 = (event.clientX-bb.left)*(canvas.width/bb.width);
 	let y0 = (event.clientY-bb.top)*(canvas.height/bb.height);
