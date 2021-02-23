@@ -2,6 +2,7 @@ body {
 	background-color: #123;
 	/*cursor: none;*/
 	overflow: hidden;
+	touch-action: manipulation;
 }
 
 div {
