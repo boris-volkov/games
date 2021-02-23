@@ -27,6 +27,8 @@ div {
 	flex-direction: column;
 	border-radius:30px 30px 100px 100px;
 	border: #369 outset;
+	justify-content: center;
+	background-color: #345;
 }
 
 canvas {
@@ -34,12 +36,14 @@ canvas {
 	height: 55vh;
 	border-radius: 5px;
 	touch-action: none;
+	border: #369 inset;
 }
 
 .top {
 	padding: 1vh;
-	border-radius: 100px 100px 0px 0px;
 	background-color: #345;
+	width: 2px;
+	visibility: hidden;
 }
 
 .canvas_frame {
