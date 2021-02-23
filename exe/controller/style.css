@@ -41,7 +41,6 @@ canvas {
 
 .top {
 	padding: 1vh;
-	background-color: #345;
 	width: 2px;
 	visibility: hidden;
 }
@@ -90,6 +89,7 @@ canvas {
 .right {
 	width: 7vh;
 	background-color: #345;
+	visibility: hidden;
 }
 
 .display {
