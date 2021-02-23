@@ -1,6 +1,6 @@
 const canvas = document.querySelector(".canvas")
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
+canvas.width = canvas.clientWidth-20;
+canvas.height = canvas.clientHeight-20;
 const up = document.querySelector(".dir-up")
 const left = document.querySelector(".dir-left")
 const right = document.querySelector(".dir-right")
