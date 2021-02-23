@@ -9,6 +9,10 @@ const button = document.querySelector(".big-button")
 
 const ctx = canvas.getContext('2d');
 
+function preventDefault(e){
+    e.preventDefault();
+}
+document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 console.log('width',canvas.width);
 console.log('height',canvas.height);

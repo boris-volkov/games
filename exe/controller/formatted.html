@@ -11,6 +11,7 @@
 
 <kw>&lthtml&gt</kw>
 	<kw>&lthead&gt</kw>
+		<kw>&ltmeta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"&gt</kw>
 		<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
 	<kw>&lt/head&gt</kw>
 
@@ -82,6 +83,7 @@
 <sc>body {</sc>
 <css>	background-color: #123;</css>
 <css>	<comment class="css">/*cursor: none;*/</comment></css>
+<css>	overflow: hidden;</css>
 <sc>}</sc>
 <css></css>
 <sc>div {</sc>
@@ -240,6 +242,10 @@ canvas.height = canvas.clientHeight<sc>;</sc>
 
 <kw>const</kw> ctx = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
 
+<kw>function</kw> preventDefault<sc>(</sc>e<sc>)</sc><sc>{</sc>
+    e.preventDefault<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc>
+document.body.addEventListener<sc>(</sc><sgl_quote>'touchmove'</sgl_quote>, preventDefault, <sc>{</sc> passive<sc>:</sc> <kw>false</kw> <sc>}</sc><sc>)</sc><sc>;</sc>
 
 console.log<sc>(</sc><sgl_quote>'width'</sgl_quote>,canvas.width<sc>)</sc><sc>;</sc>
 console.log<sc>(</sc><sgl_quote>'height'</sgl_quote>,canvas.height<sc>)</sc><sc>;</sc>

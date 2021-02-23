@@ -1,6 +1,7 @@
 body {
 	background-color: #123;
 	/*cursor: none;*/
+	overflow: hidden;
 }
 
 div {
