@@ -1,0 +1,148 @@
+body {
+	background-color: #123;
+	/*cursor: none;*/
+}
+
+div {
+	background-color: #456;
+	display: flex;
+	align-items: stretch;
+	justify-content:stretch;
+}
+
+.container {
+	flex-direction: column;
+	border-radius:30px 30px 100px 100px;
+	border: #369 outset;
+}
+
+canvas {
+	background-color: #111;
+	height: 60vh;
+	border-radius: 5px;
+	border: #369 inset;
+}
+
+.top {
+	padding: 2vh;
+	border-radius: 100px 100px 0px 0px;
+	background-color: #345;
+}
+
+.canvas_frame {
+	background-color: #456;
+	padding: 20px;
+	flex-grow:1;
+	border-radius: 20px 20px 0px 0px;
+	border: #369 inset;
+	border-bottom: none;
+}
+
+.bottom {
+	background-color: #456;
+	border-radius: 0px 0px 100px 100px;
+}
+
+.middle {
+	background-color: #345;
+}
+
+.canvas,
+.bottom_middle {
+	flex-grow:2;
+}
+
+.bottom_middle {
+	background-color: #456;
+	flex-direction: column;
+}
+
+.bmt {
+	height: 14vh;
+	background-color: #456;
+	justify-content: space-between;
+}
+
+.bmb{
+	background-color: #345;
+	flex-grow: 1;
+	border-top: #369 outset;
+}
+
+.left,
+.right {
+	width: 7vh;
+	background-color: #345;
+}
+
+.display {
+	font: 20px Courier;
+	justify-content: center;
+	align-items: center;
+	color: coral;
+	margin: 40px;
+	border-radius: 30px;
+	background-color: #123;
+	border:inset #234;
+	flex:1;
+}
+
+.buttons,
+.directions {
+	background-color: #345;
+	padding: 10px 50px;
+	flex-direction:column;
+	border: #369 outset;
+}
+
+.directions {
+	border-top-right-radius: 150px;
+	border-bottom-left-radius: 100px;
+}
+
+.buttons {
+	border-top-left-radius: 150px;
+	border-bottom-right-radius: 100px;
+	justify-content: center;
+}
+
+
+.dirtop,
+.dirmid,
+.dirbot {
+	visibility:hidden;
+}
+
+.big-button,
+.dir-left,
+.dir-up,
+.dir-right,
+.dir-down,
+.grid-item {
+	border: #548 solid;
+	padding: 4vh;
+}
+
+.big-button,
+.dir-left,
+.dir-up,
+.dir-right,
+.dir-down {
+	border-radius: 50%;
+	visibility:visible;
+	background-color: #734;
+}
+
+.big-button:active,
+.dir-left:active,
+.dir-up:active,
+.dir-right:active,
+.dir-down:active {
+	background-color: #634;
+	border: #548 inset;
+	
+}
+.big-button {
+	padding: 5vw;
+}
+

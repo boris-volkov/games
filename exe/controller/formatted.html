@@ -1,0 +1,286 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image">
+	 <a href="main.html"> 
+		<img class="screenshot" src="screenshot.png"></img>
+	 </a> 
+</div>
+
+<div class="bookmark">./exe/controller/main.html</div><pre class=html>
+<kw>&lt!doctype html&gt</kw>
+
+<kw>&lthtml&gt</kw>
+	<kw>&lthead&gt</kw>
+		<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
+	<kw>&lt/head&gt</kw>
+
+	<kw>&ltbody&gt</kw>
+		<kw>&ltdiv class="container"&gt</kw>
+			<kw>&ltdiv class="top"&gt</kw>
+			<kw>&lt/div&gt</kw>
+			<kw>&ltdiv class="middle"&gt</kw>
+				<kw>&ltdiv class="left"&gt</kw>
+				<kw>&lt/div&gt</kw>
+
+				<kw>&ltdiv class="canvas_frame"&gt</kw>
+					<kw>&ltcanvas class="canvas"&gt</kw><kw>&lt/canvas&gt</kw>
+				<kw>&lt/div&gt</kw>
+
+				<kw>&ltdiv class="right"&gt</kw>
+				<kw>&lt/div&gt</kw>
+			<kw>&lt/div&gt</kw>
+
+			<kw>&ltdiv class="bottom"&gt</kw>
+
+				<kw>&ltdiv class="directions"&gt</kw>
+					<kw>&ltdiv class="dirtop"&gt</kw>
+						<kw>&ltdiv class="grid-item"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="dir-up"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="grid-item"&gt</kw><kw>&lt/div&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="dirmid"&gt</kw>
+						<kw>&ltdiv class="dir-left"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="grid-item"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="dir-right"&gt</kw><kw>&lt/div&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="dirbot"&gt</kw>
+						<kw>&ltdiv class="grid-item"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="dir-down"&gt</kw><kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="grid-item"&gt</kw><kw>&lt/div&gt</kw>
+					<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+
+				<kw>&ltdiv class="bottom_middle"&gt</kw>
+					<kw>&ltdiv class="bmt"&gt</kw>
+						<kw>&ltdiv class="display"&gt</kw>
+							001
+						<kw>&lt/div&gt</kw>
+						<kw>&ltdiv class="display"&gt</kw>
+							001
+						<kw>&lt/div&gt</kw>
+					<kw>&lt/div&gt</kw>
+					<kw>&ltdiv class="bmb"&gt</kw>
+					<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+
+				<kw>&ltdiv class="buttons"&gt</kw>
+					<kw>&ltdiv class="big-button"&gt</kw>
+					<kw>&lt/div&gt</kw>
+				<kw>&lt/div&gt</kw>
+
+			<kw>&lt/div&gt</kw>
+
+
+		<kw>&lt/div&gt</kw>
+
+		<kw>&ltscript src="game.js"&gt</kw><kw>&lt/script&gt</kw>
+	<kw>&lt/body&gt</kw>
+
+<kw>&lt/html&gt</kw>
+</pre>
+<div class="bookmark">./exe/controller/style.css</div><pre class=css>
+<sc>body {</sc>
+<css>	background-color: #123;</css>
+<css>	<comment class="css">/*cursor: none;*/</comment></css>
+<sc>}</sc>
+<css></css>
+<sc>div {</sc>
+<css>	background-color: #456;</css>
+<css>	display: flex;</css>
+<css>	align-items: stretch;</css>
+<css>	justify-content:stretch;</css>
+<sc>}</sc>
+<css></css>
+<sc>.container {</sc>
+<css>	flex-direction: column;</css>
+<css>	border-radius:30px 30px 100px 100px;</css>
+<css>	border: #369 outset;</css>
+<sc>}</sc>
+<css></css>
+<sc>canvas {</sc>
+<css>	background-color: #111;</css>
+<css>	height: 60vh;</css>
+<css>	border-radius: 5px;</css>
+<css>	border: #369 inset;</css>
+<sc>}</sc>
+<css></css>
+<sc>.top {</sc>
+<css>	padding: 2vh;</css>
+<css>	border-radius: 100px 100px 0px 0px;</css>
+<css>	background-color: #345;</css>
+<sc>}</sc>
+<css></css>
+<sc>.canvas_frame {</sc>
+<css>	background-color: #456;</css>
+<css>	padding: 20px;</css>
+<css>	flex-grow:1;</css>
+<css>	border-radius: 20px 20px 0px 0px;</css>
+<css>	border: #369 inset;</css>
+<css>	border-bottom: none;</css>
+<sc>}</sc>
+<css></css>
+<sc>.bottom {</sc>
+<css>	background-color: #456;</css>
+<css>	border-radius: 0px 0px 100px 100px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.middle {</sc>
+<css>	background-color: #345;</css>
+<sc>}</sc>
+<css></css>
+<css>.canvas,</css>
+<sc>.bottom_middle {</sc>
+<css>	flex-grow:2;</css>
+<sc>}</sc>
+<css></css>
+<sc>.bottom_middle {</sc>
+<css>	background-color: #456;</css>
+<css>	flex-direction: column;</css>
+<sc>}</sc>
+<css></css>
+<sc>.bmt {</sc>
+<css>	height: 14vh;</css>
+<css>	background-color: #456;</css>
+<css>	justify-content: space-between;</css>
+<sc>}</sc>
+<css></css>
+<sc>.bmb{</sc>
+<css>	background-color: #345;</css>
+<css>	flex-grow: 1;</css>
+<css>	border-top: #369 outset;</css>
+<sc>}</sc>
+<css></css>
+<css>.left,</css>
+<sc>.right {</sc>
+<css>	width: 7vh;</css>
+<css>	background-color: #345;</css>
+<sc>}</sc>
+<css></css>
+<sc>.display {</sc>
+<css>	font: 20px Courier;</css>
+<css>	justify-content: center;</css>
+<css>	align-items: center;</css>
+<css>	color: coral;</css>
+<css>	margin: 40px;</css>
+<css>	border-radius: 30px;</css>
+<css>	background-color: #123;</css>
+<css>	border:inset #234;</css>
+<css>	flex:1;</css>
+<sc>}</sc>
+<css></css>
+<css>.buttons,</css>
+<sc>.directions {</sc>
+<css>	background-color: #345;</css>
+<css>	padding: 10px 50px;</css>
+<css>	flex-direction:column;</css>
+<css>	border: #369 outset;</css>
+<sc>}</sc>
+<css></css>
+<sc>.directions {</sc>
+<css>	border-top-right-radius: 150px;</css>
+<css>	border-bottom-left-radius: 100px;</css>
+<sc>}</sc>
+<css></css>
+<sc>.buttons {</sc>
+<css>	border-top-left-radius: 150px;</css>
+<css>	border-bottom-right-radius: 100px;</css>
+<css>	justify-content: center;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
+<css>.dirtop,</css>
+<css>.dirmid,</css>
+<sc>.dirbot {</sc>
+<css>	visibility:hidden;</css>
+<sc>}</sc>
+<css></css>
+<css>.big-button,</css>
+<css>.dir-left,</css>
+<css>.dir-up,</css>
+<css>.dir-right,</css>
+<css>.dir-down,</css>
+<sc>.grid-item {</sc>
+<css>	border: #548 solid;</css>
+<css>	padding: 4vh;</css>
+<sc>}</sc>
+<css></css>
+<css>.big-button,</css>
+<css>.dir-left,</css>
+<css>.dir-up,</css>
+<css>.dir-right,</css>
+<sc>.dir-down {</sc>
+<css>	border-radius: 50%;</css>
+<css>	visibility:visible;</css>
+<css>	background-color: #734;</css>
+<sc>}</sc>
+<css></css>
+<css>.big-button:active,</css>
+<css>.dir-left:active,</css>
+<css>.dir-up:active,</css>
+<css>.dir-right:active,</css>
+<sc>.dir-down:active {</sc>
+<css>	background-color: #634;</css>
+<css>	border: #548 inset;</css>
+<css>	</css>
+<sc>}</sc>
+<sc>.big-button {</sc>
+<css>	padding: 5vw;</css>
+<sc>}</sc>
+<css></css>
+</pre>
+<div class="bookmark">./exe/controller/game.js</div><pre class=js>
+<kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>".canvas"</dbl_quote><sc>)</sc>
+canvas.width = canvas.clientWidth<sc>;</sc>
+canvas.height = canvas.clientHeight<sc>;</sc>
+<kw>const</kw> up = document.querySelector<sc>(</sc><dbl_quote>".dir-up"</dbl_quote><sc>)</sc>
+<kw>const</kw> left = document.querySelector<sc>(</sc><dbl_quote>".dir-left"</dbl_quote><sc>)</sc>
+<kw>const</kw> right = document.querySelector<sc>(</sc><dbl_quote>".dir-right"</dbl_quote><sc>)</sc>
+<kw>const</kw> down = document.querySelector<sc>(</sc><dbl_quote>".dir-down"</dbl_quote><sc>)</sc>
+<kw>const</kw> button = document.querySelector<sc>(</sc><dbl_quote>".big-button"</dbl_quote><sc>)</sc>
+
+<kw>const</kw> ctx = canvas.getContext<sc>(</sc><sgl_quote>'2d'</sgl_quote><sc>)</sc><sc>;</sc>
+
+
+console.log<sc>(</sc><sgl_quote>'width'</sgl_quote>,canvas.width<sc>)</sc><sc>;</sc>
+console.log<sc>(</sc><sgl_quote>'height'</sgl_quote>,canvas.height<sc>)</sc><sc>;</sc>
+<kw>let</kw> x = 100<sc>;</sc>
+<kw>let</kw> y = 100<sc>;</sc>
+
+<kw>function</kw> draw_player<sc>(</sc><sc>)</sc><sc>{</sc>
+	clear<sc>(</sc><sc>)</sc><sc>;</sc>
+	console.log<sc>(</sc><sgl_quote>'drawing'</sgl_quote><sc>)</sc><sc>;</sc>
+	ctx.fillStyle = <dbl_quote>"#123"</dbl_quote><sc>;</sc>
+	ctx.fillRect<sc>(</sc>x,y,100,100<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+<kw>function</kw> clear<sc>(</sc><sc>)</sc> <sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#000"</dbl_quote><sc>;</sc>
+	ctx.fillRect<sc>(</sc>0,0,canvas.width, canvas.height<sc>)</sc><sc>;</sc>
+<sc>}</sc>
+
+up.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	y-=10<sc>;</sc>
+	draw_player<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+down.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	y+=10<sc>;</sc>
+	draw_player<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+right.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	x+=10<sc>;</sc>
+	draw_player<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+left.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	x-=10<sc>;</sc>
+	draw_player<sc>(</sc><sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+
+button.addEventListener<sc>(</sc><dbl_quote>"pointerdown"</dbl_quote>, <sc>(</sc>e<sc>)</sc> =&gt <sc>{</sc>
+	ctx.fillStyle = <dbl_quote>"#369"</dbl_quote><sc>;</sc>
+	ctx.fillRect<sc>(</sc>x,y, 100, 100<sc>)</sc><sc>;</sc>
+<sc>}</sc><sc>)</sc><sc>;</sc>
+</pre>
+</body></html>
