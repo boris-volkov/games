@@ -11,7 +11,6 @@
 
 <kw>&lthtml&gt</kw>
 	<kw>&lthead&gt</kw>
-		<kw>&ltmeta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"&gt</kw>
 		<kw>&ltlink href="style.css" rel="stylesheet"/&gt</kw>
 	<kw>&lt/head&gt</kw>
 
@@ -80,6 +79,11 @@
 <kw>&lt/html&gt</kw>
 </pre>
 <div class="bookmark">./exe/controller/style.css</div><pre class=css>
+<sc>html {</sc>
+<css>	touch-action: none;</css>
+<sc>}</sc>
+<css></css>
+<css></css>
 <sc>body {</sc>
 <css>	background-color: #123;</css>
 <css>	<comment class="css">/*cursor: none;*/</comment></css>
@@ -91,6 +95,13 @@
 <css>	display: flex;</css>
 <css>	align-items: stretch;</css>
 <css>	justify-content:stretch;</css>
+<css>	touch-action: none;</css>
+<css>	-webkit-touch-callout: none;</css>
+<css>    -webkit-user-select: none;</css>
+<css>    -khtml-user-select: none;</css>
+<css>    -moz-user-select: none;</css>
+<css>    -ms-user-select: none;</css>
+<css>    user-select: none;</css>
 <sc>}</sc>
 <css></css>
 <sc>.container {</sc>
@@ -101,13 +112,13 @@
 <css></css>
 <sc>canvas {</sc>
 <css>	background-color: #111;</css>
-<css>	height: 60vh;</css>
+<css>	height: 55vh;</css>
 <css>	border-radius: 5px;</css>
-<css>	border: #369 inset;</css>
+<css>	touch-action: none;</css>
 <sc>}</sc>
 <css></css>
 <sc>.top {</sc>
-<css>	padding: 2vh;</css>
+<css>	padding: 1vh;</css>
 <css>	border-radius: 100px 100px 0px 0px;</css>
 <css>	background-color: #345;</css>
 <sc>}</sc>
@@ -116,7 +127,7 @@
 <css>	background-color: #456;</css>
 <css>	padding: 20px;</css>
 <css>	flex-grow:1;</css>
-<css>	border-radius: 20px 20px 0px 0px;</css>
+<css>	border-radius: 1vh 1vw 0px 0px;</css>
 <css>	border: #369 inset;</css>
 <css>	border-bottom: none;</css>
 <sc>}</sc>
@@ -141,7 +152,7 @@
 <sc>}</sc>
 <css></css>
 <sc>.bmt {</sc>
-<css>	height: 14vh;</css>
+<css>	height: 16vh;</css>
 <css>	background-color: #456;</css>
 <css>	justify-content: space-between;</css>
 <sc>}</sc>
@@ -179,12 +190,12 @@
 <sc>}</sc>
 <css></css>
 <sc>.directions {</sc>
-<css>	border-top-right-radius: 150px;</css>
+<css>	border-top-right-radius: 120px;</css>
 <css>	border-bottom-left-radius: 100px;</css>
 <sc>}</sc>
 <css></css>
 <sc>.buttons {</sc>
-<css>	border-top-left-radius: 150px;</css>
+<css>	border-top-left-radius: 120px;</css>
 <css>	border-bottom-right-radius: 100px;</css>
 <css>	justify-content: center;</css>
 <sc>}</sc>
@@ -232,8 +243,8 @@
 </pre>
 <div class="bookmark">./exe/controller/game.js</div><pre class=js>
 <kw>const</kw> canvas = document.querySelector<sc>(</sc><dbl_quote>".canvas"</dbl_quote><sc>)</sc>
-canvas.width = canvas.clientWidth<sc>;</sc>
-canvas.height = canvas.clientHeight<sc>;</sc>
+canvas.width = canvas.clientWidth-20<sc>;</sc>
+canvas.height = canvas.clientHeight-20<sc>;</sc>
 <kw>const</kw> up = document.querySelector<sc>(</sc><dbl_quote>".dir-up"</dbl_quote><sc>)</sc>
 <kw>const</kw> left = document.querySelector<sc>(</sc><dbl_quote>".dir-left"</dbl_quote><sc>)</sc>
 <kw>const</kw> right = document.querySelector<sc>(</sc><dbl_quote>".dir-right"</dbl_quote><sc>)</sc>

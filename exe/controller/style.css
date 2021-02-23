@@ -33,12 +33,11 @@ canvas {
 	background-color: #111;
 	height: 55vh;
 	border-radius: 5px;
-	border: #369 inset;
 	touch-action: none;
 }
 
 .top {
-	padding: 2vh;
+	padding: 1vh;
 	border-radius: 100px 100px 0px 0px;
 	background-color: #345;
 }
@@ -47,7 +46,7 @@ canvas {
 	background-color: #456;
 	padding: 20px;
 	flex-grow:1;
-	border-radius: 20px 20px 0px 0px;
+	border-radius: 1vh 1vw 0px 0px;
 	border: #369 inset;
 	border-bottom: none;
 }
@@ -72,7 +71,7 @@ canvas {
 }
 
 .bmt {
-	height: 14vh;
+	height: 16vh;
 	background-color: #456;
 	justify-content: space-between;
 }
@@ -110,12 +109,12 @@ canvas {
 }
 
 .directions {
-	border-top-right-radius: 150px;
+	border-top-right-radius: 120px;
 	border-bottom-left-radius: 100px;
 }
 
 .buttons {
-	border-top-left-radius: 150px;
+	border-top-left-radius: 120px;
 	border-bottom-right-radius: 100px;
 	justify-content: center;
 }
