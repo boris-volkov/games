@@ -31,7 +31,7 @@ div {
 
 canvas {
 	background-color: #111;
-	height: 60vh;
+	height: 55vh;
 	border-radius: 5px;
 	border: #369 inset;
 	touch-action: none;
