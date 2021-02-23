@@ -1,8 +1,12 @@
+html {
+	touch-action: manipulation;
+}
+
+
 body {
 	background-color: #123;
 	/*cursor: none;*/
 	overflow: hidden;
-	touch-action: manipulation;
 }
 
 div {
@@ -10,6 +14,7 @@ div {
 	display: flex;
 	align-items: stretch;
 	justify-content:stretch;
+	touch-action: manipulation;
 }
 
 .container {
@@ -23,6 +28,7 @@ canvas {
 	height: 60vh;
 	border-radius: 5px;
 	border: #369 inset;
+	touch-action: manipulation;
 }
 
 .top {
