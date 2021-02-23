@@ -1,5 +1,5 @@
 html {
-	touch-action: manipulation;
+	touch-action: none;
 }
 
 
@@ -14,7 +14,7 @@ div {
 	display: flex;
 	align-items: stretch;
 	justify-content:stretch;
-	touch-action: manipulation;
+	touch-action: none;
 }
 
 .container {
@@ -28,7 +28,7 @@ canvas {
 	height: 60vh;
 	border-radius: 5px;
 	border: #369 inset;
-	touch-action: manipulation;
+	touch-action: none;
 }
 
 .top {
