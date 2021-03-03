@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../style.css" rel="stylesheet"/></head><body><div class="bookmark">./exe/classes.js</div><pre class=js>
+
+<kw>class</kw> Class <sc>{</sc>
+	constructor<sc>(</sc>start_hr, start_min<sc>)</sc><sc>{</sc>
+		<kw>this</kw>.start = start_hr*60 + start_min<sc>;</sc>
+		<kw>this</kw>.end = <kw>this</kw>.start + 45<sc>;</sc>
+	<sc>}</sc>
+
+	includes <sc>(</sc>mins<sc>)</sc> <sc>{</sc>
+		<kw>return</kw> <kw>this</kw>.start &lt= mins && mins &lt=<kw>this</kw>.end<sc>;</sc>
+	<sc>}</sc>
+
+<sc>}</sc>
+
+<kw>const</kw> week = <sc>{</sc> 
+	1<sc>:</sc> <sc>[</sc><kw>new</kw> Class<sc>(</sc>9,45<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>13,15<sc>)</sc>,
+	<sc>]</sc>,
+	2<sc>:</sc> <sc>[</sc><kw>new</kw> Class<sc>(</sc>11,25<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>13,15<sc>)</sc>,
+	<sc>]</sc>,
+	3<sc>:</sc> <sc>[</sc><kw>new</kw> Class<sc>(</sc>8,40<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>9,40<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>13,15<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>14,10<sc>)</sc>
+	<sc>]</sc>,
+	4<sc>:</sc> <sc>[</sc><kw>new</kw> Class<sc>(</sc>8,45<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>10,35<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>12,0<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>13,5<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>14,15<sc>)</sc>
+	<sc>]</sc>,
+	5<sc>:</sc> <sc>[</sc><kw>new</kw> Class<sc>(</sc>8,40<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>9,45<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>13,5<sc>)</sc>,
+		<kw>new</kw> Class<sc>(</sc>14,10<sc>)</sc>,
+	<sc>]</sc>
+<sc>}</sc>
+
+<kw>function</kw> refresh<sc>(</sc><sc>)</sc><sc>{</sc> 
+	<kw>let</kw> now = <kw>new</kw> Date<sc>(</sc><sc>)</sc><sc>;</sc>
+	<comment Class="js">//console.log<sc>(</sc>now.toString<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
+</comment>	weekday = now.getDay<sc>(</sc><sc>)</sc><sc>;</sc>
+	hour = now.getHours<sc>(</sc><sc>)</sc><sc>;</sc>
+	minute = now.getMinutes<sc>(</sc><sc>)</sc><sc>;</sc>
+	day_minute = hour*60 + minute<sc>;</sc>
+	today = week<sc>[</sc>weekday<sc>]</sc><sc>;</sc>
+
+	<kw>for</kw> <sc>(</sc><kw>let</kw> i = 0<sc>;</sc> i &lt today.length<sc>;</sc> i++<sc>)</sc><sc>{</sc>
+		<kw>if</kw> <sc>(</sc>day_minute &lt today<sc>[</sc>i<sc>]</sc>.start<sc>)</sc><sc>{</sc>
+			<kw>let</kw> mins_left = today<sc>[</sc>i<sc>]</sc>.start - day_minute<sc>;</sc>
+			<kw>if</kw> <sc>(</sc>mins_left &gt 60<sc>)</sc><sc>{</sc>
+				<kw>let</kw> hrs_left = Math.floor<sc>(</sc>mins_left/60<sc>)</sc><sc>;</sc>
+				mins_left = mins_left%60<sc>;</sc>
+				console.log<sc>(</sc><dbl_quote>"<kw>class</kw> <kw>in</kw> "</dbl_quote>, hrs_left, <dbl_quote>"hours"</dbl_quote>, mins_left,<dbl_quote>"minutes"</dbl_quote><sc>)</sc><sc>;</sc>
+				<kw>return</kw><sc>;</sc>
+			<sc>}</sc>
+			console.log<sc>(</sc><dbl_quote>"<kw>class</kw> <kw>in</kw>"</dbl_quote>, mins_left, <dbl_quote>"minutes"</dbl_quote><sc>)</sc><sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+		<kw>if</kw> <sc>(</sc>today<sc>[</sc>i<sc>]</sc>.includes<sc>(</sc>day_minute<sc>)</sc><sc>)</sc> <sc>{</sc>
+			mins_left = today<sc>[</sc>i<sc>]</sc>.end - day_minute<sc>;</sc>
+			console.log<sc>(</sc>mins_left, <dbl_quote>"minutes left of <kw>class</kw>"</dbl_quote><sc>)</sc><sc>;</sc>
+			<kw>return</kw><sc>;</sc>
+		<sc>}</sc>
+	<sc>}</sc>
+
+	<kw>if</kw> <sc>(</sc>weekday === 5<sc>)</sc><sc>{</sc>
+		console.log<sc>(</sc><dbl_quote>"Next <kw>class</kw> Monday at 9<sc>:</sc>45"</dbl_quote><sc>)</sc>
+		<kw>return</kw><sc>;</sc>
+	<sc>}</sc>
+
+	console.log<sc>(</sc><dbl_quote>"Next <kw>class</kw> tomorrow at"</dbl_quote>, 
+		Math.floor<sc>(</sc>week<sc>[</sc><sc>(</sc>weekday+1<sc>)</sc><sc>]</sc><sc>[</sc>0<sc>]</sc>.start/60<sc>)</sc>,
+		<dbl_quote>"<sc>:</sc>"</dbl_quote>,
+		week<sc>[</sc><sc>(</sc>weekday+1<sc>)</sc><sc>]</sc><sc>[</sc>0<sc>]</sc>.start%60
+	<sc>)</sc>
+	<kw>return</kw><sc>;</sc>
+<sc>}</sc>
+
+refresh<sc>(</sc><sc>)</sc><sc>;</sc>
+<kw>let</kw> id = setInterval<sc>(</sc> refresh, 1000*60<sc>)</sc><sc>;</sc>
+</pre>
+</body></html>

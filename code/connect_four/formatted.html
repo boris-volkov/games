@@ -1,0 +1,235 @@
+<!doctype html><html lang="en"><head>  <meta charset="utf-8">  <title>Ѭ</title><link href="../../style.css" rel="stylesheet"/></head><body>
+
+<div class="image"><img class="screenshot" src="screenshot.png"></img>
+</div>
+
+<div class="bookmark">./code/connect_four/readme.txt</div><pre class=notes>
+Here is a command-line program in python3 that lets you play a connect four game in the terminal. 
+Players take turns entering the column they would like to drop thier piece into.
+Play progresses until one player connects a line of 4 pieces, diagonals count.
+
+The program uses an internal colors module in order to print colored unicode characters for the game grid.
+If you make your terminal full screen and enlarge the font by a lot, then it starts to look like a real game!
+See the screenshot above for reference...
+
+This program uses some fairly advanced grid iteration techniques that made my head spin even when I was writing this program. There are likely better ways to do the checking for lines of 4, and if so, I welcome you to try them!
+
+Since this program uses unicode, it may not run in all online python editors. The best way to try this program is to run it locally in your own python interpreter.   
+</pre>
+<div class="bookmark">./code/connect_four/connect_four.py</div><pre class=py>
+<kw>import</kw> sys
+<kw>import</kw> time
+
+<comment Class="py"># <kw>global</kw> assets
+</comment>shade = <sgl_quote>'◡'</sgl_quote> 
+dot = <sgl_quote>'◉'</sgl_quote>
+star = <sgl_quote>'◎'</sgl_quote>
+margin = <sgl_quote>'   '</sgl_quote>
+
+<comment Class="py"># this <kw>class</kw> <kw>is</kw> basically being used <kw>as</kw> a module
+</comment><comment Class="py"># <kw>not</kw> everything <kw>is</kw> used, just here <kw>for</kw> demo
+</comment><comment Class="py"># look up ANSI escape codes <kw>if</kw> you are confused
+</comment><kw>class</kw> colors<sc>:</sc>
+    <comment Class="py"># general colors
+</comment>    reset       = <sgl_quote>'\u001b<sc>[</sc>0m'</sgl_quote>
+    dark_blue   = <sgl_quote>'\u001b<sc>[</sc>38<sc>;</sc>2<sc>;</sc>63<sc>;</sc>94<sc>;</sc>143m'</sgl_quote>
+    bold        = <sgl_quote>'\u001b<sc>[</sc>1m'</sgl_quote>
+    clear_screen= <sgl_quote>'\033<sc>[</sc>2J'</sgl_quote>
+    cyan        = <sgl_quote>'\u001b<sc>[</sc>96m'</sgl_quote>
+    yellow      = <sgl_quote>'\u001b<sc>[</sc>93m'</sgl_quote>
+    green       = <sgl_quote>'\u001b<sc>[</sc>92m'</sgl_quote>
+    red         = <sgl_quote>'\u001b<sc>[</sc>91m'</sgl_quote>
+    show_cursor = <dbl_quote>"\033<sc>[</sc>?25h"</dbl_quote>
+    hide_cursor = <dbl_quote>"\033<sc>[</sc>?25l"</dbl_quote>
+    blink       = <dbl_quote>"\033<sc>[</sc>5m"</dbl_quote>
+    stop_blink  = <dbl_quote>"\033<sc>[</sc>25m"</dbl_quote>
+    magenta     = <sgl_quote>'\x1b<sc>[</sc>95m'</sgl_quote>
+    faint       = <sgl_quote>'\x1b<sc>[</sc>2m'</sgl_quote>
+    
+    <comment Class="py"># the circled numbers <kw>for</kw> the column bases<sc>:</sc>
+</comment>    base_nums = <sc>[</sc><sgl_quote>'\U00002460'</sgl_quote>, <sgl_quote>'\U00002461'</sgl_quote>, <sgl_quote>'\U00002462'</sgl_quote>, 
+                 <sgl_quote>'\U00002463'</sgl_quote>, <sgl_quote>'\U00002464'</sgl_quote>, <sgl_quote>'\U00002465'</sgl_quote>, 
+                 <sgl_quote>'\U00002466'</sgl_quote>, <sgl_quote>'\U00002467'</sgl_quote>, <sgl_quote>'\U00002468'</sgl_quote>, 
+                 <sgl_quote>'\U00002469'</sgl_quote>, <sgl_quote>'\U0000246a'</sgl_quote>, <sgl_quote>'\U0000246b'</sgl_quote>, 
+                 <sgl_quote>'\U0000246c'</sgl_quote>, <sgl_quote>'\U0000246d'</sgl_quote>, <sgl_quote>'\U0000246e'</sgl_quote>, 
+                 <sgl_quote>'\U0000246f'</sgl_quote>, <sgl_quote>'\U00002470'</sgl_quote>, <sgl_quote>'\U00002471'</sgl_quote>, 
+                 <sgl_quote>'\U00002472'</sgl_quote>, <sgl_quote>'\U00002473'</sgl_quote>,<sc>]</sc>
+
+    <kw>def</kw> rgb<sc>(</sc>r,g,b<sc>)</sc><sc>:</sc>
+        <kw>return</kw> f<sgl_quote>'\u001b<sc>[</sc>38<sc>;</sc>2<sc>;</sc><sc>{</sc>r<sc>}</sc><sc>;</sc><sc>{</sc>g<sc>}</sc><sc>;</sc><sc>{</sc>b<sc>}</sc>m'</sgl_quote>
+
+    <kw>def</kw> bg_rgb<sc>(</sc>r,g,b<sc>)</sc><sc>:</sc>
+        <kw>return</kw> f<sgl_quote>'\u001b<sc>[</sc>48<sc>;</sc>2<sc>;</sc><sc>{</sc>r<sc>}</sc><sc>;</sc><sc>{</sc>g<sc>}</sc><sc>;</sc><sc>{</sc>b<sc>}</sc>m'</sgl_quote>
+
+    <comment Class="py"># specific colors <kw>for</kw> this game
+</comment>    blue   = rgb<sc>(</sc>70,70,250<sc>)</sc>
+    yellow = rgb<sc>(</sc>250,250,50<sc>)</sc>
+    purple = rgb<sc>(</sc>150,0,50<sc>)</sc>
+    red    = rgb<sc>(</sc>250, 50,150<sc>)</sc>
+    green  = rgb<sc>(</sc>50,250,50<sc>)</sc>
+    white  = rgb<sc>(</sc>210,220,255<sc>)</sc>
+
+<kw>class</kw> Board<sc>:</sc>
+    board = <sc>[</sc><sc>]</sc>
+
+    <kw>def</kw> __init__<sc>(</sc>self, width, height<sc>)</sc><sc>:</sc>
+        self.board = <sc>[</sc><sc>[</sc>0<sc>]</sc>*width <kw>for</kw> i <kw>in</kw> range<sc>(</sc>height<sc>)</sc><sc>]</sc> 
+ 
+    <kw>def</kw> print_board<sc>(</sc>self,dot<sc>)</sc><sc>:</sc>
+        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>1,len<sc>(</sc>self.board<sc>[</sc>0<sc>]</sc><sc>)</sc>+1<sc>)</sc><sc>:</sc>
+            rowstring = <sgl_quote>''</sgl_quote>
+            <kw>for</kw> j <kw>in</kw> range<sc>(</sc>len<sc>(</sc>self.board<sc>)</sc><sc>)</sc><sc>:</sc>
+                c = self.board<sc>[</sc>j<sc>]</sc><sc>[</sc>-i<sc>]</sc>
+                <kw>if</kw> c == <sgl_quote>'x'</sgl_quote><sc>:</sc>
+                    rowstring = rowstring + colors.blue + dot + <sgl_quote>' '</sgl_quote>
+                <kw>if</kw> c == <sgl_quote>'o'</sgl_quote><sc>:</sc>
+                    rowstring = rowstring + colors.yellow + dot + <sgl_quote>' '</sgl_quote>
+                <kw>if</kw> c == <sgl_quote>'t'</sgl_quote><sc>:</sc>
+                    rowstring = rowstring + colors.red + dot + <sgl_quote>' '</sgl_quote>
+                <kw>if</kw> c == <sgl_quote>'u'</sgl_quote><sc>:</sc>
+                    rowstring = rowstring + colors.green + dot + <sgl_quote>' '</sgl_quote>
+                <kw>elif</kw> c == 0<sc>:</sc>
+                    rowstring = rowstring + colors.purple +shade + <sgl_quote>' '</sgl_quote>
+            print<sc>(</sc>margin + rowstring + colors.purple<sc>)</sc>
+        print<sc>(</sc>margin, end = <sgl_quote>''</sgl_quote><sc>)</sc>
+        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>len<sc>(</sc>self.board<sc>)</sc><sc>)</sc><sc>:</sc>
+            print<sc>(</sc>colors.base_nums<sc>[</sc>i<sc>]</sc> + <sgl_quote>' '</sgl_quote>, end = <sgl_quote>''</sgl_quote><sc>)</sc>
+        print<sc>(</sc><sc>)</sc>
+
+
+    <kw>def</kw> drop<sc>(</sc>self, row, mark<sc>)</sc><sc>:</sc>
+        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>len<sc>(</sc>self.board<sc>[</sc>row<sc>]</sc><sc>)</sc>-1,-1,-1<sc>)</sc><sc>:</sc>
+
+            print<sc>(</sc>colors.clear_screen<sc>)</sc>
+          
+            print<sc>(</sc><sgl_quote>' '</sgl_quote><sc>)</sc>
+            <kw>if</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>i<sc>]</sc> == 0<sc>:</sc>
+                self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>i<sc>]</sc> = mark
+                Board.print_board<sc>(</sc>self, dot<sc>)</sc>
+                <kw>if</kw> i == 0 <kw>or</kw> <kw>not</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>i-1<sc>]</sc> == 0<sc>:</sc>
+                    print<sc>(</sc>colors.clear_screen<sc>)</sc>
+                    Board.print_board<sc>(</sc>self, star<sc>)</sc>
+                    print<sc>(</sc><sgl_quote>'\n'</sgl_quote>, end = <sgl_quote>'\r'</sgl_quote><sc>)</sc>
+                    time.sleep<sc>(</sc>0.3<sc>)</sc>
+                    print<sc>(</sc>colors.clear_screen<sc>)</sc>
+                    Board.print_board<sc>(</sc>self, dot<sc>)</sc>
+                    print<sc>(</sc><sgl_quote>'\n'</sgl_quote>, end = <sgl_quote>'\r'</sgl_quote><sc>)</sc>
+                    <kw>return</kw>
+                print<sc>(</sc><sc>)</sc>
+                time.sleep<sc>(</sc>0.1<sc>)</sc>
+                self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>i<sc>]</sc> = 0
+    
+    <kw>def</kw> check_four<sc>(</sc>self<sc>)</sc><sc>:</sc>
+        counter = 0
+        width = len<sc>(</sc>self.board<sc>[</sc>0<sc>]</sc><sc>)</sc>
+        height = len<sc>(</sc>self.board<sc>)</sc>
+       
+        <comment Class="py">#verticals
+</comment>        <kw>for</kw> row <kw>in</kw> range<sc>(</sc>height<sc>)</sc><sc>:</sc>
+            <kw>for</kw> col <kw>in</kw> range<sc>(</sc>1,width<sc>)</sc><sc>:</sc>
+                <kw>if</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> == self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>col-1<sc>]</sc><sc>:</sc>
+                    <kw>if</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> <sc>!</sc>= 0<sc>:</sc>
+                        counter += 1
+                        <kw>if</kw> counter == 3<sc>:</sc>
+                            <kw>return</kw> <kw>True</kw>
+                <kw>else</kw><sc>:</sc>
+                    counter = 0
+            counter = 0
+        counter = 0
+
+        <comment Class="py">#horizontals
+</comment>        <kw>for</kw> col <kw>in</kw> range<sc>(</sc>width<sc>)</sc><sc>:</sc>
+            <kw>for</kw> row <kw>in</kw> range<sc>(</sc>1,height<sc>)</sc><sc>:</sc>
+                <kw>if</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> == self.board<sc>[</sc>row-1<sc>]</sc><sc>[</sc>col<sc>]</sc><sc>:</sc>
+                    <kw>if</kw> self.board<sc>[</sc>row<sc>]</sc><sc>[</sc>col<sc>]</sc> <sc>!</sc>= 0<sc>:</sc>
+                        counter += 1
+                        <kw>if</kw> counter == 3<sc>:</sc>
+                            <kw>return</kw> <kw>True</kw>
+                <kw>else</kw><sc>:</sc>
+                    counter = 0
+            counter = 0
+        counter = 0
+ 
+        <comment Class="py">#south-east/north-west diagonals
+</comment>        <kw>for</kw> a <kw>in</kw> range<sc>(</sc>height - 3<sc>)</sc><sc>:</sc>
+            <kw>for</kw> i <kw>in</kw> range<sc>(</sc>width - 3<sc>)</sc><sc>:</sc>
+                <kw>for</kw> j <kw>in</kw> range<sc>(</sc>3<sc>)</sc><sc>:</sc>
+                    <kw>if</kw> self.board<sc>[</sc>a + j<sc>]</sc><sc>[</sc>i + j<sc>]</sc> == self.board<sc>[</sc>a + j + 1<sc>]</sc><sc>[</sc>i + 1 + j<sc>]</sc><sc>:</sc>
+                        <kw>if</kw> self.board<sc>[</sc>a + j<sc>]</sc><sc>[</sc>i + j<sc>]</sc> <sc>!</sc>= 0<sc>:</sc>
+                            counter += 1
+                            <kw>if</kw> counter == 3<sc>:</sc>
+                                <kw>return</kw> <kw>True</kw>
+                    <kw>else</kw><sc>:</sc>
+                        counter = 0
+                counter = 0
+        counter = 0
+    
+        <comment Class="py">#south-west/north-east diagonals
+</comment>        <kw>for</kw> a <kw>in</kw> range<sc>(</sc>height - 3<sc>)</sc><sc>:</sc>
+            <kw>for</kw> i <kw>in</kw> range<sc>(</sc>3, width<sc>)</sc><sc>:</sc>
+                <kw>for</kw> j <kw>in</kw> range<sc>(</sc>3<sc>)</sc><sc>:</sc>
+                    <kw>if</kw> self.board<sc>[</sc>a + j<sc>]</sc><sc>[</sc>i - j<sc>]</sc> == self.board<sc>[</sc>a + j + 1<sc>]</sc><sc>[</sc>i - j - 1<sc>]</sc><sc>:</sc>
+                        <kw>if</kw> self.board<sc>[</sc>a + j<sc>]</sc><sc>[</sc>i - j<sc>]</sc> <sc>!</sc>= 0<sc>:</sc>
+                            counter += 1
+                            <kw>if</kw> counter == 3<sc>:</sc>
+                                <kw>return</kw> <kw>True</kw>
+                    <kw>else</kw><sc>:</sc>
+                        counter = 0
+                counter = 0
+        <kw>return</kw> <kw>False</kw>
+
+    <kw>def</kw> is_space<sc>(</sc>self,x<sc>)</sc><sc>:</sc>
+        <kw>return</kw> self.board<sc>[</sc>x<sc>]</sc><sc>[</sc>-1<sc>]</sc> == 0
+
+
+<kw>if</kw> __name__ == <sgl_quote>'__main__'</sgl_quote><sc>:</sc>
+    print<sc>(</sc>colors.hide_cursor<sc>)</sc>
+    print<sc>(</sc>colors.clear_screen<sc>)</sc>
+    <comment Class="py"># <kw>if</kw> the program <kw>is</kw> called without arguments<sc>:</sc>
+</comment>    <kw>if</kw> len<sc>(</sc>sys.argv<sc>)</sc> == 1<sc>:</sc>
+        B = Board<sc>(</sc>9,9<sc>)</sc>
+        width = 9
+        height = 9
+        B.print_board<sc>(</sc>dot<sc>)</sc>
+        print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
+            colors.yellow + dot<sc>)</sc>
+        players = 2
+    <kw>else</kw><sc>:</sc> <comment Class="py"># this stuff <kw>is</kw> here to allow <kw>for</kw> multiple players
+</comment>        height = int<sc>(</sc>sys.argv<sc>[</sc>1<sc>]</sc><sc>)</sc>
+        width = int<sc>(</sc>sys.argv<sc>[</sc>2<sc>]</sc><sc>)</sc> <comment Class="py">#these are the apparent height <kw>and</kw> width on screen
+</comment>        B = Board<sc>(</sc>height,width<sc>)</sc>
+        B.print_board<sc>(</sc>dot<sc>)</sc>
+        players = sys.argv<sc>[</sc>3<sc>]</sc>
+        <kw>if</kw> players == 4<sc>:</sc>
+            print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
+                colors.yellow + dot + colors.red + <sgl_quote>' '</sgl_quote> +  dot + colors.green + <sgl_quote>' '</sgl_quote> + dot<sc>)</sc>
+        <kw>if</kw> players == 3<sc>:</sc>
+            print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
+                colors.yellow + dot + colors.red + <sgl_quote>' '</sgl_quote> +  dot<sc>)</sc>
+        
+        <kw>if</kw> players == 2<sc>:</sc>
+            print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
+                colors.yellow + dot<sc>)</sc>
+
+    <kw>while</kw> <kw>not</kw> B.check_four<sc>(</sc><sc>)</sc><sc>:</sc>
+        clrs = <sc>[</sc>colors.blue, colors.yellow, colors.red, colors.green<sc>]</sc>
+        tokens = <sc>[</sc><sgl_quote>'x'</sgl_quote>, <sgl_quote>'o'</sgl_quote>, <sgl_quote>'t'</sgl_quote>, <sgl_quote>'u'</sgl_quote><sc>]</sc>
+        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>players<sc>)</sc><sc>:</sc>
+            p1 = input<sc>(</sc>margin+clrs<sc>[</sc>i<sc>]</sc>+<sgl_quote>' '</sgl_quote> + dot + <sgl_quote>' <sc>:</sc> '</sgl_quote><sc>)</sc>
+            <kw>while</kw> <kw>not</kw> p1.isnumeric<sc>(</sc><sc>)</sc> <kw>or</kw> <sc>(</sc>int<sc>(</sc>p1<sc>)</sc> &gt width <kw>or</kw> int<sc>(</sc>p1<sc>)</sc> &lt 1<sc>)</sc> <kw>or</kw> <kw>not</kw> B.is_space<sc>(</sc>int<sc>(</sc>p1<sc>)</sc>-1<sc>)</sc><sc>:</sc>
+                print<sc>(</sc>colors.clear_screen<sc>)</sc>
+                B.print_board<sc>(</sc>dot<sc>)</sc>
+                print<sc>(</sc>margin + colors.red + <sgl_quote>'<kw>try</kw> again'</sgl_quote><sc>)</sc>
+                p1 = input<sc>(</sc>clrs<sc>[</sc>i<sc>]</sc> +<sgl_quote>' '</sgl_quote> +<sgl_quote>' '</sgl_quote> + dot + <sgl_quote>' <sc>:</sc> '</sgl_quote><sc>)</sc>
+
+            row = int<sc>(</sc>p1<sc>)</sc> - 1
+            B.drop<sc>(</sc>row, tokens<sc>[</sc>i<sc>]</sc><sc>)</sc>
+
+            <kw>if</kw> B.check_four<sc>(</sc><sc>)</sc> == 1<sc>:</sc>
+                print<sc>(</sc>margin + clrs<sc>[</sc>i<sc>]</sc> + <sgl_quote>' '</sgl_quote> + dot + <sgl_quote>' wins'</sgl_quote>, end = <sgl_quote>''</sgl_quote><sc>)</sc>
+                input<sc>(</sc><sc>)</sc>
+                <kw>break</kw>
+    
+    print<sc>(</sc>colors.show_cursor<sc>)</sc>
+</pre>
+</body></html>
