@@ -174,7 +174,7 @@ if __name__ == '__main__':
         B.print_board(dot)
         print(margin + colors.white + '\U000023C1 ' + colors.blue + dot+' ' + 
             colors.yellow + dot)
-        players = 2
+        num_players = 2
     else: # this stuff is here to allow for multiple players
         height = int(sys.argv[1])
         width = int(sys.argv[2]) #these are the apparent height and width on screen
