@@ -45,7 +45,7 @@ margin = <sgl_quote>'   '</sgl_quote>
     stop_blink  = <dbl_quote>"\033<sc>[</sc>25m"</dbl_quote>
     magenta     = <sgl_quote>'\x1b<sc>[</sc>95m'</sgl_quote>
     faint       = <sgl_quote>'\x1b<sc>[</sc>2m'</sgl_quote>
-    
+   
     <comment Class="py"># the circled numbers <kw>for</kw> the column bases<sc>:</sc>
 </comment>    base_nums = <sc>[</sc><sgl_quote>'\U00002460'</sgl_quote>, <sgl_quote>'\U00002461'</sgl_quote>, <sgl_quote>'\U00002462'</sgl_quote>, 
                  <sgl_quote>'\U00002463'</sgl_quote>, <sgl_quote>'\U00002464'</sgl_quote>, <sgl_quote>'\U00002465'</sgl_quote>, 
@@ -199,22 +199,23 @@ margin = <sgl_quote>'   '</sgl_quote>
         width = int<sc>(</sc>sys.argv<sc>[</sc>2<sc>]</sc><sc>)</sc> <comment Class="py">#these are the apparent height <kw>and</kw> width on screen
 </comment>        B = Board<sc>(</sc>height,width<sc>)</sc>
         B.print_board<sc>(</sc>dot<sc>)</sc>
-        players = sys.argv<sc>[</sc>3<sc>]</sc>
-        <kw>if</kw> players == 4<sc>:</sc>
+        num_players = sys.argv<sc>[</sc>3<sc>]</sc>
+        num_players = int<sc>(</sc>num_players<sc>)</sc>
+        <kw>if</kw> num_players == 4<sc>:</sc>
             print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
                 colors.yellow + dot + colors.red + <sgl_quote>' '</sgl_quote> +  dot + colors.green + <sgl_quote>' '</sgl_quote> + dot<sc>)</sc>
-        <kw>if</kw> players == 3<sc>:</sc>
+        <kw>if</kw> num_players == 3<sc>:</sc>
             print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
                 colors.yellow + dot + colors.red + <sgl_quote>' '</sgl_quote> +  dot<sc>)</sc>
         
-        <kw>if</kw> players == 2<sc>:</sc>
+        <kw>if</kw> num_players == 2<sc>:</sc>
             print<sc>(</sc>margin + colors.white + <sgl_quote>'\U000023C1 '</sgl_quote> + colors.blue + dot+<sgl_quote>' '</sgl_quote> + 
                 colors.yellow + dot<sc>)</sc>
 
     <kw>while</kw> <kw>not</kw> B.check_four<sc>(</sc><sc>)</sc><sc>:</sc>
         clrs = <sc>[</sc>colors.blue, colors.yellow, colors.red, colors.green<sc>]</sc>
         tokens = <sc>[</sc><sgl_quote>'x'</sgl_quote>, <sgl_quote>'o'</sgl_quote>, <sgl_quote>'t'</sgl_quote>, <sgl_quote>'u'</sgl_quote><sc>]</sc>
-        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>players<sc>)</sc><sc>:</sc>
+        <kw>for</kw> i <kw>in</kw> range<sc>(</sc>num_players<sc>)</sc><sc>:</sc>
             p1 = input<sc>(</sc>margin+clrs<sc>[</sc>i<sc>]</sc>+<sgl_quote>' '</sgl_quote> + dot + <sgl_quote>' <sc>:</sc> '</sgl_quote><sc>)</sc>
             <kw>while</kw> <kw>not</kw> p1.isnumeric<sc>(</sc><sc>)</sc> <kw>or</kw> <sc>(</sc>int<sc>(</sc>p1<sc>)</sc> &gt width <kw>or</kw> int<sc>(</sc>p1<sc>)</sc> &lt 1<sc>)</sc> <kw>or</kw> <kw>not</kw> B.is_space<sc>(</sc>int<sc>(</sc>p1<sc>)</sc>-1<sc>)</sc><sc>:</sc>
                 print<sc>(</sc>colors.clear_screen<sc>)</sc>

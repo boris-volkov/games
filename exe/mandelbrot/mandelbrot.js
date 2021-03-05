@@ -143,7 +143,6 @@ function setSize(){
 }
 
 
-
 function setState(f, save=true) {
 	if (typeof f === "function") {
 		f(state);
@@ -156,9 +155,11 @@ function setState(f, save=true) {
 	render();
 
 	document.body.style.cursor = "wait";
-	if (save) {
+    /*
+	if i == 0 {
 		history.pushState(state, "", state.toURL());
 	}
+	*/
 }
 
 function color(iterations) {

@@ -26,7 +26,7 @@ class colors:
     stop_blink  = "\033[25m"
     magenta     = '\x1b[95m'
     faint       = '\x1b[2m'
-    
+   
     # the circled numbers for the column bases:
     base_nums = ['\U00002460', '\U00002461', '\U00002462', 
                  '\U00002463', '\U00002464', '\U00002465', 
@@ -180,22 +180,23 @@ if __name__ == '__main__':
         width = int(sys.argv[2]) #these are the apparent height and width on screen
         B = Board(height,width)
         B.print_board(dot)
-        players = sys.argv[3]
-        if players == 4:
+        num_players = sys.argv[3]
+        num_players = int(num_players)
+        if num_players == 4:
             print(margin + colors.white + '\U000023C1 ' + colors.blue + dot+' ' + 
                 colors.yellow + dot + colors.red + ' ' +  dot + colors.green + ' ' + dot)
-        if players == 3:
+        if num_players == 3:
             print(margin + colors.white + '\U000023C1 ' + colors.blue + dot+' ' + 
                 colors.yellow + dot + colors.red + ' ' +  dot)
         
-        if players == 2:
+        if num_players == 2:
             print(margin + colors.white + '\U000023C1 ' + colors.blue + dot+' ' + 
                 colors.yellow + dot)
 
     while not B.check_four():
         clrs = [colors.blue, colors.yellow, colors.red, colors.green]
         tokens = ['x', 'o', 't', 'u']
-        for i in range(players):
+        for i in range(num_players):
             p1 = input(margin+clrs[i]+' ' + dot + ' : ')
             while not p1.isnumeric() or (int(p1) > width or int(p1) < 1) or not B.is_space(int(p1)-1):
                 print(colors.clear_screen)

@@ -267,7 +267,6 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 <sc>}</sc>
 
 
-
 <kw>function</kw> setState<sc>(</sc>f, save=true<sc>)</sc> <sc>{</sc>
 	<kw>if</kw> <sc>(</sc><kw>typeof</kw> f === <dbl_quote>"<kw>function</kw>"</dbl_quote><sc>)</sc> <sc>{</sc>
 		f<sc>(</sc>state<sc>)</sc><sc>;</sc>
@@ -280,9 +279,11 @@ history.replaceState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(
 	render<sc>(</sc><sc>)</sc><sc>;</sc>
 
 	document.body.style.cursor = <dbl_quote>"wait"</dbl_quote><sc>;</sc>
-	<kw>if</kw> <sc>(</sc>save<sc>)</sc> <sc>{</sc>
-		history.pushState<sc>(</sc>state, <dbl_quote>""</dbl_quote>, state.toURL<sc>(</sc><sc>)</sc><sc>)</sc><sc>;</sc>
-	<sc>}</sc>
+    <comment Class="js">/*
+	if i == 0 {
+		history.pushState(state, "", state.toURL());
+	}
+	*/</comment>
 <sc>}</sc>
 
 <kw>function</kw> color<sc>(</sc>iterations<sc>)</sc> <sc>{</sc>
