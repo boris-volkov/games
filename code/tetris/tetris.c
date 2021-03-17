@@ -6,17 +6,39 @@
 
 #define ROW pivot[0]
 #define COL pivot[1]
-#define ROWS 20
-#define COLS 20
+#define ROWS 30
+#define COLS 10
 #define lock()   pthread_mutex_lock(&mtx)
 #define unlock() pthread_mutex_unlock(&mtx)
 
-pthread_mutex_t mtx;
 
-int pivot[2] = {0,0};
-int piece[2*4] = {0,0,0,1,0,2,1,2}; // L piece
+// GLOBAL STATIC DATA
+pthread_mutex_t mtx;
+int score;
+int pivot[2] = {2,5};
+
+int pieces[] = {0,-1,0,0,0,1,1,1, 
+	            0,-1,0,0,0,1,1,-1,
+				0,-1,0,0,0,1,1,0,
+                0,-1,0,0,1,0,1,1,
+				0,0,0,1,1,0,1,-1,
+				0,0,0,1,1,0,1,1,
+                0,-1,0,0,0,1,0,2,};
+
+int *piece = &pieces; // L piece
+
+void generate_piece(){
+	pivot[0] = 2;
+	pivot[1] = 5;
+	piece = &pieces[8*(rand()%7)];
+}
 
 int board[ROWS*COLS];
+
+WINDOW * game_win;
+WINDOW * score_win;
+
+int game_over = false;
 
 void initialize_board(){
 	for (int i = 0; i < ROWS*COLS; i++){
@@ -31,17 +53,74 @@ void b_set(int row, int col, int val){
 int b_get(int row, int col){
 	return board[row*COLS + col];
 }
-
-void generate_piece(){
-	pivot[0] = 0;
-	pivot[1] = 0;
+void clear_lines(){
+restart:
+	for (int i = ROWS-1; i >= 0; i--){
+		for (int j = 0; j < COLS; j++){
+			if (b_get(i , j) == 0){ // if anything in row was zero, break loop
+				goto skip;
+			}
+		}
+		// otherwise they were all one, in which case we delete the row
+		// and move everything else down. 
+		score++;
+		for (int m = i; m > 0; m--){
+			for (int n = 0; n < COLS; n++){
+				b_set(m, n, b_get(m-1, n));
+				if (b_get(m, n) == 0) {
+					mvwaddch(game_win, m,n+1,' ');
+				} else {
+					mvwaddch(game_win, m,n+1, ACS_CKBOARD);
+				}
+			}
+		}
+		goto restart;
+skip:
+		(void) 0;
+	}
+	mvwprintw(score_win,1,1,"%d", score);
+	wrefresh(score_win);
+	wrefresh(game_win);
 }
+
+bool placeable(int row_target, int col_target) {
+	for (int i = 0; i < 4; i++){
+		int row_offset = piece[2*i];
+		int col_offset = piece[2*i+1];
+		if (ROW+row_offset+row_target >= ROWS) // floor
+			return false;
+		if (COL+col_offset+col_target < 0 || COL+col_offset+col_target >= COLS) // walls
+			return false;
+		if (b_get(ROW+row_offset+row_target, COL+col_offset+col_target) == 1) // other piece
+			return false;
+	}
+	return true;
+}
+
+void rotate() {	
+	for (int i = 0; i < 4; i++){
+		int temp = piece[2*i];
+		piece[2*i] = piece[2*i+1];
+		piece[2*i+1] = -temp;
+	}
+	if (placeable(0,0)){
+		return;
+	} else { // rotate back
+		for (int i = 0; i < 4; i++){
+			int temp = piece[2*i];
+			piece[2*i] = -piece[2*i+1];
+			piece[2*i+1] = temp;
+		}
+	}
+
+}
+
 
 void clear_piece() {
 	for (int i = 0; i < 4; i++){
 		int row_offset = piece[2*i];
 		int col_offset = piece[2*i+1];
-		mvaddch(ROW + row_offset, COL + col_offset, ' ');
+		mvwaddch(game_win, ROW + row_offset, 1+ COL + col_offset, ' ');
 	}
 }
 
@@ -49,7 +128,7 @@ void draw_piece() {
 	for (int i = 0; i < 4; i++){
 		int row_offset = piece[2*i];
 		int col_offset = piece[2*i+1];
-		mvaddch(ROW + row_offset, COL + col_offset, ACS_CKBOARD);
+		mvwaddch(game_win, ROW + row_offset, 1 + COL + col_offset, ACS_CKBOARD);
 	}
 }
 
@@ -61,81 +140,85 @@ void plant_piece() {
 	}
 }
 
-bool droppable(){
-	for (int i = 0; i < 4; i++){
-		int row_offset = piece[2*i];
-		int col_offset = piece[2*i+1];
-		if (ROW+row_offset+1 >= ROWS) { // on floor
-			mvprintw(0,0,"floor          ");
-			refresh();
-			return false;
-		}
-		if  (b_get(ROW+row_offset+1, COL+col_offset) == 1 ) { // on another
-			mvprintw(0,0,"on piece          ");
-			refresh();
-			return false;
-		}
-	}
-	return true;
-}
-
 // thread body functions need to have this signature. 
 void* key_handler(void* arg){
 	// called shared value pointer here just for demonstration
 	// in case we end up sending an object into the thread
 	int* shared_var_ptr = (int*)arg;
 	
-	for (int i = 0; i < 100; i++) {
+	for (;;) {	
+		if (game_over){
+			unlock();
+			return NULL;
+		}
 		int ch = getch();
 		lock();
+		if (game_over){
+			unlock();
+			return NULL;
+		}
 		/* CRITICAL SECTION */
 		clear_piece();
 		switch(ch){	
 			case KEY_UP:
-				ROW--;
+				rotate();
 				break;
 			case KEY_DOWN:
-				if (droppable()){
+				if (placeable(1,0)){
 					ROW++;
 				}
 				break;
 			case KEY_RIGHT:
-				if (++COL >= COLS)
-					--COL;
+				if (placeable(0,1))
+					++COL;
 				break;
 			case KEY_LEFT:
-				if (--COL <= 0)
-					++COL;
+				if (placeable(0,-1))
+					--COL;
+				break;
+			case 'q':
+				game_over = true;
+				break;
+			case ' ':
+				while (placeable(1,0)){
+					++ROW;
+				}
 				break;
 		}
 		draw_piece();
-		refresh();
+		wrefresh(game_win);
 		/********************/
 		unlock();
 	}
 	return NULL;
-}
-
-	
+}	
 
 void* dropper(void* arg){
 	int* shared_var_ptr = (int*)arg;
 	
-	for (int i = 0; i < 50; i++) {
+	for (;;) {
 		usleep(200000);
 		lock();
 		/* CRITICAL SECTION */
-		if (droppable()){
+		if (placeable(1,0)){
 			clear_piece();
 			ROW++;
 		} else {
 			plant_piece();
+			clear_lines();
 			generate_piece();
+			if (!placeable(0,0)){
+				game_over = true;
+				unlock();
+				return NULL;
+			}
 		}	
 		draw_piece();
-		refresh();
+		wrefresh(game_win);
 		/********************/
 		unlock();
+		if (game_over)
+			return NULL;
 	}
 	return NULL;
 }
@@ -147,15 +230,32 @@ void* dropper(void* arg){
 // if you want it to busy-wait, make a pthread_spin_t object instead
 // and use it in the same way. 
 
+
+WINDOW *create_newwin(int height, int width, int starty, int startx)
+{	WINDOW *local_win;
+
+	local_win = newwin(height, width, starty, startx);
+	box(local_win, 0 , 0);
+	wrefresh(local_win);		/* Show that box 		*/
+
+	return local_win;
+}
+
 int main(){
 	int ch;
-
+	score = 0;
 	initialize_board();
 	initscr();               // start ncurses	
 	raw();                   // Line buffering disabled	
 	noecho();                // Don't echo() while we do getch
 	keypad(stdscr, TRUE);    // allow input from arrow keys
 	curs_set(0);             // hide the cursor
+	refresh();
+
+	game_win = create_newwin(ROWS + 1, COLS + 2, 3, 3);
+	score_win = create_newwin(3,6, 3, 15);
+	wrefresh(score_win);
+	wrefresh(game_win);
 
 	//thread handlers
 	pthread_t thread1;
@@ -186,7 +286,7 @@ int main(){
 	pthread_mutex_destroy(&mtx);
 	
 	printw("threads joined successfully");
-	refresh();
+	wrefresh(game_win);
 	sleep(1);
 	endwin(); // End curses mode		 
 	return 0;
