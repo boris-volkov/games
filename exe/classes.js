@@ -24,8 +24,8 @@ const week = {
 		new Class(14,10)
 	],
 	4: [new Class(8,45),
+		new Class(9,40),
 		new Class(10,35),
-		new Class(12,0),
 		new Class(13,5),
 		new Class(14,15)
 	],
